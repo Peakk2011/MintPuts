@@ -864,4 +864,41 @@ ${output.innerHTML}
     });
 
     parseMarkdown();
+
+    const titleLinksContainer = document.getElementById('TitleLinks');
+    const mainContentSection = document.querySelector('.main-content');
+    const outputSection = document.querySelector('.output-section');
+
+    if (titleLinksContainer && mainContentSection && outputSection) {
+        const links = titleLinksContainer.querySelectorAll('a');
+
+        links.forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+
+                const currentHighlighted = titleLinksContainer.querySelector('#Highlight');
+                if (currentHighlighted && currentHighlighted !== this) {
+                    const baseId = currentHighlighted.getAttribute('data-base-id');
+                    if (baseId) {
+                        currentHighlighted.id = baseId;
+                    } else {
+                        currentHighlighted.removeAttribute('id'); 
+                    }
+                }
+
+                this.id = 'Highlight';
+
+                const clickedBaseId = this.getAttribute('data-base-id');
+                if (clickedBaseId === 'ToggleHTMLOUTPUT') {
+                    mainContentSection.style.display = 'none';
+                    outputSection.style.display = 'flex';
+                } else if (clickedBaseId === 'ToggleMDEditer') {
+                    mainContentSection.style.display = 'flex';
+                    outputSection.style.display = 'none';
+                }
+            });
+        });
+    } else {
+        console.warn('One or more elements for view toggling (TitleLinks, main-content, output-section) not found.');
+    }
 };

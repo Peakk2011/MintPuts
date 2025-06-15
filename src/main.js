@@ -25,7 +25,7 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 950,
-    minWidth: 800,
+    minWidth: 420,
     minHeight: 600,
     show: false,
     webPreferences: {

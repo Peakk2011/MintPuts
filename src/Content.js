@@ -225,7 +225,7 @@ export const WebContent = {
     },
 
     HTMLContent: {
-        Name: 'Markdown to HTML',
+        Name: 'Mint puts Markdown to HTML',
         Introduce(Name) {
             const DisplayName = Name || this.Name;
             return `
@@ -235,8 +235,8 @@ export const WebContent = {
                         <span>${DisplayName}</span>
                     </div>
                     <div id="TitleLinks">
-                        <li><a id="Highlight">Markdown Editer</a></li>
-                        <li><a>HTML Output</a></li>
+                        <li><a id="Highlight" data-base-id="ToggleMDEditer" href="javascript:void(0)">Markdown Editer</a></li>
+                        <li><a id="ToggleHTMLOUTPUT" data-base-id="ToggleHTMLOUTPUT" href="javascript:void(0)">HTML Output</a></li>
                     </div>
                 </div>
                 <div class="container">
@@ -487,6 +487,13 @@ export const WebContent = {
                 margin-right: ${spacing[4]};
                 font-size: 14${pixel};
                 opacity: 0.6;
+                -webkit-app-region: no-drag;
+                text-decoration: none;
+                transition: 0.2s ease;
+            }
+
+            #TitleLinks li a:hover {
+                opacity: 1;
             }
 
             #drag-region {
@@ -531,7 +538,17 @@ export const WebContent = {
                 display: flex;
                 flex-direction: column;
                 padding: ${spacing[4]};
-                width: 50%;
+                width: 100%;
+            }
+
+            .output-section {
+                position: fixed;
+                top: 0;
+                width: 100vw;
+                height: 100vh;
+                background-color: ${colorPrimary};
+                z-index: 5;
+                display: none;
             }
 
             .section-title {
@@ -580,6 +597,7 @@ export const WebContent = {
                 margin: auto;
                 border-top: 1${pixel} solid ${PublicFormatBorderColors};
                 background-color: ${colorPrimary};
+                z-index: 6;
             }
 
             .controlsContent {
