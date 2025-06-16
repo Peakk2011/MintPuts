@@ -98,8 +98,9 @@ export const WebElements = {
         8: '2rem',        // 32px
         10: '2.5rem',     // 40px
         12: '3rem',       // 48px
-        14: '3.5rem',       // 64px
-        16: '4rem',       // 64px
+        14: '3.5rem',
+        16: '4rem',
+        18: '4.5rem',
         20: '5rem',       // 80px
         24: '6rem',       // 96px
         32: '8rem',       // 128px
@@ -175,9 +176,9 @@ const lightThemeColors = {
 const darkThemeColors = {
     ColorPrimary: '#141414;',
     TextColorPrimaryDisplay: '#faf8f0;',
-    TextColorPrimaryText: '#A2A2A2;',
+    TextColorPrimaryText: '#D9D9D9;',
     HighlightPrimary: '#413c3c;',
-    FormatTextColors: '#A2A2A2',
+    FormatTextColors: '#D9D9D9',
     FormatBorderColors: '#262626',
     PrimaryHeaderText: '#dfffeb',
     PublicFormatBorderColors: '#343434',
@@ -225,7 +226,7 @@ export const WebContent = {
     },
 
     HTMLContent: {
-        Name: 'Mint puts Markdown to HTML',
+        Name: 'Mintputs',
         Introduce(Name) {
             const DisplayName = Name || this.Name;
             return `
@@ -243,7 +244,7 @@ export const WebContent = {
                     <div class="main-content">
                         <div class="input-section">
                             <div class="section-title">
-                                Markdown Input
+                                
                             </div>
                             <textarea id="markdown-input" placeholder="Input Your Markdown Syntax Here..." spellcheck="false"></textarea>
                         </div>
@@ -253,7 +254,7 @@ export const WebContent = {
                 </div>
 
                 <div class="output-section">
-                            <div class="section-title">
+                            <div class="section-title" id="HTML_outputText">
                                 HTML Output
                             </div>
                             <div id="html-output"></div>
@@ -455,13 +456,14 @@ export const WebContent = {
             }
 
             #titlebar {
-                height: 75px;
+                height: 81px;
                 background-color: ${colorPrimary};
                 -webkit-app-region: drag;
                 user-select: none;
                 width: 100%;
                 position: fixed;
                 z-index: 10;
+                border-bottom: ${FormatBorderColors} solid 1px;
             }
 
             #TitleLinks {
@@ -469,8 +471,8 @@ export const WebContent = {
                 justify-content: space-between;
                 align-items: center;
                 position: absolute;
-                top: ${spacing[10]};
-                left: ${spacing[4]};
+                top: ${spacing[12]};
+                border-top: ${colorPrimary} solid 1px;
             }
 
             #TitleLinks li {
@@ -479,12 +481,13 @@ export const WebContent = {
 
             #Highlight {
                 opacity: 1 !important;
+                background-color: ${OutputBackground.PrimarySec};
+                border-top: ${FormatBorderColors} solid 1px;
             }
 
             #TitleLinks li a {
                 color: ${textColorPrimaryDisplay};
-                padding: ${spacing[2]} ${spacing[0]};
-                margin-right: ${spacing[4]};
+                padding: ${spacing[2.5]} ${spacing[4]};
                 font-size: 14${pixel};
                 opacity: 0.6;
                 -webkit-app-region: no-drag;
@@ -559,7 +562,11 @@ export const WebContent = {
                 display: flex;
                 align-items: center;
                 font-family: ${WebElements.Typeface[4]};
-                margin-top: ${spacing[16]};
+                margin-top: ${spacing[18]};
+            }
+
+            #HTML_outputText {
+                margin-top: ${spacing[20]};
             }
 
             #markdown-input {

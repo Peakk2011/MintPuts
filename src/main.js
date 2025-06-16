@@ -25,8 +25,8 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 950,
-    minWidth: 420,
-    minHeight: 600,
+    minWidth: 345,
+    minHeight: 520,
     show: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -43,7 +43,7 @@ const createWindow = () => {
       titleBarOverlay: {
         color: '#141414',
         symbolColor: '#ffffff',
-        height: 40
+        height: 35
       }
     })
   });
