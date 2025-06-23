@@ -170,7 +170,8 @@ const lightThemeColors = {
     OutputBackground: {
         PrimarySec: "#f4f1e6",
         LinksBackground: "rgb(50, 50, 153)",
-    }
+    },
+    SIDEBAR: "#ffffff",
 };
 
 const darkThemeColors = {
@@ -190,7 +191,8 @@ const darkThemeColors = {
     OutputBackground: {
         PrimarySec: "#1e1e1e",
         LinksBackground: "rgb(108, 108, 243)",
-    }
+    },
+    SIDEBAR: "#0f0f0f",
 };
 
 export const WebContent = {
@@ -232,19 +234,28 @@ export const WebContent = {
             return `
                 <div id="titlebar">
                     <div id="drag-region">
-                        <img id="icon" src="/assets/MintLogoPage.svg" alt="icon" />
-                        <span>${DisplayName}</span>
-                    </div>
-                    <div id="TitleLinks">
-                        <li><a id="Highlight" data-base-id="ToggleMDEditer" href="javascript:void(0)">Markdown Editer</a></li>
-                        <li><a id="ToggleHTMLOUTPUT" data-base-id="ToggleHTMLOUTPUT" href="javascript:void(0)">HTML Output</a></li>
+                        <svg width="892" height="210" viewBox="0 0 892 210" fill="none" xmlns="http://www.w3.org/2000/svg" id="icon">
+                            <path d="M794 132.467H821.863C822.103 142.764 829.789 149.23 843.24 149.23C856.931 149.23 864.377 143.722 864.377 135.102C864.377 129.115 861.255 124.805 850.686 122.41L829.309 117.381C807.931 112.592 797.603 102.534 797.603 83.6169C797.603 60.3889 817.299 46.5 844.681 46.5C871.343 46.5 889.358 61.8257 889.598 84.8142H861.735C861.495 74.7567 854.77 68.2912 843.48 68.2912C831.951 68.2912 825.225 73.5594 825.225 82.4195C825.225 89.1245 830.51 93.4349 840.598 95.8295L861.975 100.858C881.912 105.408 892 114.508 892 132.707C892 156.653 871.583 171.5 842.279 171.5C812.735 171.5 794 155.695 794 132.467Z" fill="black"/>
+                            <path d="M36 168.5H1V1H44L84 97.5L122 1H165V168.5H131V57H129.5L91 168.5H73.5L37.5 57H36V168.5Z" fill="black" stroke="black"/>
+                            <path d="M408.344 4V21V44.5L395.5 51.5C400.95 51.5 408.344 51.5 408.344 51.5H439.5V77.3889H408.344V138.5C408.344 141.352 409.781 142.778 412.656 142.778L433.5 143.267V171.5H404.75C400.917 171.5 397.467 171.12 394.4 170.359C391.333 169.599 388.65 168.458 386.35 166.937C384.05 165.606 382.133 163.752 380.6 161.376C379.067 158.999 377.917 156.385 377.15 153.533C376.383 150.491 376 147.069 376 143.267V77.3889H354V51.5H376V4H408.344Z" fill="black"/>
+                            <path d="M754.344 4V21V44.5L741.5 51.5C746.95 51.5 754.344 51.5 754.344 51.5H785.5V77.3889H754.344V138.5C754.344 141.352 755.781 142.778 758.656 142.778L779.5 143.267V171.5H750.75C746.917 171.5 743.467 171.12 740.4 170.359C737.333 169.599 734.65 168.458 732.35 166.937C730.05 165.606 728.133 163.752 726.6 161.376C725.067 158.999 723.917 156.385 723.15 153.533C722.383 150.491 722 147.069 722 143.267V77.3889H700V51.5H722V4H754.344Z" fill="black"/>
+                            <path d="M217.5 52H184.5V168.5H217.5V52Z" fill="black"/>
+                            <path d="M217.5 33H184.5V5H217.5V33Z" fill="black"/>
+                            <path d="M268 168.5H235.5V52H268V72.5C268 65.3333 285.5 48.7215 307.5 49C341.5 49.4304 348.5 80 349.5 87V168.5H316.5V97.5C315 90.3333 308.4 76 294 76C279.6 76 270.667 90.3333 268 97.5V168.5Z" fill="black"/>
+                            <path d="M217.5 52H184.5V168.5H217.5V52Z" stroke="black"/>
+                            <path d="M217.5 33H184.5V5H217.5V33Z" stroke="black"/>
+                            <path d="M268 168.5H235.5V52H268V72.5C268 65.3333 285.5 48.7215 307.5 49C341.5 49.4304 348.5 80 349.5 87V168.5H316.5V97.5C315 90.3333 308.4 76 294 76C279.6 76 270.667 90.3333 268 97.5V168.5Z" stroke="black"/>
+                            <path d="M622.111 172C613.168 172 605.811 168.768 599.608 165.304C593.405 161.839 588.717 156.715 585.544 149.931C582.515 143.003 581 134.631 581 124.816V52.5H612.807V116.372C612.807 122.434 613.528 127.558 614.971 131.744C616.558 135.93 618.938 139.178 622.111 141.487C625.429 143.652 629.684 144.735 634.877 144.735C640.214 144.735 644.758 143.436 648.509 140.838C652.259 138.239 655.144 134.847 657.164 130.661C659.183 126.331 660.193 121.64 660.193 116.588V52.5H692V168.551H660.193V147.333C657.452 154.839 651.25 160.613 644.614 164.654C638.123 168.551 630.478 172 622.111 172Z" fill="black"/>
+                            <path d="M513 171C506.321 171 500.082 169.984 494.282 167.951C488.482 165.829 483.297 163.001 478.727 159.465C473.982 155.93 469.808 151.775 466.205 147.002C462.689 142.229 459.921 136.661 457.9 130.297C455.967 124.463 455 118.231 455 111.602C455 105.238 455.967 99.0951 457.9 93.173C459.833 87.2509 462.558 81.8592 466.073 76.9978C469.764 71.9595 474.026 67.6727 478.859 64.1371C483.78 60.6015 489.009 57.9056 494.545 56.0494C497.445 55.0772 500.433 54.3258 503.509 53.7955C506.585 53.2652 509.748 53 513 53C519.239 53 525.303 54.0165 531.191 56.0494C537.167 58.0824 542.527 60.8225 547.273 64.2697C551.93 67.8052 556.061 72.0479 559.664 76.9978C563.355 81.8592 566.167 87.2509 568.1 93.173C568.979 96.0899 569.682 99.0951 570.209 102.189C570.736 105.282 571 108.42 571 111.602C571 116.906 570.165 122.607 568.495 128.706C566.914 134.804 564.014 140.815 559.795 146.737C556.28 151.687 552.062 155.974 547.141 159.598C542.22 163.222 536.947 166.006 531.323 167.951C528.423 168.923 525.435 169.674 522.359 170.204C519.283 170.735 516.164 171 513 171ZM513.132 142.494C516.032 142.494 518.932 142.008 521.832 141.036C524.82 140.064 527.456 138.605 529.741 136.661C532.641 134.363 534.882 131.888 536.464 129.236C538.133 126.496 539.276 123.977 539.891 121.679C540.33 120.176 540.682 118.629 540.945 117.038C541.209 115.359 541.341 113.679 541.341 112C541.341 108.553 540.858 105.327 539.891 102.321C538.924 99.2277 537.606 96.3992 535.936 93.836C534.442 91.7146 532.553 89.6816 530.268 87.7371C527.983 85.7041 525.215 84.1131 521.964 82.964C519.064 81.9918 516.12 81.5056 513.132 81.5056C506.805 81.5056 501.224 83.406 496.391 87.2067C494.106 88.9745 492.041 91.1843 490.195 93.836C488.35 96.3992 486.988 99.1835 486.109 102.189C485.67 103.691 485.318 105.282 485.055 106.962C484.791 108.641 484.659 110.321 484.659 112C484.659 114.74 485.055 117.657 485.845 120.751C486.636 123.844 488.086 126.938 490.195 130.031C491.865 132.506 493.842 134.672 496.127 136.528C498.412 138.384 501.092 139.843 504.168 140.903C507.068 141.964 510.056 142.494 513.132 142.494Z" fill="black"/>
+                            <rect x="452" y="52" width="33" height="158" fill="black"/>
+                        </svg>
                     </div>
                 </div>
                 <div class="container">
                     <div class="main-content">
                         <div class="input-section">
                             <div class="section-title">
-                                
+                                      
                             </div>
                             <textarea id="markdown-input" placeholder="Input Your Markdown Syntax Here..." spellcheck="false"></textarea>
                         </div>
@@ -259,6 +270,11 @@ export const WebContent = {
                             </div>
                             <div id="html-output"></div>
                         </div>
+
+                <div id="TitleLinks">
+                    <li><a id="Highlight" data-base-id="ToggleMDEditer" href="javascript:void(0)">Markdown Editer</a></li>
+                    <li><a id="ToggleHTMLOUTPUT" data-base-id="ToggleHTMLOUTPUT" href="javascript:void(0)">HTML Output</a></li>
+                </div>
 
                 <div class="controls">
                     <div class="controlsContent">
@@ -413,6 +429,7 @@ export const WebContent = {
         const PublicFormatBorderColors = this.CSScolor.PublicFormatBorderColors;
         const btnSecondary = this.CSScolor.btnSecondary;
         const OutputBackground = this.CSScolor.OutputBackground;
+        const SIDEBAR = this.CSScolor.SIDEBAR;
 
         const pixel = WebElements.Units.CSSSize.AbsoluteLengths.StaticPX;
 
@@ -456,23 +473,26 @@ export const WebContent = {
             }
 
             #titlebar {
-                height: 81px;
-                background-color: ${colorPrimary};
+                width: 260px;
+                height: 100vh;
+                background-color: ${SIDEBAR};
                 -webkit-app-region: drag;
                 user-select: none;
-                width: 100%;
                 position: fixed;
                 z-index: 10;
-                border-bottom: ${FormatBorderColors} solid 1px;
+                border-right: ${FormatBorderColors} solid 1px;
             }
 
             #TitleLinks {
                 display: flex;
-                justify-content: space-between;
                 align-items: center;
-                position: absolute;
-                top: ${spacing[12]};
-                border-top: ${colorPrimary} solid 1px;
+                position: fixed;
+                top: ${spacing[0]};
+                left: 260${pixel};
+                border-bottom: ${FormatBorderColors} solid 1px;
+                z-index: 10;
+                width: calc(100vw - 260px);
+                height: 40px;
             }
 
             #TitleLinks li {
@@ -482,7 +502,7 @@ export const WebContent = {
             #Highlight {
                 opacity: 1 !important;
                 background-color: ${OutputBackground.PrimarySec};
-                border-top: ${FormatBorderColors} solid 1px;
+                border-bottom: ${FormatBorderColors} solid 1px;
             }
 
             #TitleLinks li a {
@@ -505,19 +525,17 @@ export const WebContent = {
                 gap: 8px;
                 position: absolute;
                 left: ${spacing[4]};
-                top: ${spacing[2.5]};
-            }
-
-            #drag-region span {
-                color: ${textColorPrimaryDisplay};
-                font-weight: 500;
-                font-size: 14.5px;
+                top: ${spacing[3.5]};
             }
 
             #icon {
-                height: 18${pixel};
-                width: 18${pixel};
+                width: 70${pixel};
+                height: auto;
                 -webkit-app-region: no-drag;
+            }
+
+            #icon, #icon path, #icon rect {
+                fill: ${textColorPrimaryDisplay}
             }
 
             body {
@@ -525,16 +543,18 @@ export const WebContent = {
             }
 
             .container {
-                margin: 0 auto;
                 overflow: hidden;
                 backdrop-filter: blur(10${pixel});
                 height: 100vh;
+                width: calc(100vw - 260px);
+                position: fixed;
+                right: 0;
             }
 
             .main-content {
                 display: flex;
                 margin: auto;
-                height: calc(100vh - 52.5px);
+                height: 100vh;
             }
 
             .input-section, .output-section {
@@ -547,7 +567,8 @@ export const WebContent = {
             .output-section {
                 position: fixed;
                 top: 0;
-                width: 100vw;
+                right: -30px;
+                width: calc(100vw - 260px);
                 height: 100vh;
                 background-color: ${colorPrimary};
                 z-index: 5;
@@ -562,11 +583,11 @@ export const WebContent = {
                 display: flex;
                 align-items: center;
                 font-family: ${WebElements.Typeface[4]};
-                margin-top: ${spacing[18]};
+                margin-top: ${spacing[10]};
             }
 
             #HTML_outputText {
-                margin-top: ${spacing[20]};
+                margin-top: ${spacing[12]};
             }
 
             #markdown-input {
@@ -597,9 +618,8 @@ export const WebContent = {
                 flex-wrap: wrap;
                 position: fixed;
                 bottom: 0;
-                left: 50%;
-                transform: translateX(-50%);
-                width: 100vw;
+                right: 0;
+                width: calc(100vw - 260px);
                 height: 52.5${pixel};
                 margin: auto;
                 border-top: 1${pixel} solid ${PublicFormatBorderColors};
@@ -678,7 +698,7 @@ export const WebContent = {
                 ${WebElements.Typeface[8]};
             }
 
-            #html-output h1 { font-size: 2.4em; font-family: ${WebElements.Typeface[10]}; line-height: 1.4; border-bottom: ${FormatBorderColors} solid 1px; margin: 10${pixel} 0 10${pixel} 0; color: ${PrimaryHeaderText} }
+            #html-output h1 { font-size: 2.4em; font-family: ${WebElements.Typeface[8]}; line-height: 1.4; border-bottom: ${FormatBorderColors} solid 1px; margin: 10${pixel} 0 10${pixel} 0; color: ${PrimaryHeaderText} }
             #html-output h2 { font-size: 2em; line-height: 1.4; }
             #html-output h3 { font-size: 1.8em; line-height: 1.45; opacity: 0.72; }
             #html-output h4 { font-size: 1.6em; line-height: 1.5; opacity: 0.65; }
