@@ -1,5 +1,51 @@
 // Content.js Example to making content inside this file
 // WebElements = Custon user agent stylesheet units 
+
+// OS Detection
+const getOS = () => {
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    if (userAgent.includes('mac')) return 'darwin';
+    if (userAgent.includes('win')) return 'win32';
+    return 'other';
+};
+
+// Platform-specific configurations
+const platformStyles = {
+    darwin: {
+        titleBarHeight: '28px',
+        windowControls: 'left',
+        fontSystem: '-apple-system, BlinkMacSystemFont',
+        defaultRadius: '6px',
+        defaultShadow: '0 0 10px rgba(0,0,0,0.2)',
+        spacing: {
+            titleBarPadding: '0 80px', 
+            contentPadding: '16px'
+        }
+    },
+    win32: {
+        titleBarHeight: '35px',
+        windowControls: 'right',
+        fontSystem: 'Segoe UI',
+        defaultRadius: '4px',
+        defaultShadow: '0 2px 8px rgba(0,0,0,0.15)',
+        spacing: {
+            titleBarPadding: '0 16px',
+            contentPadding: '16px'
+        }
+    },
+    other: {
+        titleBarHeight: '32px',
+        windowControls: 'right',
+        fontSystem: 'system-ui',
+        defaultRadius: '4px',
+        defaultShadow: '0 1px 6px rgba(0,0,0,0.1)',
+        spacing: {
+            titleBarPadding: '0 16px',
+            contentPadding: '16px'
+        }
+    }
+};
+
 export const WebElements = {
     StoredFontFamily: "@import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@100..700&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Manrope:wght@200..800&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&family=Trirong:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');",
     Typeface: [
@@ -193,6 +239,11 @@ const darkThemeColors = {
         LinksBackground: "rgb(108, 108, 243)",
     },
     SIDEBAR: "#0f0f0f",
+};
+
+const isMacOS = () => {
+    const platform = navigator.platform.toLowerCase();
+    return platform.includes('mac');
 };
 
 export const WebContent = {
@@ -526,12 +577,14 @@ export const WebContent = {
                 position: absolute;
                 left: ${spacing[4]};
                 top: ${spacing[3.5]};
+                margin-top: ${isMacOS() ? spacing[4] : '0'};
             }
 
             #icon {
                 width: 70${pixel};
                 height: auto;
                 -webkit-app-region: no-drag;
+                margin-top: ${isMacOS() ? spacing[4] : '0'};
             }
 
             #icon, #icon path, #icon rect {
