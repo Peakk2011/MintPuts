@@ -19,6 +19,4 @@ And pure text going to paragraph text for explaining something
 ```
 
 2. Mintputs going to scans the file
-
-Converts Heading texts into HTML website fully executeable and can run smoothly with different User-agent-stylesheet
-with Auto-renders a styled UI
+3. And you press `Download html` or `Copy HTML` to download executeable website 
