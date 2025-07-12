@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain } = require('electron');
 const path = require('node:path');
 const isDev = require('electron-is-dev');
 
@@ -24,8 +24,8 @@ app.commandLine.appendSwitch('--enable-native-gpu-memory-buffers');
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 950,
+    width: 740,
+    height: 860,
     minWidth: 345,
     minHeight: 520,
     show: false,

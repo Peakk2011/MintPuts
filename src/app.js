@@ -41,7 +41,6 @@ const generateMainStylesheet = () => {
 const getCachedComponents = () => {
     if (!cache.componentsValid) {
         cache.components.comp1 = WebContent.ElementComponents();
-        cache.components.comp2 = WebContent.ElementComponents2();
         cache.componentsValid = true;
     }
     return cache.components.comp1 + cache.components.comp2;
