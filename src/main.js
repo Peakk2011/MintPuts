@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain } = require('electron');
 const path = require('node:path');
 const isDev = require('electron-is-dev');
 
@@ -7,8 +7,9 @@ if (require('electron-squirrel-startup')) {
 }
 
 if (isDev) {
+  const path = require('path');
   require('electron-reload')(__dirname, {
-    electron: path.join(__dirname, '..', 'node_modules', 'electron', 'dist', 'electron.exe'),
+    electron: path.join(__dirname, '../node_modules/.bin/electron'),
     hardResetMethod: 'exit'
   });
 }
@@ -23,8 +24,8 @@ app.commandLine.appendSwitch('--enable-native-gpu-memory-buffers');
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 950,
+    width: 740,
+    height: 860,
     minWidth: 345,
     minHeight: 520,
     show: false,
@@ -43,7 +44,7 @@ const createWindow = () => {
       titleBarOverlay: {
         color: '#141414',
         symbolColor: '#ffffff',
-        height: 35
+        height: 30
       }
     })
   });

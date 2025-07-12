@@ -84,44 +84,6 @@ export const Webfunctions = async (Main) => {
                 paragraph: /^(?!#|>|[-*+]|\d+\.|```|---|$|\|).+$/gm
             };
 
-            this.syntaxPatterns = {
-                javascript: {
-                    keyword: /\b(function|var|let|const|if|else|for|while|return|class|extends|import|export|async|await|try|catch|finally|switch|case|default|break|continue|throw|new|this|super|static|typeof|instanceof|in|of|delete|void)\b/g,
-                    string: /(["'`])((?:(?!\1)[^\\]|\\.)*)(\1)/g,
-                    comment: /(\/\/.*$|\/\*[\s\S]*?\*\/)/gm,
-                    number: /\b\d+(\.\d+)?\b/g,
-                    function: /\b([a-zA-Z_$][a-zA-Z0-9_$]*)\s*(?=\()/g,
-                    operator: /[+\-*/%=<>!&|^~?:]/g
-                },
-                python: {
-                    keyword: /\b(def|class|if|elif|else|for|while|return|import|from|as|try|except|finally|with|pass|break|continue|and|or|not|in|is|lambda|yield|global|nonlocal|assert|del|raise)\b/g,
-                    string: /(["'])((?:(?!\1)[^\\]|\\.)*)(\1)/g,
-                    comment: /#.*$/gm,
-                    number: /\b\d+(\.\d+)?\b/g,
-                    function: /\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?=\()/g
-                },
-                html: {
-                    tag: /<\/?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/g,
-                    attr: /\s([a-zA-Z-]+)=/g,
-                    string: /(["'])((?:(?!\1)[^\\]|\\.)*)(\1)/g,
-                    comment: /<!--[\s\S]*?-->/g
-                },
-                css: {
-                    selector: /([.#]?[a-zA-Z][a-zA-Z0-9-_]*)\s*{/g,
-                    property: /([a-zA-Z-]+)\s*:/g,
-                    value: /:\s*([^;]+);/g,
-                    comment: /\/\*[\s\S]*?\*\//g,
-                    important: /!important/g
-                },
-                json: {
-                    key: /"([^"]+)":/g,
-                    string: /"([^"\\]*(\\.[^"\\]*)*)"/g,
-                    number: /\b-?\d+(\.\d+)?([eE][+-]?\d+)?\b/g,
-                    boolean: /\b(true|false)\b/g,
-                    null: /\bnull\b/g
-                }
-            };
-
             this.templates = {
                 'README': `# Project Title
 
@@ -276,8 +238,8 @@ Wrap up your thoughts and provide a call to action.
 
         processCodeBlocks(text) {
             return text.replace(this.patterns.codeBlock, (match, lang, code) => {
-                const highlightedCode = this.highlightSyntax(code.trim(), lang || 'javascript');
-                return `<pre class="hljs"><code class="language-${lang || 'javascript'}">${highlightedCode}</code></pre>`;
+                const escapedCode = this.escapeHtml(code.trim());
+                return `<pre><code class="language-${lang || 'javascript'}">${escapedCode}</code></pre>`;
             });
         }
 
@@ -360,47 +322,7 @@ Wrap up your thoughts and provide a call to action.
         }
 
         highlightSyntax(code, language) {
-            if (!this.syntaxPatterns[language]) {
-                return this.escapeHtml(code);
-            }
-
-            let highlighted = this.escapeHtml(code);
-            const patterns = this.syntaxPatterns[language];
-
-            for (const [type, pattern] of Object.entries(patterns)) {
-                highlighted = highlighted.replace(pattern, (match, ...groups) => {
-                    switch (type) {
-                        case 'string':
-                            return `<span class="hljs-string">${match}</span>`;
-                        case 'comment':
-                            return `<span class="hljs-comment">${match}</span>`;
-                        case 'keyword':
-                            return `<span class="hljs-keyword">${match}</span>`;
-                        case 'number':
-                            return `<span class="hljs-number">${match}</span>`;
-                        case 'function':
-                            return `<span class="hljs-function">${groups[0]}</span>(`;
-                        case 'tag':
-                            return `<span class="hljs-tag">${match}</span>`;
-                        case 'attr':
-                            return ` <span class="hljs-attr">${groups[0]}</span>=`;
-                        case 'operator':
-                            return `<span class="hljs-operator">${match}</span>`;
-                        case 'boolean':
-                            return `<span class="hljs-boolean">${match}</span>`;
-                        case 'null':
-                            return `<span class="hljs-null">${match}</span>`;
-                        case 'key':
-                            return `<span class="hljs-key">${match}</span>`;
-                        case 'important':
-                            return `<span class="hljs-important">${match}</span>`;
-                        default:
-                            return `<span class="hljs-${type}">${match}</span>`;
-                    }
-                });
-            }
-
-            return highlighted;
+            return this.escapeHtml(code);
         }
 
         escapeHtml(text) {
@@ -430,12 +352,206 @@ Wrap up your thoughts and provide a call to action.
 
     const parser = new HighPerformanceMarkdownParser();
 
-    const input = document.getElementById('markdown-input');
+    let input = document.getElementById('markdown-input');
     const output = document.getElementById('html-output');
     const parseTimeEl = document.getElementById('parse-time');
     const charCountEl = document.getElementById('char-count');
     const wordCountEl = document.getElementById('word-count');
     const readingTimeEl = document.getElementById('reading-time');
+
+    let editor = null;
+    if (input && typeof CodeMirror !== 'undefined') {
+        editor = CodeMirror.fromTextArea(input, {
+            mode: {
+                name: 'markdown',
+                highlightFormatting: true,
+                fencedCodeBlocks: true,
+                base: 'markdown'
+            },
+            theme: 'monokai',
+            lineNumbers: true,
+            lineWrapping: true,
+            autoCloseBrackets: true,
+            matchBrackets: true,
+            indentUnit: 2,
+            tabSize: 4,
+            placeholder: "Input Your Markdown Syntax Here...",
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            foldGutter: true,
+            matchBrackets: true,
+            autoCloseBrackets: true,
+            extraKeys: {
+                "Ctrl-B": function(cm) {
+                    const selection = cm.getSelection();
+                    cm.replaceSelection(`**${selection}**`);
+                },
+                "Ctrl-I": function(cm) {
+                    const selection = cm.getSelection();
+                    cm.replaceSelection(`*${selection}*`);
+                },
+                "Ctrl-K": function(cm) {
+                    const selection = cm.getSelection();
+                    cm.replaceSelection(`[${selection}](url)`);
+                },
+                "Ctrl-`": function(cm) {
+                    const selection = cm.getSelection();
+                    cm.replaceSelection(`\`${selection}\``);
+                },
+                "Tab": function(cm) {
+                    cm.replaceSelection("    ", "end");
+                }
+            }
+        });
+
+        const originalInput = input;
+        input = {
+            value: '',
+            addEventListener: function(type, handler) {
+                if (type === 'input') {
+                    editor.on('change', handler);
+                } else if (type === 'paste') {
+                    editor.on('paste', handler);
+                } else if (type === 'keydown') {
+                    editor.on('keydown', handler);
+                }
+            },
+            focus: function() {
+                editor.focus();
+            },
+            setSelectionRange: function(start, end) {
+                editor.setSelection({line: 0, ch: start}, {line: 0, ch: end});
+            },
+            get selectionStart() {
+                const pos = editor.getCursor();
+                return editor.indexFromPos(pos);
+            },
+            get selectionEnd() {
+                const pos = editor.getCursor();
+                return editor.indexFromPos(pos);
+            },
+            set value(val) {
+                editor.setValue(val);
+            },
+            get value() {
+                return editor.getValue();
+            }
+        };
+
+        originalInput.style.display = 'none';
+        
+        const cmElement = editor.getWrapperElement();
+        cmElement.style.height = '100%';
+        cmElement.style.fontFamily = 'Inter Tight, Anuphan, sans-serif';
+        cmElement.style.fontSize = '14px';
+        cmElement.style.lineHeight = '1.6';
+
+        const updateCodeMirrorTheme = (isDark) => {
+            if (isDark) {
+                editor.setOption('theme', 'monokai');
+            } else {
+                editor.setOption('theme', 'default');
+            }
+        };
+
+        if (window.WebContent && window.WebContent.setThemeChangeCallback) {
+            window.WebContent.setThemeChangeCallback(updateCodeMirrorTheme);
+        }
+
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        updateCodeMirrorTheme(prefersDark);
+
+        setTimeout(() => {
+            editor.refresh();
+            
+        editor.setOption('mode', editor.getOption('mode'));
+        
+        editor.on('change', function() {
+            setTimeout(() => {
+                editor.refresh();
+            }, 10);
+        });
+
+        editor.on('cursorActivity', function() {
+            editor.refresh();
+        });
+
+        // Force initial highlighting
+        setTimeout(() => {
+            editor.setOption('mode', {
+                name: 'markdown',
+                highlightFormatting: true,
+                fencedCodeBlocks: true,
+                base: 'markdown'
+            });
+        }, 200);
+        }, 100);
+    }
+
+    if (typeof CodeMirror !== 'undefined') {
+        CodeMirror.defineMIME("text/x-go", "go");
+        CodeMirror.defineMIME("text/x-php", "php");
+        CodeMirror.defineMIME("text/x-sql", "sql");
+        CodeMirror.defineMIME("text/x-yaml", "yaml");
+        CodeMirror.defineMIME("text/x-toml", "toml");
+        CodeMirror.defineMIME("text/x-dockerfile", "dockerfile");
+        CodeMirror.defineMIME("text/x-vue", "vue");
+        CodeMirror.defineMIME("text/x-rustsrc", "rust");
+        CodeMirror.defineMIME("text/x-swift", "swift");
+        CodeMirror.defineMIME("text/x-perl", "perl");
+        CodeMirror.defineMIME("text/x-powershell", "powershell");
+        CodeMirror.defineMIME("text/x-sass", "sass");
+        CodeMirror.defineMIME("text/x-stex", "stex");
+        
+        CodeMirror.defineMIME("text/x-typescript", "typescript");
+        CodeMirror.defineMIME("text/x-jsx", "jsx");
+        CodeMirror.defineMIME("text/x-coffeescript", "coffeescript");
+        CodeMirror.defineMIME("text/x-lua", "lua");
+        CodeMirror.defineMIME("text/x-erlang", "erlang");
+        CodeMirror.defineMIME("text/x-haskell", "haskell");
+        CodeMirror.defineMIME("text/x-elm", "elm");
+        CodeMirror.defineMIME("text/x-fortran", "fortran");
+        CodeMirror.defineMIME("text/x-octave", "octave");
+        CodeMirror.defineMIME("text/x-r", "r");
+        CodeMirror.defineMIME("text/x-julia", "julia");
+        CodeMirror.defineMIME("text/x-d", "d");
+        CodeMirror.defineMIME("text/x-nginx", "nginx");
+        CodeMirror.defineMIME("text/x-apache", "apache");
+        CodeMirror.defineMIME("text/x-properties", "properties");
+        CodeMirror.defineMIME("text/x-ini", "ini");
+        CodeMirror.defineMIME("text/x-cmake", "cmake");
+        CodeMirror.defineMIME("text/x-makefile", "makefile");
+        CodeMirror.defineMIME("text/x-diff", "diff");
+        
+        CodeMirror.defineMIME("text/x-js", "javascript");
+        CodeMirror.defineMIME("text/x-ts", "typescript");
+        CodeMirror.defineMIME("text/x-tsx", "jsx");
+        CodeMirror.defineMIME("text/x-coffee", "coffeescript");
+        CodeMirror.defineMIME("text/x-bash", "shell");
+        CodeMirror.defineMIME("text/x-sh", "shell");
+        CodeMirror.defineMIME("text/x-zsh", "shell");
+        CodeMirror.defineMIME("text/x-fish", "shell");
+        CodeMirror.defineMIME("text/x-c", "clike");
+        CodeMirror.defineMIME("text/x-cpp", "clike");
+        CodeMirror.defineMIME("text/x-csharp", "clike");
+        CodeMirror.defineMIME("text/x-java", "clike");
+        CodeMirror.defineMIME("text/x-scala", "clike");
+        CodeMirror.defineMIME("text/x-kotlin", "clike");
+        CodeMirror.defineMIME("text/x-html", "htmlmixed");
+        CodeMirror.defineMIME("text/x-xml", "xml");
+        CodeMirror.defineMIME("text/x-json", "application/json");
+        CodeMirror.defineMIME("text/x-css", "css");
+        CodeMirror.defineMIME("text/x-scss", "sass");
+        CodeMirror.defineMIME("text/x-less", "css");
+        CodeMirror.defineMIME("text/x-stylus", "css");
+        CodeMirror.defineMIME("text/x-markdown", "markdown");
+        CodeMirror.defineMIME("text/x-md", "markdown");
+        CodeMirror.defineMIME("text/x-gfm", "gfm");
+        
+        CodeMirror.defineMIME("text/x-config", "properties");
+        CodeMirror.defineMIME("text/x-env", "properties");
+        CodeMirror.defineMIME("text/x-gitignore", "properties");
+        CodeMirror.defineMIME("text/x-editorconfig", "properties");
+    }
 
     if (!input) {
         console.error("Markdown input element ('markdown-input') not found. Markdown editor functionality will be disabled.");

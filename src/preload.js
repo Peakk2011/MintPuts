@@ -1,12 +1,9 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-// Expose protected methods that allow the renderer process to use
-// the ipcRenderer without exposing the entire object
 contextBridge.exposeInMainWorld('electronAPI', {
-  // App info
+  platform: process.platform,
   getVersion: () => ipcRenderer.invoke('get-app-version'),
-  
-  // Performance utilities
+
   getPerformanceMetrics: () => {
     return {
       memory: process.memoryUsage(),
@@ -46,14 +43,14 @@ if (process.env.NODE_ENV === 'development') {
     log: (...args) => console.log('[Preload]', ...args),
     error: (...args) => console.error('[Preload]', ...args),
     warn: (...args) => console.warn('[Preload]', ...args),
-    
+
     // Performance profiling
     startProfile: (name) => console.profile(name),
     endProfile: (name) => console.profileEnd(name),
-    
+
     // Memory tracking
     getMemoryUsage: () => process.memoryUsage(),
-    
+
     // Timing utilities
     time: (label) => console.time(label),
     timeEnd: (label) => console.timeEnd(label)
@@ -79,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return false;
     }
   });
-  
+
   unusedStyleSheets.forEach(sheet => {
     if (sheet.ownerNode) {
       sheet.ownerNode.remove();

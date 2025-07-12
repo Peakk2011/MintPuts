@@ -1,5 +1,5 @@
 // Content.js Example to making content inside this file
-// WebElements = Custon user agent stylesheet units 
+
 export const WebElements = {
     StoredFontFamily: "@import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@100..700&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Manrope:wght@200..800&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&family=Trirong:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');",
     Typeface: [
@@ -39,7 +39,7 @@ export const WebElements = {
             AUTO: 'auto',
             boxSizing: 'border-box',
         },
-        weights: { // Added
+        weights: {
             light: '300',
             normal: '400',
             medium: '500',
@@ -192,7 +192,27 @@ const darkThemeColors = {
         PrimarySec: "#1e1e1e",
         LinksBackground: "rgb(108, 108, 243)",
     },
-    SIDEBAR: "#0f0f0f",
+    SIDEBAR: "#0c0c0c",
+};
+
+const getPlatformInfo = () => {
+    const isElectron = !!window.electronAPI;
+
+    return {
+        isElectron: isElectron,
+        isMacOS: isElectron && window.electronAPI.platform === 'darwin',
+        isWindows: isElectron && window.electronAPI.platform === 'win32',
+        inBrowser: !isElectron,
+    };
+};
+
+const isMacOS = () => {
+    return getPlatformInfo().isMacOS;
+};
+
+// Check if running in browser
+const isBrowserOpening = () => {
+    return getPlatformInfo().inBrowser;
 };
 
 export const WebContent = {
@@ -269,14 +289,11 @@ export const WebContent = {
                 </div>
                 <div class="container">
                     <div class="main-content">
-                        <div class="input-section">
-                            <div class="section-title">
-                                      
+                        <div class="input-section" style="font-family: "JetBrains Mono", "Anuphan", sans-serif !important;">
+                            <div id="markdown-input-container" style="font-family: "JetBrains Mono", "Anuphan", sans-serif !important;">
+                                <textarea id="markdown-input" placeholder="Input Your Markdown Syntax Here..." spellcheck="false"></textarea>
                             </div>
-                            <textarea id="markdown-input" placeholder="Input Your Markdown Syntax Here..." spellcheck="false"></textarea>
                         </div>
-
-                        
                     </div>
                 </div>
 
@@ -305,20 +322,8 @@ export const WebContent = {
                         </div>
                     </div>
                 </div>
-
             `
         },
-        // parameters values for MintAssembly
-        MintAssemblySimpleAddition(variableAX = 200, variableBX = 'ax') {
-            return `
-                <Entry>
-                    <mov dst="ax" src="${variableAX}"></mov>
-                    <mov dst="bx" src="${variableBX}"></mov>
-                    <print var="ax"></print>
-                    <print var="bx"></print>
-                </Entry>
-            `;
-        }
     },
 
     StaticCSSvalues: {
@@ -402,21 +407,12 @@ export const WebContent = {
         `,
     },
 
-    // เราสามารถคัดลองอีกไปวางใน main ตาม layout ที่เราต้องการว่าจะมีเท่าใหร่
     ElementComponents() {
         return `
             ${this.HTMLContent.Introduce()}
         `;
     },
 
-    ElementComponents2() {
-        return `
-            ${ /* Simple Addition values using MintAssembly */''}
-            ${this.HTMLContent.MintAssemblySimpleAddition()}
-        `;
-    },
-
-    // เช่นกันกับ CSS ว่าเราต้องการให้ไป style ในส่วนใหน
     StyledElementComponents() {
         if (this._cachedCSS) return this._cachedCSS;
 
@@ -431,7 +427,6 @@ export const WebContent = {
         } = WebElements;
         const { weights } = Units;
 
-        // Hoist properties
         const normalizeCallReset = this.Normalize.CALLReset;
         const textRenderForce = this.TextRendering.ForceGrayStyleRendering;
         const textRenderSpecific = this.TextRendering.SpecificTargetingRendering;
@@ -509,6 +504,7 @@ export const WebContent = {
                 z-index: 10;
                 width: calc(100vw - 260px);
                 height: 40px;
+                background-color: ${colorPrimary};
             }
 
             #TitleLinks li {
@@ -544,6 +540,15 @@ export const WebContent = {
                 position: absolute;
                 left: ${spacing[4]};
                 top: ${spacing[3.5]};
+                margin-top: ${(() => {
+                if (isBrowserOpening()) {
+                    return '0';
+                } else if (isMacOS()) {
+                    return spacing[4];
+                } else {
+                    return '0';
+                }
+            })()};
             }
 
             #SBCloseButtons {
@@ -554,6 +559,15 @@ export const WebContent = {
                 width: 70${pixel};
                 height: auto;
                 -webkit-app-region: no-drag;
+                margin-top: ${(() => {
+                if (isBrowserOpening()) {
+                    return '0';
+                } else if (isMacOS()) {
+                    return spacing[4];
+                } else {
+                    return '0';
+                }
+            })()};
             }
 
             #icon, #icon path, #icon rect {
@@ -614,13 +628,15 @@ export const WebContent = {
                 height: 100vh;
                 width: calc(100vw - 260px);
                 position: fixed;
-                right: 0;
+                left: 260px;
             }
 
             .main-content {
                 display: flex;
                 margin: auto;
                 height: 100vh;
+                position: ${WebElements.Units.CSSPosition[1]};
+                right: -15px;
             }
 
             .input-section, .output-section {
@@ -738,8 +754,7 @@ export const WebContent = {
                 font-family: ${WebElements.Typeface[0]},${DefaultFontFallback};
             }
 
-            /* Syntax Highlighting Styles */
-            .hljs {
+            pre {
                 background: ${OutputBackground.PrimarySec};
                 border-radius: 6${pixel};
                 padding: ${spacing[2]} ${spacing[4]};
@@ -748,14 +763,132 @@ export const WebContent = {
                 border: 1px solid ${PublicFormatBorderColors};
             }
 
-            .hljs-keyword { color: #d73a49; font-weight: bold; }
-            .hljs-string { color: #032f62; }
-            .hljs-comment { color: #6a737d; font-style: italic; }
-            .hljs-number { color: #005cc5; }
-            .hljs-function { color: #6f42c1; }
-            .hljs-variable { color: #e36209; }
-            .hljs-tag { color: #22863a; }
-            .hljs-attr { color: #6f42c1; }
+            pre code {
+                background: none;
+                padding: 0;
+                border-radius: 0;
+                font-family: ${WebElements.Typeface[9]};
+                color: ${textColorPrimaryText};
+            }
+
+            .input-section, #markdown-input-container {
+                position: fixed !important;
+                inset: 0 !important;
+                width: 100vw !important;
+                height: calc(100vh - 40px) !important;
+                min-width: calc(100vh - 40px) !important;
+                min-height: calc(100vh - 40px) !important;
+                max-width: 100vw !important;
+                max-height: calc(100vh - 40px) !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                z-index: 10;
+                background: transparent !important;
+                overflow: hidden !important;
+            }
+
+            #markdown-input-container {
+                height: calc(100vh - 40px) !important;
+                min-height: calc(100vh - 40px) !important;
+                max-height: calc(100vh - 40px) !important; 
+            }
+
+            .CodeMirror {
+                margin-top: 55px !important;
+            }
+
+            .CodeMirror-scroll, .CodeMirror-sizer {
+                height: calc(100vh - 40px) !important;
+                min-height: calc(100vh - 40px) !important;
+                max-height: calc(100vh - 40px) !important;
+                margin-left:   0rem !important;
+                margin-right:  0rem !important;
+                margin-top:    0rem !important;
+                margin-bottom: 0rem !important;
+            }
+
+            .CodeMirror-sizer {
+                margin-left: 55px !important;
+            }
+
+            .CodeMirror-gutters, .CodeMirror-gutter {
+                height: calc(100vh - 40px) !important;
+                min-height: calc(100vh - 40px) !important;
+                max-height: calc(100vh - 40px) !important;
+                background: transparent !important;
+            }
+
+            .CodeMirror-linenumber {
+                min-width: 45px;
+                width: 45px;
+                padding: 0 4px 0 0 !important;
+                color: #8A8A8A !important;
+                background: transparent !important;
+                text-align: right !important;
+                box-sizing: border-box !important;
+            }
+
+            .CodeMirror-foldgutter {
+                width: 20px;
+                background: transparent !important;
+            }
+
+            .CodeMirror-foldgutter-open,
+            .CodeMirror-foldgutter-folded {
+                cursor: pointer;
+                color: #8A8A8A !important;
+                background: transparent !important;
+            }
+
+            .CodeMirror-foldgutter-open:after {
+                content: "▼";
+                font-size: 10px;
+            }
+
+            .CodeMirror-foldgutter-folded:after {
+                content: "▶";
+                font-size: 10px;
+            }
+
+            .cm-s-monokai.CodeMirror {
+                background: transparent !important;
+
+            }
+
+            .CodeMirror-wrap pre.CodeMirror-line, .CodeMirror-wrap pre.CodeMirror-line-like {
+                cursor: default !important;
+                font-family: "JetBrains Mono", "Anuphan", sans-serif !important;
+            }
+
+            .CodeMirror-wrap pre.CodeMirror-line span, .CodeMirror-wrap pre.CodeMirror-line-like span {
+                font-family: "JetBrains Mono", "Anuphan", sans-serif !important;
+            }
+            
+            .cm-header { color: #ffc799 !important; }                         /* Header: Orange */
+            .cm-strong { color: #DCDCAA !important; }                         /* Bold: Yellow */
+            .cm-em { color: #CE9178 !important; font-style: italic; }         /* Italic: Orange */
+            .cm-link, .cm-url { color: #569CD6 !important; text-decoration: underline; }  
+            .cm-quote { color: #6A9955 !important; background-color: #222520; }         
+            .cm-list { color: #DCDCAA !important; }                           /* List: Yellow */
+            .cm-variable-2 { color: #CE9178 !important; }                     /* Inline code: Orange */
+            .cm-formatting { color: #808080 !important; }                     /* Formatting: Gray */
+            .cm-error { color: #F44747 !important; }                          /* Error: Red */
+            .cm-string { color: #CE9178 !important; }                         /* String: Orange */
+            .cm-keyword { color: #569CD6 !important; }                        /* Keyword: Blue */
+            .cm-comment { color: #6A9955 !important; }   
+            .cm-number { color: #DCDCAA !important; }                         /* Number: Yellow */
+            .cm-property { color: #4EC9B0 !important; }                       /* Property: Cyan */
+            .cm-operator { color: #DCDCAA !important; }                       /* Operator: Yellow */
+            .cm-tag { color: #569CD6 !important; }                            /* Tag: Blue */
+            .cm-attribute { color: #DCDCAA !important; }                      /* Attribute: Yellow */
+            .cm-builtin { color: #4EC9B0 !important; }                        /* Builtin: Cyan */
+            .cm-type { color: #4EC9B0 !important; }                           /* Type: Cyan */
+            .cm-function { color: #DCDCAA !important; }                       /* Function: Yellow */
+            .cm-meta { color: #808080 !important; }                           /* Meta: Gray */
+            .cm-qualifier { color: #569CD6 !important; }                      /* Qualifier: Blue */
+            .cm-atom { color: #569CD6 !important; }                           /* Atom: Blue */
+            .cm-punctuation { color: #D4D4D4 !important; }                    /* Punctuation: Light Gray */
+            .cm-bracket { color: #D4D4D4 !important; }                        /* Bracket: Light Gray */
 
             /* Markdown Output Styles */
             #html-output h1, #html-output h2, #html-output h3, #html-output h4, #html-output h5, #html-output h6 {

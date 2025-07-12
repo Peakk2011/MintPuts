@@ -41,7 +41,6 @@ const generateMainStylesheet = () => {
 const getCachedComponents = () => {
     if (!cache.componentsValid) {
         cache.components.comp1 = WebContent.ElementComponents();
-        cache.components.comp2 = WebContent.ElementComponents2();
         cache.componentsValid = true;
     }
     return cache.components.comp1 + cache.components.comp2;
@@ -49,7 +48,6 @@ const getCachedComponents = () => {
 
 const Main = Mint.createState({});
 
-// logger about error log about ...
 const Logger = {
     error: console.error.bind(console, '[Mintkit Error]'),
     info: console.info.bind(console, '[Mintkit]'),
@@ -117,10 +115,6 @@ const InitialMintkit = () => {
 const startMintkit = () => {
     Mint.AdjustHook?.();
     InitialMintkit();
-
-    // if (Webfunctions) {
-    //     Webfunctions(Main);
-    // }
 };
 
 if (document.readyState === 'complete') {
