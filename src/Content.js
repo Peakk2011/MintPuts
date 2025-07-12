@@ -249,6 +249,22 @@ export const WebContent = {
                             <path d="M513 171C506.321 171 500.082 169.984 494.282 167.951C488.482 165.829 483.297 163.001 478.727 159.465C473.982 155.93 469.808 151.775 466.205 147.002C462.689 142.229 459.921 136.661 457.9 130.297C455.967 124.463 455 118.231 455 111.602C455 105.238 455.967 99.0951 457.9 93.173C459.833 87.2509 462.558 81.8592 466.073 76.9978C469.764 71.9595 474.026 67.6727 478.859 64.1371C483.78 60.6015 489.009 57.9056 494.545 56.0494C497.445 55.0772 500.433 54.3258 503.509 53.7955C506.585 53.2652 509.748 53 513 53C519.239 53 525.303 54.0165 531.191 56.0494C537.167 58.0824 542.527 60.8225 547.273 64.2697C551.93 67.8052 556.061 72.0479 559.664 76.9978C563.355 81.8592 566.167 87.2509 568.1 93.173C568.979 96.0899 569.682 99.0951 570.209 102.189C570.736 105.282 571 108.42 571 111.602C571 116.906 570.165 122.607 568.495 128.706C566.914 134.804 564.014 140.815 559.795 146.737C556.28 151.687 552.062 155.974 547.141 159.598C542.22 163.222 536.947 166.006 531.323 167.951C528.423 168.923 525.435 169.674 522.359 170.204C519.283 170.735 516.164 171 513 171ZM513.132 142.494C516.032 142.494 518.932 142.008 521.832 141.036C524.82 140.064 527.456 138.605 529.741 136.661C532.641 134.363 534.882 131.888 536.464 129.236C538.133 126.496 539.276 123.977 539.891 121.679C540.33 120.176 540.682 118.629 540.945 117.038C541.209 115.359 541.341 113.679 541.341 112C541.341 108.553 540.858 105.327 539.891 102.321C538.924 99.2277 537.606 96.3992 535.936 93.836C534.442 91.7146 532.553 89.6816 530.268 87.7371C527.983 85.7041 525.215 84.1131 521.964 82.964C519.064 81.9918 516.12 81.5056 513.132 81.5056C506.805 81.5056 501.224 83.406 496.391 87.2067C494.106 88.9745 492.041 91.1843 490.195 93.836C488.35 96.3992 486.988 99.1835 486.109 102.189C485.67 103.691 485.318 105.282 485.055 106.962C484.791 108.641 484.659 110.321 484.659 112C484.659 114.74 485.055 117.657 485.845 120.751C486.636 123.844 488.086 126.938 490.195 130.031C491.865 132.506 493.842 134.672 496.127 136.528C498.412 138.384 501.092 139.843 504.168 140.903C507.068 141.964 510.056 142.494 513.132 142.494Z" fill="black"/>
                             <rect x="452" y="52" width="33" height="158" fill="black"/>
                         </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px" id="SBCloseButtons"><path d="M660-320v-320L500-480l160 160ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm120-80v-560H200v560h120Zm80 0h360v-560H400v560Zm-80 0H200h120Z"/></svg>
+                    </div>
+                    <div id="TitlebarLinks">
+                        <li><a href="javascript:void(0)">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M440-120v-320H120v-80h320v-320h80v320h320v80H520v320h-80Z"/></svg>
+                        New files</a></li>
+                        <li><a href="javascript:void(0)">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg>
+                        About Mintputs</a></li>
+                        <span>Recent files</span>
+                        <li><a href="javascript:void(0)" id="CurrentFiles">Untitled - Mintputs</a></li>
+                        <div class="RecentsFiles">
+                            <li><a href="javascript:void(0)">คิดแต่ไม่ถึง</a></li>
+                            <li><a href="javascript:void(0)">โครงงานวิทยาศาสตร์</a></li>
+                            <li><a href="javascript:void(0)">Math projects</a></li>
+                        </div>
                     </div>
                 </div>
                 <div class="container">
@@ -522,10 +538,16 @@ export const WebContent = {
             #drag-region {
                 display: flex;
                 align-items: center;
+                justify-content: space-between;
+                width: 88%;
                 gap: 8px;
                 position: absolute;
                 left: ${spacing[4]};
                 top: ${spacing[3.5]};
+            }
+
+            #SBCloseButtons {
+                fill: #fff;
             }
 
             #icon {
@@ -535,7 +557,51 @@ export const WebContent = {
             }
 
             #icon, #icon path, #icon rect {
-                fill: ${textColorPrimaryDisplay}
+                fill: #fff;
+            }
+
+            #TitlebarLinks {
+                display: flex;
+                flex-direction: column;
+                margin-top: ${spacing[14]};
+                padding: 0 ${spacing[4]};
+            }
+
+            #TitlebarLinks li {
+                list-style: none;
+            }
+
+            #TitlebarLinks li a {
+                text-decoration: none;
+                padding: ${spacing[1]} ${spacing[0]};
+                padding-bottom: ${spacing[1]};
+                font-size: 14${pixel};
+                display: block;
+            }
+
+            #TitlebarLinks li a svg {
+                width: 20px;
+                height: 20px;
+                margin-right: ${spacing[1.5]};
+                transform: translateY(3px);
+            }
+
+            #TitlebarLinks span {
+                padding: ${spacing[2]} ${spacing[0.5]};
+                font-size: 14${pixel};
+                opacity: 60%;
+            }
+
+            #CurrentFiles {
+                padding: ${spacing[1]} ${spacing[3]} !important;
+                background-color: ${OutputBackground.PrimarySec};
+                display: block;
+                border-radius: ${borderRadius.lg};
+                outline: ${FormatBorderColors} solid 1px;
+            }
+
+            .RecentsFiles {
+                margin-top: ${spacing[3]}
             }
 
             body {
@@ -736,7 +802,7 @@ export const WebContent = {
                 }
             }
             @media ${WebElements.DirectThemes[1]} {
-                #icon {
+                #icon,#SBCloseButtons  {
                     filter: invert(100%);
                 }
             }
