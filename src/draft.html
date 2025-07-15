@@ -1,0 +1,30 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mintkit Framework</title>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script type="module">
+        import { Mint } from "https://cdn.jsdelivr.net/gh/Peakk2011/Mintkit_CDN/mint.min.js";
+
+        const app = async () => {
+            const root = {
+                html: `
+                    
+                `
+            }
+
+            queueMicrotask(() => {
+                Mint.injectHTML("#app",root.html);
+            })
+        }
+
+        app();
+    </script>
+
+</body>
+</html>

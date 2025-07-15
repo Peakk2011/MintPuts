@@ -278,10 +278,25 @@ export const WebContent = {
                         <li><a href="javascript:void(0)">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg>
                         About Mintputs</a></li>
+                        
+                        <div id="TemplatesDropdownBar">
+                        <button id="ToggleDropdownPreset">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M240-160q-33 0-56.5-23.5T160-240q0-33 23.5-56.5T240-320q33 0 56.5 23.5T320-240q0 33-23.5 56.5T240-160Zm240 0q-33 0-56.5-23.5T400-240q0-33 23.5-56.5T480-320q33 0 56.5 23.5T560-240q0 33-23.5 56.5T480-160Zm240 0q-33 0-56.5-23.5T640-240q0-33 23.5-56.5T720-320q33 0 56.5 23.5T800-240q0 33-23.5 56.5T720-160ZM240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400ZM240-640q-33 0-56.5-23.5T160-720q0-33 23.5-56.5T240-800q33 0 56.5 23.5T320-720q0 33-23.5 56.5T240-640Zm240 0q-33 0-56.5-23.5T400-720q0-33 23.5-56.5T480-800q33 0 56.5 23.5T560-720q0 33-23.5 56.5T480-640Zm240 0q-33 0-56.5-23.5T640-720q0-33 23.5-56.5T720-800q33 0 56.5 23.5T800-720q0 33-23.5 56.5T720-640Z"/></svg>
+                        Templates</button>
+                        <div id="DropdownPresetMenu">
+                                <span>TEMPLATES PRESET</span>
+                                <hr>
+                                <button class="dropdown-template-btn" onclick="insertTemplate('README')">README</button>
+                                <button class="dropdown-template-btn" onclick="insertTemplate('Documentation')">Documentation</button>
+                                <button class="dropdown-template-btn" onclick="insertTemplate('Blog Post')">Blog Post</button>
+                                <button class="dropdown-template-btn" onclick="insertTemplate('Table Example')">Table Example</button>
+                            </div>
+                        </div>
+
                         <span>Recent files</span>
-                        <li><a href="javascript:void(0)" id="CurrentFiles">Untitled - Mintputs</a></li>
+                        <li><a href="javascript:void(0)" id="CurrentFiles">Untitled</a></li>
                         <div class="RecentsFiles">
-                            <li><a href="javascript:void(0)">คิดแต่ไม่ถึง</a></li>
+                            <li><a href="javascript:void(0)">ซ้อมวิชาไทย</a></li>
                             <li><a href="javascript:void(0)">โครงงานวิทยาศาสตร์</a></li>
                             <li><a href="javascript:void(0)">Math projects</a></li>
                         </div>
@@ -505,6 +520,7 @@ export const WebContent = {
                 width: calc(100vw - 260px);
                 height: 40px;
                 background-color: ${colorPrimary};
+                -webkit-app-region: drag;
             }
 
             #TitleLinks li {
@@ -863,6 +879,20 @@ export const WebContent = {
             .CodeMirror-wrap pre.CodeMirror-line span, .CodeMirror-wrap pre.CodeMirror-line-like span {
                 font-family: "JetBrains Mono", "Anuphan", sans-serif !important;
             }
+
+            .CodeMirror-code .cm-tab {
+                position: relative;
+            }
+                
+            .CodeMirror-code .cm-tab:before {
+                content: "";
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                border-left: 1px solid #e0e0e0;
+                opacity: 0.5;
+            }
             
             .cm-header { color: #ffc799 !important; }                         /* Header: Orange */
             .cm-strong { color: #DCDCAA !important; }                         /* Bold: Yellow */
@@ -941,6 +971,90 @@ export const WebContent = {
             }
 
             ${textRenderSpecific}; 
+            
+            #TemplatesDropdownBar {
+                position: relative;
+            }
+
+            #ToggleDropdownPreset {
+                padding: ${spacing[1.5]} ${spacing[0]};
+                border: none;
+                cursor: pointer;
+                transition: all 0.5s;
+                background: transparent;
+                font-size: 14${pixel};
+            }
+
+            #ToggleDropdownPreset svg {
+                width: 20px;
+                height: 20px;
+                margin-right: ${spacing[1.5]};
+                transform: translateY(4px);
+            }
+            
+            #DropdownPresetMenu {
+                display: block;
+                position: absolute;
+                left: 12px;
+                top: 130px;
+                background-color: ${colorPrimary};
+                border: ${FormatBorderColors} solid 1px;
+                border-radius: 6px;
+                min-width: 230px;
+                height: 100px;
+                z-index: 100;
+                padding: 4px 0;
+                overflow: hidden;
+                opacity: 0;
+                pointer-events: none;
+                transition: all cubic-bezier(0.22, 1, 0.36, 1) 300ms;
+                -webkit-app-region: no-drag;
+            }
+
+            #DropdownPresetMenu hr {
+                width: 88%;
+                margin-top: 0.2rem;
+                margin-bottom: 0.6rem;
+                margin-left: auto;
+                margin-right: auto;
+                opacity: 10%;
+            }
+
+            #DropdownPresetMenu span {
+                padding: 14px 16px;
+                font-size: 12${pixel};
+                opacity: 60%;
+            }
+                
+            #DropdownPresetMenu.open {
+                height: 205px;
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            .dropdown-template-btn {
+                display: block;
+                width: 95%;
+                margin: auto;
+                margin-bottom: 0.15rem;
+                text-align: left;
+                padding: 5px 10px;
+                border: none;
+                background: none;
+                cursor: pointer;
+                font-size: 14.5${pixel};
+                color: ${textColorPrimaryDisplay};
+                opacity: 80%;
+                border-radius: 8px;
+                transition: background 0.15s, color 0.15s;
+                -webkit-app-region: no-drag;
+            }
+            .dropdown-template-btn:hover, .dropdown-template-btn:focus {
+                background: ${btnSecondary.background};
+            }
+            .dropdown-template-btn:active {
+                background: transparent;
+            }
         `;
         this._cachedCSS = GlobalCSS;
         return GlobalCSS;

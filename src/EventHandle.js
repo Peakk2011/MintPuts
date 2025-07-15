@@ -381,32 +381,46 @@ Wrap up your thoughts and provide a call to action.
             matchBrackets: true,
             autoCloseBrackets: true,
             extraKeys: {
-                "Ctrl-B": function(cm) {
+                "Ctrl-B": function (cm) {
                     const selection = cm.getSelection();
                     cm.replaceSelection(`**${selection}**`);
                 },
-                "Ctrl-I": function(cm) {
+                "Ctrl-I": function (cm) {
                     const selection = cm.getSelection();
                     cm.replaceSelection(`*${selection}*`);
                 },
-                "Ctrl-K": function(cm) {
+                "Ctrl-K": function (cm) {
                     const selection = cm.getSelection();
                     cm.replaceSelection(`[${selection}](url)`);
                 },
-                "Ctrl-`": function(cm) {
+                "Ctrl-`": function (cm) {
                     const selection = cm.getSelection();
                     cm.replaceSelection(`\`${selection}\``);
                 },
-                "Tab": function(cm) {
-                    cm.replaceSelection("    ", "end");
-                }
+                "Ctrl-Space": "autocomplete"
             }
         });
+
+        // Add overlay for /command syntax highlighting
+        CodeMirror.defineMode("slash-command-overlay", function (config, parserConfig) {
+            var overlay = {
+                token: function (stream, state) {
+                    if (stream.sol() && stream.match(/^\s*\/[a-zA-Z].*$/)) {
+                        stream.skipToEnd();
+                        return "command";
+                    }
+                    while (!stream.eol()) stream.next();
+                    return null;
+                }
+            };
+            return CodeMirror.overlayMode(CodeMirror.getMode(config, parserConfig.backdrop || "markdown"), overlay);
+        });
+        editor.setOption('mode', { name: 'slash-command-overlay', backdrop: 'markdown' });
 
         const originalInput = input;
         input = {
             value: '',
-            addEventListener: function(type, handler) {
+            addEventListener: function (type, handler) {
                 if (type === 'input') {
                     editor.on('change', handler);
                 } else if (type === 'paste') {
@@ -415,11 +429,11 @@ Wrap up your thoughts and provide a call to action.
                     editor.on('keydown', handler);
                 }
             },
-            focus: function() {
+            focus: function () {
                 editor.focus();
             },
-            setSelectionRange: function(start, end) {
-                editor.setSelection({line: 0, ch: start}, {line: 0, ch: end});
+            setSelectionRange: function (start, end) {
+                editor.setSelection({ line: 0, ch: start }, { line: 0, ch: end });
             },
             get selectionStart() {
                 const pos = editor.getCursor();
@@ -438,7 +452,7 @@ Wrap up your thoughts and provide a call to action.
         };
 
         originalInput.style.display = 'none';
-        
+
         const cmElement = editor.getWrapperElement();
         cmElement.style.height = '100%';
         cmElement.style.fontFamily = 'Inter Tight, Anuphan, sans-serif';
@@ -462,28 +476,27 @@ Wrap up your thoughts and provide a call to action.
 
         setTimeout(() => {
             editor.refresh();
-            
-        editor.setOption('mode', editor.getOption('mode'));
-        
-        editor.on('change', function() {
-            setTimeout(() => {
-                editor.refresh();
-            }, 10);
-        });
 
-        editor.on('cursorActivity', function() {
-            editor.refresh();
-        });
+            editor.setOption('mode', editor.getOption('mode'));
 
-        // Force initial highlighting
-        setTimeout(() => {
-            editor.setOption('mode', {
-                name: 'markdown',
-                highlightFormatting: true,
-                fencedCodeBlocks: true,
-                base: 'markdown'
+            editor.on('change', function () {
+                setTimeout(() => {
+                    editor.refresh();
+                }, 10);
             });
-        }, 200);
+
+            editor.on('cursorActivity', function () {
+                editor.refresh();
+            });
+
+            setTimeout(() => {
+                editor.setOption('mode', {
+                    name: 'markdown',
+                    highlightFormatting: true,
+                    fencedCodeBlocks: true,
+                    base: 'markdown'
+                });
+            }, 200);
         }, 100);
     }
 
@@ -501,7 +514,7 @@ Wrap up your thoughts and provide a call to action.
         CodeMirror.defineMIME("text/x-powershell", "powershell");
         CodeMirror.defineMIME("text/x-sass", "sass");
         CodeMirror.defineMIME("text/x-stex", "stex");
-        
+
         CodeMirror.defineMIME("text/x-typescript", "typescript");
         CodeMirror.defineMIME("text/x-jsx", "jsx");
         CodeMirror.defineMIME("text/x-coffeescript", "coffeescript");
@@ -521,7 +534,7 @@ Wrap up your thoughts and provide a call to action.
         CodeMirror.defineMIME("text/x-cmake", "cmake");
         CodeMirror.defineMIME("text/x-makefile", "makefile");
         CodeMirror.defineMIME("text/x-diff", "diff");
-        
+
         CodeMirror.defineMIME("text/x-js", "javascript");
         CodeMirror.defineMIME("text/x-ts", "typescript");
         CodeMirror.defineMIME("text/x-tsx", "jsx");
@@ -546,7 +559,7 @@ Wrap up your thoughts and provide a call to action.
         CodeMirror.defineMIME("text/x-markdown", "markdown");
         CodeMirror.defineMIME("text/x-md", "markdown");
         CodeMirror.defineMIME("text/x-gfm", "gfm");
-        
+
         CodeMirror.defineMIME("text/x-config", "properties");
         CodeMirror.defineMIME("text/x-env", "properties");
         CodeMirror.defineMIME("text/x-gitignore", "properties");
@@ -563,6 +576,257 @@ Wrap up your thoughts and provide a call to action.
 
     if (!output || !parseTimeEl || !charCountEl) {
         console.warn("One or more Markdown UI elements not found. Some UI features might be affected.");
+    }
+
+    let isTyping = false;
+    let isTypewriterActive = false;
+
+    function typewriterInsertCM5(editor, text, delay = 10, callback) {
+        isTypewriterActive = true;
+        editor.off("inputRead", inputReadHandler);
+        let i = 0;
+        function typeNext() {
+            editor.setValue(text.slice(0, i));
+            const currentText = text.slice(0, i);
+            const lines = currentText.split('\n');
+            const line = lines.length - 1;
+            const ch = lines[lines.length - 1].length;
+            editor.setCursor({ line, ch });
+            i++;
+            if (i <= text.length) {
+                setTimeout(typeNext, delay);
+            } else {
+                isTypewriterActive = false;
+                editor.on("inputRead", inputReadHandler);
+                if (callback) callback();
+            }
+        }
+        typeNext();
+    }
+
+    function typewriterInsertLineCM5(editor, text, lineIndex, delay = 30, callback) {
+        isTypewriterActive = true;
+        editor.off("inputRead", inputReadHandler);
+        let i = 0;
+        function typeNext() {
+            const currentText = text.slice(0, i);
+            const lines = currentText.split('\n');
+            const from = { line: lineIndex, ch: 0 };
+            const to = {
+                line: lineIndex + lines.length - 1,
+                ch: lines[lines.length - 1].length
+            };
+            editor.replaceRange(currentText, from, to, "+typewriter");
+            editor.setCursor(to);
+            i++;
+            if (i <= text.length) {
+                setTimeout(typeNext, delay);
+            } else {
+                isTypewriterActive = false;
+                editor.on("inputRead", inputReadHandler);
+                if (callback) callback();
+            }
+        }
+        typeNext();
+    }
+
+    let inputReadHandler = null;
+
+    if (editor) {
+        inputReadHandler = function (cm, change) {
+            if (isTypewriterActive) return;
+            if (change.text[0] && /[\w.]/.test(change.text[0])) {
+                cm.showHint({ completeSingle: false });
+            }
+        };
+        editor.on("inputRead", inputReadHandler);
+
+        editor.on("keydown", function (cm, e) {
+            if (isTypewriterActive) return;
+            if (e.key === "Enter" || e.keyCode === 13) {
+                const cursor = cm.getCursor();
+                const line = cm.getLine(cursor.line);
+                const cmd = line.trim();
+
+                // Create Method
+                if (cmd.toLowerCase() === "/ create heading with subtitle") {
+                    e.preventDefault();
+                    typewriterInsertLineCM5(
+                        cm,
+                        "# Heading <!-- This is Heading texts -->\n## Subtitle <!-- This is Subtitle -->",
+                        cursor.line,
+                        10
+                    );
+                    return;
+                }
+                if (cmd.toLowerCase() === "/ create heading") {
+                    e.preventDefault();
+                    typewriterInsertLineCM5(
+                        cm,
+                        "# Heading <!-- This is Heading texts -->",
+                        cursor.line,
+                        20
+                    );
+                    return;
+                }
+                if (cmd.toLowerCase() === "/ create list") {
+                    e.preventDefault();
+                    typewriterInsertLineCM5(
+                        cm,
+                        "- Item 1\n- Item 2\n- Item 3\n\n<!-- For ordered list, use: -->\n\n1. First\n2. Second\n3. Third",
+                        cursor.line,
+                        15
+                    );
+                    return;
+                }
+                if (cmd.toLowerCase() === "/ create table") {
+                    e.preventDefault();
+                    typewriterInsertLineCM5(
+                        cm,
+                        "| Column 1 | Column 2 | Column 3 |\n|----------|----------|----------|\n| Data 1   | Data 2   | Data 3   |\n| Data 4   | Data 5   | Data 6   |",
+                        cursor.line,
+                        22.5
+                    );
+                    return;
+                }
+                if (cmd.toLowerCase() === "/ create quote") {
+                    e.preventDefault();
+                    typewriterInsertLineCM5(
+                        cm,
+                        "> This is a quote box.\n> You can use it for important notes or highlights.",
+                        cursor.line,
+                        12.5
+                    );
+                    return;
+                }
+                if (cmd.toLowerCase() === "/ create social links") {
+                    e.preventDefault();
+                    typewriterInsertLineCM5(
+                        cm,
+                        "[Twitter](https://twitter.com/yourprofile)\n[Facebook](https://facebook.com/yourprofile)\n[LinkedIn](https://linkedin.com/in/yourprofile)",
+                        cursor.line,
+                        8
+                    );
+                    return;
+                }
+                if (cmd.toLowerCase() === "/ create about me section") {
+                    e.preventDefault();
+                    typewriterInsertLineCM5(
+                        cm,
+                        "## About Me\nHi! I'm [Peakk], a developer\n- I love coding\n- And love to create something that going better\n- How to reach me:\n[instagram](https://www.instagram.com/peakk.mint.teams/)",
+                        cursor.line,
+                        10
+                    );
+                    return;
+                }
+                if (cmd.toLowerCase() === "/ create all headings") {
+                    e.preventDefault();
+                    typewriterInsertLineCM5(
+                        cm,
+                        `
+# This is how heading size look
+## This is how heading size look
+### This is how heading size look
+#### This is how heading size look
+##### This is how heading size look
+                        `,
+                        cursor.line,
+                        25
+                    );
+                    return;
+                }
+                // HTML output tag
+                if (cmd.toLowerCase() === "/ html") {
+                    e.preventDefault();
+                    typewriterInsertLineCM5(
+                        cm,
+                        `<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>HTML Example</title>\n</head>\n<body>\n    <h1>Hello, [YOUR_NAME]</h1>\n    <p>This is a basic HTML output example.</p>\n</body>\n</html>`,
+                        cursor.line,
+                        10
+                    );
+                    return;
+                }
+                if (cmd.toLowerCase() === "/ html with mintkit") {
+                    e.preventDefault();
+                    typewriterInsertLineCM5(
+                        cm,
+                        '<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Mintkit Framework</title>\n</head>\n<body>\n    <div id="app"></div>\n\n    <script type="module">\n        import { Mint } from "https://cdn.jsdelivr.net/gh/Peakk2011/Mintkit_CDN/mint.min.js";\n\n        const app = async () => {\n            const root = {\n                html: `\n                    \n                `\n            }\n\n            queueMicrotask(() => {\n                Mint.injectHTML("#app",root.html);\n            })\n        }\n\n        app();\n    <\/script>\n\n</body>\n</html>',
+                        cursor.line,
+                        10
+                    );
+                    return;
+                }
+                // Easter EGG
+                if (cmd.toLowerCase() === "/ peakk") {
+                    e.preventDefault();
+                    typewriterInsertLineCM5(
+                        cm,
+                        `
+# Paris - The chainsmokers
+## Peakk Favourite song
+
+If we go down, then we go down together
+They'll say you could do anything
+They'll say that I was clever
+If we go down, then we go down together
+We'll get away with everything
+Let's show them we are better
+
+Let's show them we are better
+Let's show them we are better
+                        `,
+                        cursor.line,
+                        30
+                    );
+                    return;
+                }
+                if (cmd.toLowerCase() === "/ girlfriend") {
+                    e.preventDefault();
+                    typewriterInsertLineCM5(
+                        cm,
+                        `
+# เพลงที่คนสร้างอยากสื่อถือแฟนเก่า
+## คิด(แต่ไม่)ถึง
+
+อยากรู้เพียงว่าความคิดถึงของเธอกับฉันมันเท่ากันหรือเปล่า
+ถามจริง ๆ ว่าใจเธอเปลี่ยนไปหรือเปล่า
+ฉันไม่คิดไปเองใช่ไหม
+ความคิดถึงที่ฉันได้เคยส่งไป
+ส่งไปได้เพียงในความทรงจำที่มีเราเรื่อยมา
+แค่นึกภาพตอนนั้น ฉันก็มีน้ำตา
+รู้บ้างไหมว่าเจ็บแค่ไหน
+ความคิดถึงที่ฉันได้เคยส่งไป
+ส่งไปไม่เคยถึงเธอเลย
+
+(คิดแต่ไม่ถึง คิด คิด แต่ไม่ถึงเธอ) => x4
+
+ว่าความคิดถึงของเธอกับฉันมันเท่ากันหรือเปล่า
+ถามจริง ๆ ว่าใจเธอเปลี่ยนไปหรือเปล่า
+ฉันไม่คิดไปเองใช่ไหม
+ความคิดถึงที่ฉันได้เคยส่งไป
+ส่งไปได้เพียงในความทรงจำที่มีเราเรื่อยมา
+แค่นึกภาพตอนนั้น ฉันก็มีน้ำตา
+รู้บ้างไหมว่าเจ็บแค่ไหน
+ความคิดถึงที่ฉันได้เคยส่งไป
+ส่งไปไม่เคยถึงเธอเลย
+                        `,
+                        cursor.line,
+                        30
+                    );
+                    return;
+                }
+                if (cmd.toLowerCase() === "/ help") {
+                    e.preventDefault();
+                    typewriterInsertLineCM5(
+                        cm,
+                        "## Help\n- Type /create heading with subtitle To create a topic\n- Type /create heading To create a heading\n- Type /create list To create a list\n- Type /create table To create a table\n- Type /create quote box To create a quote\n- Type /create social links To create social links\n- Type /create about me section To create an about me section\n- Type /help To view all commands",
+                        cursor.line,
+                        10
+                    );
+                    return;
+                }
+            }
+        });
     }
 
     function parseMarkdown() {
@@ -826,9 +1090,29 @@ ${output.innerHTML}
     function insertTemplate(templateName) {
         const template = parser.insertTemplate(templateName);
         if (template) {
-            input.value = template;
-            parseMarkdown();
-            showNotification(`${templateName} template loaded!`, 'success');
+            if (typeof editor !== 'undefined' && editor) {
+                typewriterInsertCM5(editor, template, 10, () => {
+                    parseMarkdown();
+                    showNotification(`${templateName} template loaded!`, 'success');
+                });
+            } else if (input && input.tagName === 'TEXTAREA') {
+                let i = 0;
+                input.value = '';
+                function typeNext() {
+                    input.value += template[i++];
+                    if (i < template.length) {
+                        setTimeout(typeNext, 10);
+                    } else {
+                        parseMarkdown();
+                        showNotification(`${templateName} template loaded!`, 'success');
+                    }
+                }
+                typeNext();
+            } else {
+                input.value = template;
+                parseMarkdown();
+                showNotification(`${templateName} template loaded!`, 'success');
+            }
         }
     }
 
@@ -981,6 +1265,19 @@ ${output.innerHTML}
 
     parseMarkdown();
 
+    // Dropdown
+    const toggle = document.getElementById('ToggleDropdownPreset');
+    const menu = document.getElementById('DropdownPresetMenu');
+    if(toggle && menu){
+        toggle.addEventListener('click', function(e){
+            e.stopPropagation();
+            menu.classList.toggle('open');
+        });
+        document.addEventListener('click', function(){
+            menu.classList.remove('open');
+        });
+    }
+
     const titleLinksContainer = document.getElementById('TitleLinks');
     const mainContentSection = document.querySelector('.main-content');
     const outputSection = document.querySelector('.output-section');
@@ -989,7 +1286,7 @@ ${output.innerHTML}
         const links = titleLinksContainer.querySelectorAll('a');
 
         links.forEach(link => {
-            link.addEventListener('click', function(event) {
+            link.addEventListener('click', function (event) {
                 event.preventDefault();
 
                 const currentHighlighted = titleLinksContainer.querySelector('#Highlight');
@@ -998,7 +1295,7 @@ ${output.innerHTML}
                     if (baseId) {
                         currentHighlighted.id = baseId;
                     } else {
-                        currentHighlighted.removeAttribute('id'); 
+                        currentHighlighted.removeAttribute('id');
                     }
                 }
 
