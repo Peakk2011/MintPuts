@@ -252,6 +252,13 @@ export const WebContent = {
         Introduce(Name) {
             const DisplayName = Name || this.Name;
             return `
+
+                <div id="TitleLinks">
+                    <li><a id="Highlight" data-base-id="ToggleMDEditer" href="javascript:void(0)">Markdown Editer</a></li>
+                    <li><a id="ToggleHTMLOUTPUT" data-base-id="ToggleHTMLOUTPUT" href="javascript:void(0)">HTML Output</a></li>
+                </div>
+
+
                 <div id="titlebar">
                     <div id="drag-region">
                         <svg width="892" height="210" viewBox="0 0 892 210" fill="none" xmlns="http://www.w3.org/2000/svg" id="icon">
@@ -318,11 +325,6 @@ export const WebContent = {
                             </div>
                             <div id="html-output"></div>
                         </div>
-
-                <div id="TitleLinks">
-                    <li><a id="Highlight" data-base-id="ToggleMDEditer" href="javascript:void(0)">Markdown Editer</a></li>
-                    <li><a id="ToggleHTMLOUTPUT" data-base-id="ToggleHTMLOUTPUT" href="javascript:void(0)">HTML Output</a></li>
-                </div>
 
                 <div class="controls">
                     <div class="controlsContent">
@@ -513,14 +515,17 @@ export const WebContent = {
                 display: flex;
                 align-items: center;
                 position: fixed;
-                top: ${spacing[0]};
-                left: 260${pixel};
-                border-bottom: ${FormatBorderColors} solid 1px;
+                top: ${spacing[4]};
+                left: 50%;
+                transform: translateX(-50%);
+                border: ${FormatBorderColors} solid 1px;
                 z-index: 10;
-                width: calc(100vw - 260px);
+                width: fit-content;
                 height: 40px;
                 background-color: ${colorPrimary};
                 -webkit-app-region: drag;
+                border-radius: ${borderRadius.full};
+                padding: 0 ${spacing[1]};
             }
 
             #TitleLinks li {
@@ -529,13 +534,11 @@ export const WebContent = {
 
             #Highlight {
                 opacity: 1 !important;
-                background-color: ${OutputBackground.PrimarySec};
-                border-bottom: ${FormatBorderColors} solid 1px;
             }
 
             #TitleLinks li a {
                 color: ${textColorPrimaryDisplay};
-                padding: ${spacing[2.5]} ${spacing[4]};
+                padding: ${spacing[3]} ${spacing[4]};
                 font-size: 14${pixel};
                 opacity: 0.6;
                 -webkit-app-region: no-drag;
@@ -718,9 +721,8 @@ export const WebContent = {
                 bottom: 0;
                 right: 0;
                 width: calc(100vw - 260px);
-                height: 52.5${pixel};
+                height: 60${pixel};
                 margin: auto;
-                border-top: 1${pixel} solid ${PublicFormatBorderColors};
                 background-color: ${colorPrimary};
                 z-index: 6;
             }
@@ -729,7 +731,7 @@ export const WebContent = {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding: 0 ${spacing[4]};
+                padding: 0 ${spacing[6]};
                 width: 100vw;
             }
 
@@ -738,7 +740,7 @@ export const WebContent = {
             }
 
             .btn {
-                padding: ${spacing[2]} ${spacing[3.5]};
+                padding: ${spacing[2]} ${spacing[4]};
                 border: none;
                 font-weight: 400;
                 cursor: pointer;
@@ -801,16 +803,25 @@ export const WebContent = {
                 z-index: 10;
                 background: transparent !important;
                 overflow: hidden !important;
+                bottom: 0 !important;
             }
 
             #markdown-input-container {
                 height: calc(100vh - 40px) !important;
                 min-height: calc(100vh - 40px) !important;
                 max-height: calc(100vh - 40px) !important; 
+                bottom: 0 !important;
             }
 
             .CodeMirror {
-                margin-top: 55px !important;
+                margin-right: 0 !important;
+                margin-bottom: 0 !important;
+                margin-left: 0 !important;
+                padding: 0 !important;
+            }
+
+            .CodeMirror-code {
+                margin-top: 80px !important;
             }
 
             .CodeMirror-scroll, .CodeMirror-sizer {
@@ -821,6 +832,7 @@ export const WebContent = {
                 margin-right:  0rem !important;
                 margin-top:    0rem !important;
                 margin-bottom: 0rem !important;
+                bottom: 0 !important;
             }
 
             .CodeMirror-sizer {
@@ -832,6 +844,7 @@ export const WebContent = {
                 min-height: calc(100vh - 40px) !important;
                 max-height: calc(100vh - 40px) !important;
                 background: transparent !important;
+                bottom: 0 !important;
             }
 
             .CodeMirror-linenumber {
