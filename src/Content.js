@@ -1,157 +1,4 @@
-// Content.js Example to making content inside this file
-
-export const WebElements = {
-    StoredFontFamily: "@import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@100..700&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Manrope:wght@200..800&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&family=Trirong:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');",
-    Typeface: [
-        '"Inter Tight", sans-serif;',
-        '"Merriweather", serif;',
-        '"Trirong", serif;',
-        '"Anuphan", sans-serif;',
-        '"JetBrains Mono", monospace;',
-        '"Manrope", sans-serif;',
-        '"Instrument Sans", sans-serif;',
-        '"Source Serif 4", serif;',
-        '"Inter Tight", Anuphan, sans-serif',
-        '"JetBrains Mono", Anuphan, sans-serif',
-        '"Source Serif 4", "Trirong", serif;',
-    ],
-    DefaultFontFallback: '"Leelawadee UI", "Segoe UI", -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", sans-serif',
-    Units: {
-        CSSPosition: ['static', 'relative', 'fixed', 'absolute', 'sticky'],
-        CSSSize: {
-            AbsoluteLengths: {
-                StaticCM: 'cm',
-                StaticMM: 'mm',
-                StaticIN: 'in',
-                StaticPT: 'pt',
-                StaticPC: 'pc',
-                StaticPX: 'px'
-            },
-            RelativeLengths: {
-                RelativeEM: 'em',
-                RelativeREM: 'rem',
-                RelativeVW: 'vw',
-                RelativeVH: 'vh',
-                RelativePERCENT: '%',
-                RelativeVMAX: 'vmax',
-                RelativeMXCON: 'max-content',
-            },
-            AUTO: 'auto',
-            boxSizing: 'border-box',
-        },
-        weights: {
-            light: '300',
-            normal: '400',
-            medium: '500',
-            semibold: '600',
-            bold: '700',
-            extrabold: '800'
-        },
-    },
-    DirectThemes: [
-        '(prefers-color-scheme: dark)',
-        '(prefers-color-scheme: light)'
-    ],
-    get BorderRadius() {
-        return {};
-    },
-    get layout() {
-        return {
-            zIndex: {
-                Hidden: '-1',
-                Base: '0',
-                Dropdown: '1000',
-                Modal: '1050',
-                Tooltip: '1100'
-            },
-            Overflow: {
-                Hidden: 'hidden',
-                Scroll: 'scroll',
-                Auto: 'auto'
-            },
-            MediaQuery: [
-                '(min-width: 1280px)',
-                '(min-width: 768px)',
-                '(min-width: 576px)',
-                '(min-width: 380px)',
-                '(min-width: 320px)',
-            ],
-        };
-    },
-    get Transition() {
-        return {};
-    },
-    spacing: {
-        0: '0',
-        px: '1px',
-        0.5: '0.125rem',  // 2px
-        1: '0.25rem',     // 4px
-        1.5: '0.375rem',  // 6px
-        2: '0.5rem',      // 8px
-        2.5: '0.625rem',  // 10px
-        3: '0.75rem',     // 12px
-        3.5: '0.875rem',  // 14px
-        4: '1rem',        // 16px
-        5: '1.25rem',     // 20px
-        6: '1.5rem',      // 24px
-        7: '1.75rem',     // 28px
-        8: '2rem',        // 32px
-        10: '2.5rem',     // 40px
-        12: '3rem',       // 48px
-        14: '3.5rem',
-        16: '4rem',
-        18: '4.5rem',
-        20: '5rem',       // 80px
-        24: '6rem',       // 96px
-        32: '8rem',       // 128px
-    },
-    borderRadius: {
-        none: '0',
-        sm: '0.125rem',          // 2px
-        DEFAULT: '0.25rem',      // 4px
-        md: '0.375rem',          // 6px
-        lg: '0.5rem',            // 8px
-        xl: '0.75rem',           // 12px
-        '2xl': '1rem',           // 16px
-        '3xl': '1.5rem',         // 24px
-        full: '100vmax'
-    },
-    shadows: {
-        sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-        DEFAULT: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
-        md: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-        lg: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
-        xl: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
-        '2xl': '0 25px 50px -12px rgb(0 0 0 / 0.25)',
-        inner: 'inset 0 2px 4px 0 rgb(0 0 0 / 0.05)',
-        none: 'none'
-    },
-    transitions: {
-        none: 'none',
-        all: 'all 150ms cubic-bezier(0.4, 0, 0.2, 1)',
-        DEFAULT: 'color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter 150ms cubic-bezier(0.4, 0, 0.2, 1)',
-        colors: 'color, background-color, border-color, text-decoration-color, fill, stroke 150ms cubic-bezier(0.4, 0, 0.2, 1)',
-        opacity: 'opacity 150ms cubic-bezier(0.4, 0, 0.2, 1)',
-        shadow: 'box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1)',
-        transform: 'transform 150ms cubic-bezier(0.4, 0, 0.2, 1)',
-    },
-    easings: {
-        linear: 'linear',
-        in: 'cubic-bezier(0.4, 0, 1, 1)',
-        out: 'cubic-bezier(0, 0, 0.2, 1)',
-        'in-out': 'cubic-bezier(0.4, 0, 0.2, 1)',
-        bounce: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
-        smooth: 'cubic-bezier(0.19, 1, 0.22, 1)',
-    },
-    breakpoints: {
-        mb: '411px',
-        sm: '450px',
-        md: '768px',
-        lg: '1024px',
-        xl: '1280px',
-        '2xl': '1536px'
-    }
-}
+import { WebElements } from './redistributables/units.js';
 
 const lightThemeColors = {
     ColorPrimary: '#faf8f0;',
@@ -439,12 +286,13 @@ export const WebContent = {
             Units,
             spacing,
             borderRadius,
-            easings,
-            breakpoints,
+            shadows,
+            transitions,
+            weights,
+            DirectThemes,
         } = WebElements;
-        const { weights } = Units;
 
-        const normalizeCallReset = this.Normalize.CALLReset;
+        const normalizeCallReset = `${Units.CSSSize.boxSizing};`;
         const textRenderForce = this.TextRendering.ForceGrayStyleRendering;
         const textRenderSpecific = this.TextRendering.SpecificTargetingRendering;
 
@@ -459,23 +307,36 @@ export const WebContent = {
         const OutputBackground = this.CSScolor.OutputBackground;
         const SIDEBAR = this.CSScolor.SIDEBAR;
 
-        const pixel = WebElements.Units.CSSSize.AbsoluteLengths.StaticPX;
+        const pixel = Units.CSSSize.AbsoluteLengths.StaticPX;
+        const percent = Units.CSSSize.RelativeLengths.RelativePERCENT;
+        const rem = Units.CSSSize.RelativeLengths.RelativeREM;
+        const em = Units.CSSSize.RelativeLengths.RelativeEM;
+        const vw = Units.CSSSize.RelativeLengths.RelativeVW;
+        const vh = Units.CSSSize.RelativeLengths.RelativeVH;
+        const auto = Units.CSSSize.AUTO;
+        const absolute = Units.CSSPosition[3];
+        const fixed = Units.CSSPosition[2];
+        const bold = Units.weights.bold;
+        const borderRadiusLg = borderRadius.lg;
+        const borderRadiusFull = borderRadius.full;
+        const shadowMd = shadows.md;
+        const transitionAll = transitions.all;
 
         const GlobalCSS = `
             * {
-                ${normalizeCallReset};
-                ${textRenderForce};
-                font-family: ${WebElements.Typeface[8]};
+                ${normalizeCallReset}
+                ${textRenderForce}
+                font-family: ${Typeface[8]}, ${DefaultFontFallback};
                 color: ${FormatTextColors};
                 line-height: 1.8;
             }
 
             *::-webkit-scrollbar {
-                height: 5px;
-                width: 5px;
+                height: 5${pixel};
+                width: 5${pixel};
             }
             *::-webkit-scrollbar-track {
-                border-radius: 0px;
+                border-radius: 0${pixel};
                 background-color: ${colorPrimary};
             }
 
@@ -488,7 +349,7 @@ export const WebContent = {
             }
 
             *::-webkit-scrollbar-thumb {
-                border-radius: 20px;
+                border-radius: 20${pixel};
                 background-color: #484848;
             }
 
@@ -499,32 +360,32 @@ export const WebContent = {
             *::-webkit-scrollbar-thumb:active {
                 background-color: #999999;
             }
-
+            
             #titlebar {
-                width: 260px;
-                height: 100vh;
+                width: 260${pixel};
+                height: 100${vh};
                 background-color: ${SIDEBAR};
                 -webkit-app-region: drag;
                 user-select: none;
-                position: fixed;
+                position: ${fixed};
                 z-index: 10;
-                border-right: ${FormatBorderColors} solid 1px;
+                border-right: ${FormatBorderColors} solid 1${pixel};
             }
 
             #TitleLinks {
                 display: flex;
                 align-items: center;
-                position: fixed;
+                position: ${fixed};
                 top: ${spacing[4]};
-                left: 50%;
-                transform: translateX(-50%);
-                border: ${FormatBorderColors} solid 1px;
+                left: 50${percent};
+                transform: translateX(-50${percent});
+                border: ${FormatBorderColors} solid 1${pixel};
                 z-index: 10;
                 width: fit-content;
-                height: 40px;
+                height: 40${pixel};
                 background-color: ${colorPrimary};
                 -webkit-app-region: drag;
-                border-radius: ${borderRadius.full};
+                border-radius: ${borderRadiusFull};
                 padding: 0 ${spacing[1]};
             }
 
@@ -543,7 +404,7 @@ export const WebContent = {
                 opacity: 0.6;
                 -webkit-app-region: no-drag;
                 text-decoration: none;
-                transition: 0.2s ease;
+                transition: ${transitionAll};
             }
 
             #TitleLinks li a:hover {
@@ -554,9 +415,9 @@ export const WebContent = {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                width: 88%;
-                gap: 8px;
-                position: absolute;
+                width: 88${percent};
+                gap: 8${pixel};
+                position: ${absolute};
                 left: ${spacing[4]};
                 top: ${spacing[3.5]};
                 margin-top: ${(() => {
@@ -576,7 +437,7 @@ export const WebContent = {
 
             #icon {
                 width: 70${pixel};
-                height: auto;
+                height: ${auto};
                 -webkit-app-region: no-drag;
                 margin-top: ${(() => {
                 if (isBrowserOpening()) {
@@ -613,24 +474,24 @@ export const WebContent = {
             }
 
             #TitlebarLinks li a svg {
-                width: 20px;
-                height: 20px;
+                width: 20${pixel};
+                height: 20${pixel};
                 margin-right: ${spacing[1.5]};
-                transform: translateY(3px);
+                transform: translateY(3${pixel});
             }
 
             #TitlebarLinks span {
                 padding: ${spacing[2]} ${spacing[0.5]};
                 font-size: 14${pixel};
-                opacity: 60%;
+                opacity: 60${percent};
             }
 
             #CurrentFiles {
                 padding: ${spacing[1]} ${spacing[3]} !important;
                 background-color: ${OutputBackground.PrimarySec};
                 display: block;
-                border-radius: ${borderRadius.lg};
-                outline: ${FormatBorderColors} solid 1px;
+                border-radius: ${borderRadiusLg};
+                outline: ${FormatBorderColors} solid 1${pixel};
             }
 
             .RecentsFiles {
@@ -644,46 +505,46 @@ export const WebContent = {
             .container {
                 overflow: hidden;
                 backdrop-filter: blur(10${pixel});
-                height: 100vh;
-                width: calc(100vw - 260px);
-                position: fixed;
-                left: 260px;
+                height: 100${vh};
+                width: calc(100${vw} - 260${pixel});
+                position: ${fixed};
+                left: 260${pixel};
             }
 
             .main-content {
                 display: flex;
                 margin: auto;
-                height: 100vh;
-                position: ${WebElements.Units.CSSPosition[1]};
-                right: -15px;
+                height: 100${vh};
+                position: ${Units.CSSPosition[1]};
+                right: -15${pixel};
             }
 
             .input-section, .output-section {
                 display: flex;
                 flex-direction: column;
                 padding: ${spacing[4]};
-                width: 100%;
+                width: 100${percent};
             }
 
             .output-section {
-                position: fixed;
+                position: ${fixed};
                 top: 0;
-                right: -30px;
-                width: calc(100vw - 260px);
-                height: 100vh;
+                right: -30${pixel};
+                width: calc(100${vw} - 260${pixel});
+                height: 100${vh};
                 background-color: ${colorPrimary};
                 z-index: 5;
                 display: none;
             }
 
             .section-title {
-                font-size: 20px;
-                font-weight: 600;
+                font-size: 20${pixel};
+                font-weight: ${bold};
                 margin-bottom: ${spacing[4]};
                 color: ${textColorPrimaryText};
                 display: flex;
                 align-items: center;
-                font-family: ${WebElements.Typeface[4]};
+                font-family: ${Typeface[4]};
                 margin-top: ${spacing[10]};
             }
 
@@ -701,14 +562,14 @@ export const WebContent = {
                 transition: all 0.3s ease;
                 background-color: transparent;
                 color: ${FormatTextColors};
-                font-family: ${WebElements.Typeface[9]};
+                font-family: ${Typeface[9]};
                 font-weight: 480;
             }
 
             #html-output {
                 flex: 1;
                 overflow-y: auto;
-                width: 850px;
+                width: 850${pixel};
                 margin: auto;
             }
 
@@ -717,10 +578,10 @@ export const WebContent = {
                 align-items: center;
                 justify-content: space-between;
                 flex-wrap: wrap;
-                position: fixed;
+                position: ${fixed};
                 bottom: 0;
                 right: 0;
-                width: calc(100vw - 260px);
+                width: calc(100${vw} - 260${pixel});
                 height: 60${pixel};
                 margin: auto;
                 background-color: ${colorPrimary};
@@ -732,7 +593,7 @@ export const WebContent = {
                 justify-content: space-between;
                 align-items: center;
                 padding: 0 ${spacing[6]};
-                width: 100vw;
+                width: 100${vw};
             }
 
             .Buttons {
@@ -747,7 +608,7 @@ export const WebContent = {
                 transition: all 0.3s ease;
                 font-size: 13.5${pixel};
                 border-radius: 50${pixel};
-                font-family: ${WebElements.Typeface[6]},${DefaultFontFallback};
+                font-family: ${Typeface[6]},${DefaultFontFallback};
                 margin-right: ${spacing[1.5]};
                 line-height: 1.2;
             }
@@ -769,7 +630,7 @@ export const WebContent = {
                 gap: 18.5${pixel};
                 font-size: 13.5${pixel};
                 color: #A2A2A2;
-                font-family: ${WebElements.Typeface[0]},${DefaultFontFallback};
+                font-family: ${Typeface[0]},${DefaultFontFallback};
             }
 
             pre {
@@ -778,26 +639,26 @@ export const WebContent = {
                 padding: ${spacing[2]} ${spacing[4]};
                 overflow-x: auto;
                 margin: 10${pixel} 0;
-                border: 1px solid ${PublicFormatBorderColors};
+                border: 1${pixel} solid ${PublicFormatBorderColors};
             }
 
             pre code {
                 background: none;
                 padding: 0;
                 border-radius: 0;
-                font-family: ${WebElements.Typeface[9]};
+                font-family: ${Typeface[9]};
                 color: ${textColorPrimaryText};
             }
 
             .input-section, #markdown-input-container {
-                position: fixed !important;
+                position: ${fixed} !important;
                 inset: 0 !important;
-                width: 100vw !important;
-                height: calc(100vh - 40px) !important;
-                min-width: calc(100vh - 40px) !important;
-                min-height: calc(100vh - 40px) !important;
-                max-width: 100vw !important;
-                max-height: calc(100vh - 40px) !important;
+                width: 100${vw} !important;
+                height: calc(100${vh} - 40${pixel}) !important;
+                min-width: calc(100${vh} - 40${pixel}) !important;
+                min-height: calc(100${vh} - 40${pixel}) !important;
+                max-width: 100${vw} !important;
+                max-height: calc(100${vh} - 40${pixel}) !important;
                 margin: 0 !important;
                 padding: 0 !important;
                 z-index: 10;
@@ -807,9 +668,9 @@ export const WebContent = {
             }
 
             #markdown-input-container {
-                height: calc(100vh - 40px) !important;
-                min-height: calc(100vh - 40px) !important;
-                max-height: calc(100vh - 40px) !important; 
+                height: calc(100${vh} - 40${pixel}) !important;
+                min-height: calc(100${vh} - 40${pixel}) !important;
+                max-height: calc(100${vh} - 40${pixel}) !important; 
                 bottom: 0 !important;
             }
 
@@ -821,36 +682,36 @@ export const WebContent = {
             }
 
             .CodeMirror-code {
-                margin-top: 80px !important;
+                margin-top: 80${pixel} !important;
             }
 
             .CodeMirror-scroll, .CodeMirror-sizer {
-                height: calc(100vh - 40px) !important;
-                min-height: calc(100vh - 40px) !important;
-                max-height: calc(100vh - 40px) !important;
-                margin-left:   0rem !important;
-                margin-right:  0rem !important;
-                margin-top:    0rem !important;
-                margin-bottom: 0rem !important;
+                height: calc(100${vh} - 40${pixel}) !important;
+                min-height: calc(100${vh} - 40${pixel}) !important;
+                max-height: calc(100${vh} - 40${pixel}) !important;
+                margin-left:   0${rem} !important;
+                margin-right:  0${rem} !important;
+                margin-top:    0${rem} !important;
+                margin-bottom: 0${rem} !important;
                 bottom: 0 !important;
             }
 
-            .CodeMirror-sizer {
-                margin-left: 55px !important;
+            .CodeMirror-sizer{
+                margin-left: 55${pixel} !important;
             }
 
             .CodeMirror-gutters, .CodeMirror-gutter {
-                height: calc(100vh - 40px) !important;
-                min-height: calc(100vh - 40px) !important;
-                max-height: calc(100vh - 40px) !important;
+                height: calc(100${vh} - 40${pixel}) !important;
+                min-height: calc(100${vh} - 40${pixel}) !important;
+                max-height: calc(100${vh} - 40${pixel}) !important;
                 background: transparent !important;
                 bottom: 0 !important;
             }
 
             .CodeMirror-linenumber {
-                min-width: 45px;
-                width: 45px;
-                padding: 0 4px 0 0 !important;
+                min-width: 45${pixel};
+                width: 45${pixel};
+                padding: 0 4${pixel} 0 0 !important;
                 color: #8A8A8A !important;
                 background: transparent !important;
                 text-align: right !important;
@@ -858,7 +719,7 @@ export const WebContent = {
             }
 
             .CodeMirror-foldgutter {
-                width: 20px;
+                width: 20${pixel};
                 background: transparent !important;
             }
 
@@ -871,17 +732,16 @@ export const WebContent = {
 
             .CodeMirror-foldgutter-open:after {
                 content: "▼";
-                font-size: 10px;
+                font-size: 10${pixel};
             }
 
             .CodeMirror-foldgutter-folded:after {
                 content: "▶";
-                font-size: 10px;
+                font-size: 10${pixel};
             }
-
+            
             .cm-s-monokai.CodeMirror {
                 background: transparent !important;
-
             }
 
             .CodeMirror-wrap pre.CodeMirror-line, .CodeMirror-wrap pre.CodeMirror-line-like {
@@ -899,11 +759,11 @@ export const WebContent = {
                 
             .CodeMirror-code .cm-tab:before {
                 content: "";
-                position: absolute;
+                position: ${absolute};
                 left: 0;
                 top: 0;
                 bottom: 0;
-                border-left: 1px solid #e0e0e0;
+                border-left: 1${pixel} solid #e0e0e0;
                 opacity: 0.5;
             }
             
@@ -937,30 +797,30 @@ export const WebContent = {
             #html-output h1, #html-output h2, #html-output h3, #html-output h4, #html-output h5, #html-output h6 {
                 color: ${textColorPrimaryDisplay};
                 margin: 18.5${pixel} 0 18.5${pixel} 0;
-                ${WebElements.Typeface[8]};
+                ${Typeface[8]};
             }
 
-            #html-output h1 { font-size: 2.4em; font-family: ${WebElements.Typeface[8]}; line-height: 1.4; border-bottom: ${FormatBorderColors} solid 1px; margin: 10${pixel} 0 10${pixel} 0; color: ${PrimaryHeaderText} }
-            #html-output h2 { font-size: 2em; line-height: 1.4; }
-            #html-output h3 { font-size: 1.8em; line-height: 1.45; opacity: 0.72; }
-            #html-output h4 { font-size: 1.6em; line-height: 1.5; opacity: 0.65; }
-            #html-output h5 { font-size: 1.4em; line-height: 1.65; opacity: 0.60; }
-            #html-output h6 { font-size: 1.2em; line-height: 1.82; opacity: 0.55; }
+            #html-output h1 { font-size: 2.4${em}; font-family: ${Typeface[8]}; line-height: 1.4; border-bottom: ${FormatBorderColors} solid 1${pixel}; margin: 10${pixel} 0 10${pixel} 0; color: ${PrimaryHeaderText} }
+            #html-output h2 { font-size: 2${em}; line-height: 1.4; }
+            #html-output h3 { font-size: 1.8${em}; line-height: 1.45; opacity: 0.72; }
+            #html-output h4 { font-size: 1.6${em}; line-height: 1.5; opacity: 0.65; }
+            #html-output h5 { font-size: 1.4${em}; line-height: 1.65; opacity: 0.60; }
+            #html-output h6 { font-size: 1.2${em}; line-height: 1.82; opacity: 0.55; }
 
-            #html-output p { margin: 10px 0; line-height: 1.6; color: ${textColorPrimaryText}; }
-            #html-output code { background: transparnt; padding: 2${pixel} 6px; border-radius: 4px; font-family: ${WebElements.Typeface[9]}; }
-            #html-output blockquote { border-left: 4px solid ${textColorPrimaryDisplay}; padding-left: 15px; margin: 15px 0; color: ${textColorPrimaryDisplay}; opacity: 0.8; }
-            #html-output ul, #html-output ol { margin: 10px 0 10px 30px; }
-            #html-output li { margin: 5px 0; }
+            #html-output p { margin: 10${pixel} 0; line-height: 1.6; color: ${textColorPrimaryText}; }
+            #html-output code { background: transparnt; padding: 2${pixel} 6${pixel}; border-radius: 4${pixel}; font-family: ${Typeface[9]}; }
+            #html-output blockquote { border-left: 4${pixel} solid ${FormatBorderColors}; padding-left: 15${pixel}; margin: 15${pixel} 0; color: ${textColorPrimaryDisplay}; opacity: 0.8; }
+            #html-output ul, #html-output ol { margin: 10${pixel} 0 10${pixel} 30${pixel}; }
+            #html-output li { margin: 5${pixel} 0; }
             #html-output li a,strong { color: ${textColorPrimaryText}; }
             #html-output a { color: ${OutputBackground.LinksBackground}; text-decoration: none; margin: 18.5${pixel} 0 18.5${pixel} 0; }
             #html-output a:hover { text-decoration: underline; }
-            #html-output table { border-collapse: collapse; width: 100%; margin: 10px 0; margin-bottom: ${spacing[3.5]}; }
-            #html-output th, #html-output td { border-bottom: 1px solid ${PublicFormatBorderColors}; padding: ${spacing[2]} ${spacing[4]}; text-align: left; }
-            #html-output th { font-weight: 600; }
+            #html-output table { border-collapse: collapse; width: 100${percent}; margin: 10${pixel} 0; margin-bottom: ${spacing[3.5]}; }
+            #html-output th, #html-output td { border-bottom: 1${pixel} solid ${PublicFormatBorderColors}; padding: ${spacing[2]} ${spacing[4]}; text-align: left; }
+            #html-output th { font-weight: ${bold}; }
 
             /* Responsive adjustments */
-            @media (max-width: ${breakpoints.mb}), (max-width: ${breakpoints.sm}) {
+            @media (max-width: ${WebElements.breakpoints.mb}), (max-width: ${WebElements.breakpoints.sm}) {
                 .btn {
                     font-size: 12.5${pixel};
                     padding: ${spacing[2]} ${spacing[3]};
@@ -970,16 +830,16 @@ export const WebContent = {
                     display: none;
                 }
             }
-            @media (max-width: ${breakpoints.md}) {}
-            @media (min-width: ${breakpoints.lg}) {}
-            @media (max-width: ${breakpoints.xl}) {
+            @media (max-width: ${WebElements.breakpoints.md}) {}
+            @media (min-width: ${WebElements.breakpoints.lg}) {}
+            @media (max-width: ${WebElements.breakpoints.xl}) {
                 #html-output {
-                    width: 100%;
+                    width: 100${percent};
                 }
             }
-            @media ${WebElements.DirectThemes[1]} {
+            @media ${DirectThemes[1]} {
                 #icon,#SBCloseButtons  {
-                    filter: invert(100%);
+                    filter: invert(100${percent});
                 }
             }
 
@@ -993,72 +853,72 @@ export const WebContent = {
                 padding: ${spacing[1.5]} ${spacing[0]};
                 border: none;
                 cursor: pointer;
-                transition: all 0.5s;
+                transition: ${transitionAll};
                 background: transparent;
                 font-size: 14${pixel};
             }
 
             #ToggleDropdownPreset svg {
-                width: 20px;
-                height: 20px;
+                width: 20${pixel};
+                height: 20${pixel};
                 margin-right: ${spacing[1.5]};
-                transform: translateY(4px);
+                transform: translateY(4${pixel});
             }
             
             #DropdownPresetMenu {
                 display: block;
-                position: absolute;
-                left: 12px;
-                top: 130px;
+                position: ${absolute};
+                left: 12${pixel};
+                top: 130${pixel};
                 background-color: ${colorPrimary};
-                border: ${FormatBorderColors} solid 1px;
-                border-radius: 6px;
-                min-width: 230px;
-                height: 100px;
+                border: ${FormatBorderColors} solid 1${pixel};
+                border-radius: 6${pixel};
+                min-width: 230${pixel};
+                height: 100${pixel};
                 z-index: 100;
-                padding: 4px 0;
+                padding: 4${pixel} 0;
                 overflow: hidden;
                 opacity: 0;
                 pointer-events: none;
-                transition: all cubic-bezier(0.22, 1, 0.36, 1) 300ms;
+                transition: ${transitionAll};
                 -webkit-app-region: no-drag;
             }
 
             #DropdownPresetMenu hr {
-                width: 88%;
-                margin-top: 0.2rem;
-                margin-bottom: 0.6rem;
+                width: 88${percent};
+                margin-top: 0.2${rem};
+                margin-bottom: 0.6${rem};
                 margin-left: auto;
                 margin-right: auto;
-                opacity: 10%;
+                opacity: 10${percent};
             }
 
             #DropdownPresetMenu span {
-                padding: 14px 16px;
+                padding: 14${pixel} 16${pixel};
                 font-size: 12${pixel};
-                opacity: 60%;
+                opacity: 60${percent};
             }
                 
             #DropdownPresetMenu.open {
-                height: 205px;
+                height: 205${pixel};
                 opacity: 1;
                 pointer-events: auto;
             }
 
             .dropdown-template-btn {
                 display: block;
-                width: 95%;
+                width: 95${percent};
                 margin: auto;
-                margin-bottom: 0.15rem;
+                margin-bottom: 0.15${rem};
                 text-align: left;
-                padding: 5px 10px;
+                padding: 5${pixel} 10${pixel};
                 border: none;
                 background: none;
                 cursor: pointer;
                 font-size: 14.5${pixel};
                 color: ${textColorPrimaryDisplay};
-                opacity: 80%;
-                border-radius: 8px;
+                opacity: 80${percent};
+                border-radius: 8${pixel};
                 transition: background 0.15s, color 0.15s;
                 -webkit-app-region: no-drag;
             }

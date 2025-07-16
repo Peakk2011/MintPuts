@@ -1,6 +1,7 @@
 import { Mint } from './mintkit/mint.js';
 import { Webfunctions } from './EventHandle.js';
-import { WebContent, WebElements } from './Content.js';
+import { WebContent } from './Content.js';
+import { WebElements } from './redistributables/units.js';
 
 const ROOT = '#app';
 const MAIN_CONTAINER_ID = 'ROOT';
