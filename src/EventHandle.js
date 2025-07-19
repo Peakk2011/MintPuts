@@ -418,6 +418,43 @@ Wrap up your thoughts and provide a call to action.
         });
         editor.setOption('mode', { name: 'slash-command-overlay', backdrop: 'markdown' });
 
+        window.editor = editor;
+
+        // resetStr(); --force :reset=all & resetStr(); :reset
+        editor.on('keydown', function (cm, event) {
+            if ((event.key === 'Enter' || event.keyCode === 13)) {
+                const value = cm.getValue().trim();
+                if (typeof window.resetStr === 'function' && (value === 'resetStr(); --force' || value === ':reset=all')) {
+                    window.resetStr();
+                    cm.setValue('');
+                    if (typeof showNotification === 'function') {
+                        showNotification('Storage cleared!', 'success');
+                    } else {
+                        alert('Storage cleared!');
+                    }
+                    event.preventDefault();
+                } else if (typeof window.cleanLocalStorageForMintputs === 'function' && (value === 'resetStr();' || value === ':reset')) {
+                    window.cleanLocalStorageForMintputs();
+                    cm.setValue('');
+                    if (typeof showNotification === 'function') {
+                        showNotification('Storage cleaned!', 'success');
+                    } else {
+                        alert('Storage cleaned!');
+                    }
+                    event.preventDefault();
+                } else if ((/^resetThis\s*\(\s*\)\s*;?.*/.test(value) || value === 'resetThis' || value === ':clear') && typeof clearAll === 'function') {
+                    clearAll();
+                    cm.setValue('');
+                    if (typeof showNotification === 'function') {
+                        showNotification('Cleared!', 'success');
+                    } else {
+                        alert('Cleared!');
+                    }
+                    event.preventDefault();
+                }
+            }
+        });
+
         const originalInput = input;
         input = {
             value: '',
@@ -1024,12 +1061,12 @@ ${output.innerHTML}
     // Dropdown
     const toggle = document.getElementById('ToggleDropdownPreset');
     const menu = document.getElementById('DropdownPresetMenu');
-    if(toggle && menu){
-        toggle.addEventListener('click', function(e){
+    if (toggle && menu) {
+        toggle.addEventListener('click', function (e) {
             e.stopPropagation();
             menu.classList.toggle('open');
         });
-        document.addEventListener('click', function(){
+        document.addEventListener('click', function () {
             menu.classList.remove('open');
         });
     }

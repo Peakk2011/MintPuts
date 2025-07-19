@@ -74,6 +74,8 @@ const queueRender = () => {
                 Webfunctions(Main).catch(err => Logger.error('Error in Webfunctions:', err));
                 firstRenderComplete = true;
             }
+        } else {
+            console.log("No changes to render");
         }
         renderQueued = false;
     });

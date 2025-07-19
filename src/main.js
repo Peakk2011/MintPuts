@@ -157,8 +157,8 @@ process.on('unhandledRejection', async (reason, promise) => {
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
-    width: 740,
-    height: 860,
+    width: 1000,
+    height: 845,
     minWidth: 345,
     minHeight: 520,
     show: false,

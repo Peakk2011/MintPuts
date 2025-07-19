@@ -1,4 +1,193 @@
 import { WebElements } from './redistributables/units.js';
+import { Mint } from './mintkit/mint.js';
+
+const RECENTS_KEY = 'mintputs_recents';
+const FILE_PREFIX = 'mintputs_file_';
+const MAX_RECENTS = 10;
+let _modalCSSInjected = false;
+
+function mint_getRecents() {
+    const saved = localStorage.getItem(RECENTS_KEY);
+    return saved ? JSON.parse(saved) : [];
+}
+
+function mint_saveRecents(list) {
+    localStorage.setItem(RECENTS_KEY, JSON.stringify(list));
+}
+
+function mint_addRecent(filename) {
+    let recents = mint_getRecents();
+    recents = recents.filter(f => f !== filename);
+    recents.unshift(filename);
+    if (recents.length > MAX_RECENTS) recents = recents.slice(0, MAX_RECENTS);
+    mint_saveRecents(recents);
+}
+
+function mint_saveFile(filename, content) {
+    // console.log('[DEBUG] Saving file:', filename, '| content:', content, '| typeof:', typeof content, '| length:', content ? content.length : 0);
+    localStorage.setItem('mintputs_file_' + filename, encodeURIComponent(content));
+    mint_addRecent(filename);
+    // console.log('[DEBUG] Saved file:', filename, 'content:', content);
+}
+
+function mint_loadFile(filename) {
+    const raw = localStorage.getItem('mintputs_file_' + filename);
+    if (!raw) return '';
+    try {
+        return decodeURIComponent(raw);
+    } catch (e) {
+        return raw;
+    }
+}
+
+function mint_showSaveModal(onSave, onCancel) {
+    if (!_modalCSSInjected) {
+        Mint.injectCSS(`
+            #mintputs-save-modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+            }
+            .mintputs-modal-backdrop {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100vw;
+                height: 100vh;
+                background: rgba(0,0,0,0.18);
+                z-index: 0;
+            }
+            .mintputs-modal-content {
+                position: relative;
+                z-index: 1;
+                background: #fff;
+                border-radius: 12px;
+                box-shadow: 0 4px 32px rgba(0,0,0,0.13);
+                padding: 2.2em 2.5em 1.5em 2.5em;
+                min-width: 320px;
+                max-width: 90vw;
+                min-height: 120px;
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .mintputs-modal-content h2 {
+                margin-top: 0;
+            }
+            #mintputs-save-filename {
+                width: 100%;
+                padding: 8px;
+                font-size: 1.1em;
+                margin-bottom: 1em;
+                border-radius: 6px;
+                border: 1px solid #ccc;
+            }
+            .mintputs-modal-content button {
+                padding: 8px 18px;
+                border-radius: 6px;
+                border: none;
+                cursor: pointer;
+            }
+            #mintputs-save-cancel {
+                background: #eee;
+            }
+            #mintputs-save-confirm {
+                background: #2d8cff;
+                color: #fff;
+            }
+            @media (prefers-color-scheme: dark) {
+                .mintputs-modal-content {
+                    background: #232323;
+                    color: #fafafa;
+                }
+            }
+        `);
+        _modalCSSInjected = true;
+    }
+    let modal = document.getElementById('mintputs-save-modal');
+    if (!modal) {
+        Mint.injectHTML('body', `
+            <div id="mintputs-save-modal">
+                <div class="mintputs-modal-backdrop"></div>
+                <div class="mintputs-modal-content">
+                    <h2>บันทึกไฟล์</h2>
+                    <input id="mintputs-save-filename" type="text" placeholder="Files name" autofocus />
+                    <div style="display:flex;gap:1em;justify-content:flex-end;">
+                        <button id="mintputs-save-cancel">Cancel</button>
+                        <button id="mintputs-save-confirm">Save</button>
+                    </div>
+                </div>
+            </div>
+        ` + document.body.innerHTML);
+        modal = document.getElementById('mintputs-save-modal');
+    }
+    modal.style.display = 'flex';
+    const input = document.getElementById('mintputs-save-filename');
+    input.value = '';
+    input.focus();
+    document.getElementById('mintputs-save-cancel').onclick = () => {
+        mint_hideSaveModal();
+        if (typeof onCancel === 'function') onCancel();
+    };
+    document.getElementById('mintputs-save-confirm').onclick = () => {
+        const filename = input.value.trim();
+        if (!filename) {
+            input.focus();
+            return;
+        }
+        mint_hideSaveModal();
+        if (typeof onSave === 'function') onSave(filename);
+    };
+    input.onkeydown = (e) => {
+        if (e.key === 'Enter') document.getElementById('mintputs-save-confirm').click();
+        if (e.key === 'Escape') document.getElementById('mintputs-save-cancel').click();
+    };
+}
+
+function mint_hideSaveModal() {
+    const modal = document.getElementById('mintputs-save-modal');
+    if (modal) modal.style.display = 'none';
+}
+
+function mint_bindCtrlS(getContent, setCurrentFile, updateRecentsUI) {
+    window.addEventListener('keydown', function (e) {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+            e.preventDefault();
+            mint_showSaveModal(
+                (filename) => {
+                    const content = getContent();
+                    mint_saveFile(filename, content);
+                    if (typeof updateRecentsUI === 'function') updateRecentsUI();
+                    if (typeof setCurrentFile === 'function') setCurrentFile(filename);
+                },
+                () => { }
+            );
+        }
+    });
+}
+
+function mint_updateRecentsUI(onClickFile) {
+    const recentsDiv = document.querySelector('.RecentsFiles');
+    if (!recentsDiv) return;
+    recentsDiv.innerHTML = '';
+    mint_getRecents().forEach(name => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = 'javascript:void(0)';
+        a.textContent = name;
+        a.onclick = () => {
+            if (typeof onClickFile === 'function') onClickFile(name);
+        };
+        li.appendChild(a);
+        recentsDiv.appendChild(li);
+    });
+}
 
 const lightThemeColors = {
     ColorPrimary: '#faf8f0;',
@@ -150,9 +339,7 @@ export const WebContent = {
                         <span>Recent files</span>
                         <li><a href="javascript:void(0)" id="CurrentFiles">Untitled</a></li>
                         <div class="RecentsFiles">
-                            <li><a href="javascript:void(0)">ซ้อมวิชาไทย</a></li>
-                            <li><a href="javascript:void(0)">โครงงานวิทยาศาสตร์</a></li>
-                            <li><a href="javascript:void(0)">Math projects</a></li>
+                            <li><a href="javascript:void(0)"></a></li>
                         </div>
                     </div>
                 </div>
@@ -164,14 +351,13 @@ export const WebContent = {
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="output-section">
-                            <div class="section-title" id="HTML_outputText">
-                                HTML Output
-                            </div>
-                            <div id="html-output"></div>
+                    <div class="output-section">
+                        <div class="section-title" id="HTML_outputText">
+                            HTML Output
                         </div>
+                        <div id="html-output"></div>
+                    </div>
+                </div>
 
                 <div class="controls">
                     <div class="controlsContent">
@@ -329,6 +515,10 @@ export const WebContent = {
                 font-family: ${Typeface[8]}, ${DefaultFontFallback};
                 color: ${FormatTextColors};
                 line-height: 1.8;
+                /* Fallback */
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
             }
 
             *::-webkit-scrollbar {
@@ -527,14 +717,28 @@ export const WebContent = {
             }
 
             .output-section {
-                position: ${fixed};
+                position: fixed;
                 top: 0;
-                right: -30${pixel};
-                width: calc(100${vw} - 260${pixel});
-                height: 100${vh};
+                right: -30px;
+                width: calc(100vw - 260px);
+                height: 100vh;
                 background-color: ${colorPrimary};
                 z-index: 5;
                 display: none;
+                flex-direction: column;
+            }
+
+            #html-output {
+                flex: 1;
+                overflow-y: auto;
+                width: 100%;
+                max-width: 850px;
+                margin: auto;
+                height: 100%;
+                padding: 24px 32px;
+                background: ${OutputBackground.PrimarySec};
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
             }
 
             .section-title {
@@ -564,13 +768,6 @@ export const WebContent = {
                 color: ${FormatTextColors};
                 font-family: ${Typeface[9]};
                 font-weight: 480;
-            }
-
-            #html-output {
-                flex: 1;
-                overflow-y: auto;
-                width: 850${pixel};
-                margin: auto;
             }
 
             .controls {
@@ -793,50 +990,6 @@ export const WebContent = {
             .cm-punctuation { color: #D4D4D4 !important; }                    /* Punctuation: Light Gray */
             .cm-bracket { color: #D4D4D4 !important; }                        /* Bracket: Light Gray */
 
-            /* Markdown Output Styles */
-            #html-output h1, #html-output h2, #html-output h3, #html-output h4, #html-output h5, #html-output h6 {
-                color: ${textColorPrimaryDisplay};
-                margin: 18.5${pixel} 0 18.5${pixel} 0;
-                ${Typeface[8]};
-            }
-
-            #html-output h1 { font-size: 2.4${em}; font-family: ${Typeface[8]}; line-height: 1.4; border-bottom: ${FormatBorderColors} solid 1${pixel}; margin: 10${pixel} 0 10${pixel} 0; color: ${PrimaryHeaderText} }
-            #html-output h2 { font-size: 2${em}; line-height: 1.4; }
-            #html-output h3 { font-size: 1.8${em}; line-height: 1.45; opacity: 0.72; }
-            #html-output h4 { font-size: 1.6${em}; line-height: 1.5; opacity: 0.65; }
-            #html-output h5 { font-size: 1.4${em}; line-height: 1.65; opacity: 0.60; }
-            #html-output h6 { font-size: 1.2${em}; line-height: 1.82; opacity: 0.55; }
-
-            #html-output p { margin: 10${pixel} 0; line-height: 1.6; color: ${textColorPrimaryText}; }
-            #html-output code { background: transparnt; padding: 2${pixel} 6${pixel}; border-radius: 4${pixel}; font-family: ${Typeface[9]}; }
-            #html-output blockquote { border-left: 4${pixel} solid ${FormatBorderColors}; padding-left: 15${pixel}; margin: 15${pixel} 0; color: ${textColorPrimaryDisplay}; opacity: 0.8; }
-            #html-output ul, #html-output ol { margin: 10${pixel} 0 10${pixel} 30${pixel}; }
-            #html-output li { margin: 5${pixel} 0; }
-            #html-output li a,strong { color: ${textColorPrimaryText}; }
-            #html-output a { color: ${OutputBackground.LinksBackground}; text-decoration: none; margin: 18.5${pixel} 0 18.5${pixel} 0; }
-            #html-output a:hover { text-decoration: underline; }
-            #html-output table { border-collapse: collapse; width: 100${percent}; margin: 10${pixel} 0; margin-bottom: ${spacing[3.5]}; }
-            #html-output th, #html-output td { border-bottom: 1${pixel} solid ${PublicFormatBorderColors}; padding: ${spacing[2]} ${spacing[4]}; text-align: left; }
-            #html-output th { font-weight: ${bold}; }
-
-            /* Responsive adjustments */
-            @media (max-width: ${WebElements.breakpoints.mb}), (max-width: ${WebElements.breakpoints.sm}) {
-                .btn {
-                    font-size: 12.5${pixel};
-                    padding: ${spacing[2]} ${spacing[3]};
-                }
-
-                .stats {
-                    display: none;
-                }
-            }
-            @media (max-width: ${WebElements.breakpoints.md}) {}
-            @media (min-width: ${WebElements.breakpoints.lg}) {}
-            @media (max-width: ${WebElements.breakpoints.xl}) {
-                #html-output {
-                    width: 100${percent};
-                }
-            }
             @media ${DirectThemes[1]} {
                 #icon,#SBCloseButtons  {
                     filter: invert(100${percent});
@@ -929,10 +1082,351 @@ export const WebContent = {
                 background: transparent;
             }
         `;
-        this._cachedCSS = GlobalCSS;
-        return GlobalCSS;
-    }
+        // Mintputs/Output
+        const htmlOutputModernCSS = `
+            @import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Anuphan:wght@400;600;700&display=swap');
 
+            #html-output {
+                --text: #000;
+                --background: #faf9f5;
+                --muted: #666;
+                --border: #a7a6a3;
+                --code-bg: #eae9e5;
+                --heading-border: #a7a6a3;
+                --Links: rgb(50, 50, 153);
+
+                font-family: 'Inter Tight', 'Anuphan', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                max-width: 900px;
+                margin: 0 auto;
+                padding: 2.5rem;
+                line-height: 1.75;
+                color: var(--text);
+                background-color: var(--background);
+                animation: fadeIn 400ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+                height: 100%;
+                overflow-y: auto;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            }
+
+            @media (prefers-color-scheme: dark) {
+                #html-output {
+                    --text: #f4f4f4;
+                    --background: #141414;
+                    --muted: #999;
+                    --border: #343434;
+                    --code-bg: #1f1f1f;
+                    --heading-border: #333;
+                    --Links: rgb(108, 108, 243);
+                }
+            }
+
+            #html-output p {
+                margin: 0 0 1.5rem;
+            }
+
+            #html-output h1, #html-output h2, #html-output h3, #html-output h4, #html-output h5, #html-output h6 {
+                margin-top: 32px;
+                margin-bottom: 16px;
+                font-weight: 600;
+                line-height: 1.25; 
+            }
+
+            #html-output h1 {
+                font-size: 42px;
+                border-bottom: 1px solid var(--heading-border);
+                padding-bottom: 10px;
+            }
+
+            #html-output h2 {
+                font-size: 36px;
+                border-bottom: 1px solid var(--heading-border);
+                padding-bottom: 8px;
+            }
+
+            #html-output h3 { font-size: 1.7em; }
+            #html-output h4 { font-size: 1.425em; }
+            #html-output h5 { font-size: 1.245em; }
+            #html-output h6 { font-size: 1em; }
+
+            #html-output a {
+                color: var(--Links);
+                text-decoration: underline;
+                transition: color 0.2s ease;
+            }
+
+            #html-output a:hover, #html-output a:focus {
+                color: var(--muted);
+            }
+
+            #html-output code {
+                background: var(--code-bg);
+                padding: 2px 4px;
+                border-radius: 3px;
+                font-family: Consolas, Menlo, Monaco, "Courier New", monospace;
+                font-size: 0.95em;
+            }
+
+            #html-output pre {
+                background: var(--code-bg);
+                padding: 16px;
+                border-radius: 6px;
+                overflow-x: auto;
+                margin: 0 0 1.5rem;
+            }
+
+            #html-output pre code {
+                background: none;
+                padding: 0;
+                border-radius: 0;
+                font-size: 0.95em;
+                color: inherit;
+            }
+
+            #html-output blockquote {
+                border-left: 4px solid var(--border);
+                margin: 0 0 1.5rem;
+                padding-left: 16px;
+                color: var(--muted);
+                font-style: italic;
+            }
+
+            #html-output ul, #html-output ol {
+                margin-left: 0rem;
+                margin-right: 0rem;
+                margin-top: 2rem;
+                margin-bottom: 2rem;
+                padding: 0;
+            }
+
+            #html-output li {
+                margin-bottom: 0.5rem;
+            }
+
+            #html-output li > ul, #html-output li > ol {
+                margin-top: 0.5rem;
+            }
+
+            #html-output hr {
+                border: none;
+                border-top: 1px solid var(--border);
+                margin: 2rem 0;
+            }
+
+            #html-output table {
+                border-collapse: collapse;
+                width: 100%;
+                margin-bottom: 1.5rem;
+            }
+
+            #html-output th, #html-output td {
+                border: 1px solid var(--border);
+                padding: 8px 12px;
+                text-align: left;
+            }
+
+            #html-output th {
+                background: var(--code-bg);
+                font-weight: 600;
+            }
+
+            #html-output img {
+                max-width: 100%;
+                height: auto;
+                display: block;
+                margin: 1rem auto;
+            }
+
+            @media (max-width: 640px) {
+                #html-output {
+                    padding: 1.5rem;
+                }
+            }
+
+            @keyframes fadeIn {
+                0% {
+                    opacity: 0;
+                }
+                100% {
+                    opacity: 1;
+                }
+            }
+        `;
+        this._cachedCSS = GlobalCSS + htmlOutputModernCSS;
+        return this._cachedCSS;
+    },
 };
+
+// MintputsStorage * UI
+function getContent() {
+    if (window.editor && typeof window.editor.getValue === 'function') {
+        const value = window.editor.getValue();
+        // console.log('[DEBUG] getContent (CodeMirror):', value, '| editor:', window.editor);
+        return value;
+    }
+    const textarea = document.getElementById('markdown-input');
+    const value = textarea ? textarea.value : '';
+    // console.log('[DEBUG] getContent (textarea):', value, '| textarea:', textarea);
+    return value;
+}
+
+function setCurrentFile(filename) {
+    const currentFile = document.getElementById('CurrentFiles');
+    if (currentFile) currentFile.textContent = filename;
+}
+
+function updateRecentsUI() {
+    // console.log('[DEBUG] updateRecentsUI called');
+    let recents = mint_getRecents();
+    // console.log('[DEBUG] recents:', recents);
+    const recentsDiv = document.querySelector('.RecentsFiles');
+    // console.log('[DEBUG] recentsDiv:', recentsDiv);
+    if (!recentsDiv) return;
+    recentsDiv.innerHTML = '';
+    recents.forEach(name => {
+        if (!name) return;
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = 'javascript:void(0)';
+        a.textContent = name;
+        a.onclick = () => {
+            const content = mint_loadFile(name);
+            const textarea = document.getElementById('markdown-input');
+            if (window.editor && typeof window.editor.setValue === 'function') {
+                window.editor.setValue(content);
+                setCurrentFile(name);
+                window.editor.focus();
+            } else if (textarea) {
+                textarea.value = content;
+                setCurrentFile(name);
+                textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                textarea.focus();
+            } else {
+                // console.warn('[DEBUG] Did not set editor or textarea. content:', content);
+            }
+        };
+        li.appendChild(a);
+        recentsDiv.appendChild(li);
+    });
+    // console.log('[DEBUG] RecentsFiles innerHTML:', recentsDiv.innerHTML);
+}
+window.updateRecentsUI = updateRecentsUI;
+
+function observeRecentsDivAndUpdate() {
+    const targetSelector = '.RecentsFiles';
+    const found = document.querySelector(targetSelector);
+    if (found) {
+        updateRecentsUI();
+        return;
+    }
+    const observer = new MutationObserver(() => {
+        const recentsDiv = document.querySelector(targetSelector);
+        if (recentsDiv) {
+            updateRecentsUI();
+            observer.disconnect();
+        }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+}
+
+if (typeof window !== 'undefined') {
+    window.addEventListener('DOMContentLoaded', () => {
+        observeRecentsDivAndUpdate();
+    });
+}
+
+// Clean localStorage
+function cleanLocalStorageForMintputs() {
+    const recents = mint_getRecents();
+    let cleaned = false;
+    recents.forEach(name => {
+        const key = FILE_PREFIX + name;
+        const raw = localStorage.getItem(key);
+        if (raw && /<textarea|<div|<span|<p|<br|<script|<style/i.test(raw)) {
+            localStorage.removeItem(key);
+            cleaned = true;
+            // console.log('[CLEAN] Removed old HTML file from localStorage:', key);
+        }
+    });
+    if (cleaned) {
+        const newRecents = mint_getRecents().filter(name => {
+            return !!localStorage.getItem(FILE_PREFIX + name);
+        });
+        mint_saveRecents(newRecents);
+        updateRecentsUI();
+    }
+}
+window.cleanLocalStorageForMintputs = cleanLocalStorageForMintputs;
+
+if (typeof window !== 'undefined') {
+    window.addEventListener('DOMContentLoaded', () => {
+        cleanLocalStorageForMintputs();
+        const recents = mint_getRecents();
+        // console.log('Startup recents:', recents);
+        if (recents.length > 0) {
+            const firstFile = recents[0];
+            const key = FILE_PREFIX + firstFile;
+            const raw = localStorage.getItem(key);
+            let decoded = '';
+            if (raw) {
+                try {
+                    decoded = decodeURIComponent(raw);
+                } catch (e) {
+                    decoded = raw;
+                }
+            }
+            // console.log('Trying to load:', key, 'raw:', raw, 'decoded:', decoded);
+            const textarea = document.getElementById('markdown-input');
+            if (window.editor && typeof window.editor.setValue === 'function') {
+                window.editor.setValue(decoded);
+                setCurrentFile(firstFile);
+                window.editor.focus();
+            } else if (textarea) {
+                textarea.value = decoded;
+                setCurrentFile(firstFile);
+                textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                textarea.focus();
+            } else {
+                // console.warn('[DEBUG] Did not set editor or textarea. content:', content);
+            }
+        }
+        updateRecentsUI();
+    });
+}
+
+if (typeof window !== 'undefined') {
+    mint_bindCtrlS(getContent, setCurrentFile, updateRecentsUI);
+}
+
+/**
+ * @function clear
+ * @desc 
+ */
+ 
+function clearAllRecentFiles() {
+    localStorage.removeItem('mintputs_recents');
+    const recents = mint_getRecents();
+    recents.forEach(name => {
+        if (name) localStorage.removeItem('mintputs_file_' + name);
+    });
+    updateRecentsUI();
+}
+
+if (typeof window !== 'undefined') {
+    window.clearAllRecentFiles = clearAllRecentFiles;
+}
+
+function resetStr() {
+    localStorage.removeItem('mintputs_recents');
+    Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('mintputs_file_')) {
+            localStorage.removeItem(key);
+        }
+    });
+    updateRecentsUI();
+}
+if (typeof window !== 'undefined') {
+    window.resetStr = resetStr;
+}
 
 WebContent.initThemeSystem();
