@@ -593,7 +593,7 @@ const std::string HTTPServer::liveReloadScript = R"(
 )";
 
 // Main application
-class LiveServer {
+class Mintputs {
 private:
     HTTPServer server;
     Logger logger;
@@ -616,7 +616,7 @@ private:
     }
 
 public:
-    LiveServer(int port = 3000) : server(port) {}
+    Mintputs(int port = 3000) : server(port) {}
     
     bool start() {
         logger.info("Starting Live Server...");
@@ -658,7 +658,7 @@ public:
         logger.info("========================");
         
 #ifndef _WIN32
-        static auto clearLogHandler = [](int signal, LiveServer* server) {
+        static auto clearLogHandler = [](int signal, Mintputs* server) {
             if (server) {
                 server->clearLog();
                 server->logger.info("Manual log clear triggered");
@@ -700,7 +700,7 @@ int main(int argc, char* argv[]) {
     }
     
     try {
-        LiveServer app(port);
+        Mintputs app(port);
         
         if (!app.start()) {
             std::cerr << "Failed to start server" << std::endl;
@@ -718,11 +718,11 @@ int main(int argc, char* argv[]) {
 
 /*    
     WINDOWS (MinGW):
-    g++ -x c++ -std=c++20 -static -O3 -DNDEBUG -flto -march=native LiveServer.cpp -o LiveServer.exe -lstdc++ -lws2_32
+    g++ -x c++ -std=c++20 -static -O3 -DNDEBUG -flto -march=native Mintputs.cpp -o Mintputs.exe -lstdc++ -lws2_32
     
     LINUX:
-    g++ -std=c++20 -O3 -DNDEBUG -flto -march=native LiveServer.cpp -o LiveServer -lpthread
+    g++ -std=c++20 -O3 -DNDEBUG -flto -march=native Mintputs.cpp -o Mintputs -lpthread
     
     macOS:
-    g++ -std=c++20 -O3 -DNDEBUG -flto -march=native LiveServer.cpp -o LiveServer
+    g++ -std=c++20 -O3 -DNDEBUG -flto -march=native Mintputs.cpp -o Mintputs
 */
