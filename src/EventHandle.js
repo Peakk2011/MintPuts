@@ -425,7 +425,7 @@ Wrap up your thoughts and provide a call to action.
         CodeMirror.defineMode("slash-command-overlay", function (config, parserConfig) {
             var overlay = {
                 token: function (stream, state) {
-                    if (stream.sol() && stream.match(/^\s*\/[a-zA-Z].*$/)) {
+                    if (stream.sol() && stream.match(/^[\s]*\/[a-zA-Z].*$/)) {
                         stream.skipToEnd();
                         return "command";
                     }
@@ -435,7 +435,6 @@ Wrap up your thoughts and provide a call to action.
             };
             return CodeMirror.overlayMode(CodeMirror.getMode(config, parserConfig.backdrop || "markdown"), overlay);
         });
-        editor.setOption('mode', { name: 'slash-command-overlay', backdrop: 'markdown' });
 
         window.editor = editor;
 
@@ -489,7 +488,7 @@ Wrap up your thoughts and provide a call to action.
                                 const sign = window.binaryConverterModule._get_sign_bit(number);
                                 const exponent = window.binaryConverterModule._get_exponent(number);
                                 const mantissa = window.binaryConverterModule._get_mantissa(number);
-                                result = `Float ${number} → Binary: ${binary}\nIEEE 754: Sign=${sign}, Exponent=${exponent}, Mantissa=${mantissa}`;
+                                result = `Float ${number} → Binary: ${binary}\nSign=${sign}, Exponent=${exponent}, Mantissa=${mantissa}`;
                             }
                             
                             cm.setValue(result);
@@ -503,9 +502,9 @@ Wrap up your thoughts and provide a call to action.
                             }
                         }
                     } else {
-                        cm.setValue('Binary converter module not loaded. Please wait...');
+                        cm.setValue('Module not loaded');
                         if (typeof showNotification === 'function') {
-                            showNotification('Loading binary converter...', 'info');
+                            return;
                         }
                     }
                     event.preventDefault();
@@ -522,19 +521,16 @@ Wrap up your thoughts and provide a call to action.
                             
                             cm.setValue(`Binary ${binaryStr} → Integer: ${result}`);
                             if (typeof showNotification === 'function') {
-                                showNotification('Binary to integer conversion completed!', 'success');
+                                showNotification('Binary to integer conversion completed', 'success');
                             }
                         } catch (error) {
                             cm.setValue(`Error: ${error.message}`);
                             if (typeof showNotification === 'function') {
-                                showNotification('Binary to integer conversion failed!', 'error');
+                                showNotification('Binary to integer conversion failed', 'error');
                             }
                         }
                     } else {
-                        cm.setValue('Binary converter module not loaded. Please wait...');
-                        if (typeof showNotification === 'function') {
-                            showNotification('Loading binary converter...', 'info');
-                        }
+                        return;
                     }
                     event.preventDefault();
                 } else if (/^binary2float\s+([01]{32})\s*$/.test(value)) {
@@ -550,19 +546,16 @@ Wrap up your thoughts and provide a call to action.
                             
                             cm.setValue(`Binary ${binaryStr} → Float: ${result}`);
                             if (typeof showNotification === 'function') {
-                                showNotification('Binary to float conversion completed!', 'success');
+                                showNotification('Binary to float conversion completed', 'success');
                             }
                         } catch (error) {
                             cm.setValue(`Error: ${error.message}`);
                             if (typeof showNotification === 'function') {
-                                showNotification('Binary to float conversion failed!', 'error');
+                                showNotification('Binary to float conversion failed', 'error');
                             }
                         }
                     } else {
-                        cm.setValue('Binary converter module not loaded. Please wait...');
-                        if (typeof showNotification === 'function') {
-                            showNotification('Loading binary converter...', 'info');
-                        }
+                        return;
                     }
                     event.preventDefault();
                 }
@@ -628,19 +621,15 @@ Wrap up your thoughts and provide a call to action.
 
         setTimeout(() => {
             editor.refresh();
-
             editor.setOption('mode', editor.getOption('mode'));
-
             editor.on('change', function () {
                 setTimeout(() => {
                     editor.refresh();
                 }, 10);
             });
-
             editor.on('cursorActivity', function () {
                 editor.refresh();
             });
-
             setTimeout(() => {
                 editor.setOption('mode', {
                     name: 'markdown',
@@ -648,10 +637,10 @@ Wrap up your thoughts and provide a call to action.
                     fencedCodeBlocks: true,
                     base: 'markdown'
                 });
-            }, 200);
+                editor.setOption('mode', { name: 'slash-command-overlay', backdrop: 'markdown' });
+            }, 250);
         }, 100);
 
-        // เรียกใช้ intellisense/editor command logic
         setupIntellisense(editor);
     }
 
@@ -661,9 +650,7 @@ Wrap up your thoughts and provide a call to action.
         CodeMirror.defineMIME("text/x-sql", "sql");
         CodeMirror.defineMIME("text/x-yaml", "yaml");
         CodeMirror.defineMIME("text/x-toml", "toml");
-        // CodeMirror.defineMIME("text/x-dockerfile", "dockerfile");
         CodeMirror.defineMIME("text/x-vue", "vue");
-        // CodeMirror.defineMIME("text/x-rustsrc", "rust");
         CodeMirror.defineMIME("text/x-swift", "swift");
         CodeMirror.defineMIME("text/x-perl", "perl");
         CodeMirror.defineMIME("text/x-powershell", "powershell");

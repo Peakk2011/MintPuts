@@ -59,6 +59,14 @@ const speedArgs = {
 };
 
 const promptMap = {
+    "/ using": {
+        text: "Using `/ using binary help` to see all commands",
+        speed: speedArgs.normal
+    },
+    "/ using binary=<number>": {
+        text: "Than Enter your number values.",
+        speed: speedArgs.normal
+    },
     "/ create": {
         text: "Using `/ Create` method to type more options\nType  `/ help`   to see all options",
         speed: speedArgs.normal
@@ -152,7 +160,7 @@ const promptMap = {
         speed: speedArgs.normal
     },
     "/ create faq": {
-        text: "## FAQ\n**Q:** What is MintPuts?\n**A:** A cool editor!",
+        text: "## FAQ\n**Q:** What is MintPuts?\n**A:** A cool editor",
         speed: speedArgs.normal
     },
     "/ create product card": {
@@ -160,9 +168,9 @@ const promptMap = {
 <div class="product-card-minimal">
   <img src="https://images.unsplash.com/photo-1513708927688-890fe41c2e31?auto=format&fit=crop&w=400&q=80" alt="Product" class="product-img-minimal">
   <div class="product-info-minimal">
-    <div class="product-title-minimal">MintPuts T-Shirt</div>
-    <div class="product-price-minimal">$19.99</div>
-    <button class="product-btn-minimal">Add to Cart</button>
+    <div class="product-title-minimal">[Example]</div>
+    <div class="product-price-minimal">[Texts]</div>
+    <button class="product-btn-minimal">[Texts]</button>
   </div>
 </div>
 
@@ -233,45 +241,24 @@ const promptMap = {
   }
 }
 </style>`,
-        speed: speedArgs.normal
+        speed: speedArgs.veryFast
     },
     "/ help": {
         text: "## Help\n- Type /create heading with subtitle To create a topic\n- Type /create heading To create a heading\n- Type /create list To create a list\n- Type /create table To create a table\n- Type /create quote To create a quote\n- Type /create social links To create social links\n- Type /create about me section To create an about me section\n- Type /create code block To create a code block\n- Type /create image To create an image\n- Type /create link To create a link\n- Type /create warning To create a warning box\n- Type /create info To create an info box\n- Type /create todo To create a todo list\n- Type /create contact To create a contact section\n- Type /create profile To create a profile section\n- Type /create faq To create a FAQ section\n\n## Binary Converter:\n- Type /binary help for binary converter commands\n- Type `binary <number>` to convert number to binary\n- Type `binary2int <binary>` to convert binary to integer\n- Type `binary2float <32-bit-binary>` to convert binary to float",
-        speed: speedArgs.veryFast
+        speed: speedArgs.fast
     },
     // Easter eggs
     "/ test.peakk": {
         text: `\n# Paris - The chainsmokers\n## Peakk Favourite song\n\nIf we go down, then we go down together\nThey'll say you could do anything\nThey'll say that I was clever\nIf we go down, then we go down together\nWe'll get away with everything\nLet's show them we are better\n\nLet's show them we are better\nLet's show them we are better\n                        `,
-        speed: speedArgs.veryFast
+        speed: speedArgs.fast
     },
     "/ test.girlfriend": {
         text: `\n# เพลงที่คนสร้างอยากสื่อถือแฟนเก่า\n## คิด(แต่ไม่)ถึง\n\nอยากรู้เพียงว่าความคิดถึงของเธอกับฉันมันเท่ากันหรือเปล่า\nถามจริง ๆ ว่าใจเธอเปลี่ยนไปหรือเปล่า\nฉันไม่คิดไปเองใช่ไหม\nความคิดถึงที่ฉันได้เคยส่งไป\nส่งไปได้เพียงในความทรงจำที่มีเราเรื่อยมา\nแค่นึกภาพตอนนั้น ฉันก็มีน้ำตา\nรู้บ้างไหมว่าเจ็บแค่ไหน\nความคิดถึงที่ฉันได้เคยส่งไป\nส่งไปไม่เคยถึงเธอเลย\n\n(คิดแต่ไม่ถึง คิด คิด แต่ไม่ถึงเธอ) => x4\n\nว่าความคิดถึงของเธอกับฉันมันเท่ากันหรือเปล่า\nถามจริง ๆ ว่าใจเธอเปลี่ยนไปหรือเปล่า\nฉันไม่คิดไปเองใช่ไหม\nความคิดถึงที่ฉันได้เคยส่งไป\nส่งไปได้เพียงในความทรงจำที่มีเราเรื่อยมา\nแค่นึกภาพตอนนั้น ฉันก็มีน้ำตา\nรู้บ้างไหมว่าเจ็บแค่ไหน\nความคิดถึงที่ฉันได้เคยส่งไป\nส่งไปไม่เคยถึงเธอเลย\n                        `,
-        speed: speedArgs.veryFast
+        speed: speedArgs.fast
     },
-    "/ binary help": {
-        text: `# Binary Converter Commands
-
-## Available Commands:
-- \`binary <number>\` - Convert number to binary
-  - Example: \`binary 42\` → Integer 42 to binary
-  - Example: \`binary 3.14\` → Float 3.14 to binary (IEEE 754)
-
-- \`binary2int <binary>\` - Convert binary to integer
-  - Example: \`binary2int 101010\` → Binary 101010 to integer
-
-- \`binary2float <32-bit-binary>\` - Convert 32-bit binary to float
-  - Example: \`binary2float 01000000010010001111010111000011\` → 32-bit binary to float
-
-## Usage:
-Just type the command and press Enter in the editor!
-
-## Examples:
-- \`binary 255\`
-- \`binary -42\`
-- \`binary 3.14159\`
-- \`binary2int 1101\`
-- \`binary2float 01000000010010001111010111000011\``,
-        speed: speedArgs.veryFast
+    "/ using binary help": {
+        text: `# Binary Converter Commands\n\n## All Commands:\n- \`/ using binary=<number>\` - Convert number to binary\n  - Example: \`/ using binary=42\` → Integer 42 to binary\n  - Example: \`/ using binary=3.14\` → Float 3.14 to binary (IEEE 754)\n\n- \`/ using binary2int=<binary>\` - Convert binary to integer\n  - Example: \`/ using binary2int=101010\` → Binary 101010 to integer\n\n- \`/ using binary2float=<32-bit-binary>\` - Convert 32-bit binary to float\n  - Example: \`/ using binary2float=01000000010010001111010111000011\` → 32-bit binary to float\n\n## Usage:\nType the command and press Enter in the editor\n\n## Examples:\n- \`/ using binary=255\`\n- \`/ using binary=-42\`\n- \`/ using binary=3.14159\`\n- \`/ using binary2int=1101\``,
+        speed: speedArgs.fast
     },
 };
 
@@ -327,16 +314,136 @@ function setupIntellisense(editor) {
             const prompt = promptMap[cmd.toLowerCase()];
             if (prompt) {
                 e.preventDefault();
+                // nore `Press Enter to begin`
+                if (cmd.toLowerCase() === '/ using' || cmd.toLowerCase().startsWith('/ using binary=')) {
+                    typewriterInsertLineCM5(
+                        cm,
+                        prompt.text,
+                        cursor.line,
+                        prompt.speed,
+                        () => removePressEnterHint(cm)
+                    );
+                } else {
+                    typewriterInsertLineCM5(
+                        cm,
+                        prompt.text + "\n\n`Press Enter to begin`",
+                        cursor.line,
+                        prompt.speed,
+                        () => removePressEnterHint(cm)
+                    );
+                }
+                return;
+            }
+
+            if (/^\/ using binary(2int|2float)?=/.test(cmd.toLowerCase())) {
+                e.preventDefault();
+                // GET pattern
+                let result = '';
+                if (/^\/ using binary=/.test(cmd.toLowerCase())) {
+                    const match = cmd.match(/^\/ using binary=(.+)$/i);
+                    if (match) {
+                        const value = match[1].trim();
+                        const number = parseFloat(value);
+                        if (window.binaryConverterModule) {
+                            try {
+                                if (!isNaN(number)) {
+                                    if (Number.isInteger(number)) {
+                                        // Integer to binary
+                                        const binaryPtr = window.binaryConverterModule._int_to_binary(number);
+                                        const binary = window.binaryConverterModule.UTF8ToString(binaryPtr);
+                                        result = `${number} → ${binary}`;
+                                    } else {
+                                        // Float to binary
+                                        const binaryPtr = window.binaryConverterModule._float_to_binary(number);
+                                        const binary = window.binaryConverterModule.UTF8ToString(binaryPtr);
+                                        // const sign = window.binaryConverterModule._get_sign_bit(number);
+                                        // const exponent = window.binaryConverterModule._get_exponent(number);
+                                        // const mantissa = window.binaryConverterModule._get_mantissa(number);
+                                        result = `${number} → ${binary}`;
+                                        // Sign=${sign}, Exponent=${exponent}, Mantissa=${mantissa}
+                                    }
+                                } else {
+                                    result = `Error: Invalid number\n/ using binary=<number>`;
+                                }
+                            } catch (error) {
+                                result = `Error: ${error.message}`;
+                            }
+                        } else {
+                            result = 'Module not loaded';
+                        }
+                    } else {
+                        result = 'Error: Invalid command format.';
+                    }
+                } else if (/^\/ using binary2int=/.test(cmd.toLowerCase())) {
+                    const match = cmd.match(/^\/ using binary2int=([01]+)$/i);
+                    if (match) {
+                        const binaryStr = match[1];
+                        if (window.binaryConverterModule) {
+                            try {
+                                const binaryPtr = window.binaryConverterModule._malloc(binaryStr.length + 1);
+                                window.binaryConverterModule.stringToUTF8(binaryStr, binaryPtr, binaryStr.length + 1);
+                                const intResult = window.binaryConverterModule._binary_to_int(binaryPtr);
+                                window.binaryConverterModule._free(binaryPtr);
+                                result = `Binary ${binaryStr} → Integer: ${intResult}`;
+                            } catch (error) {
+                                result = `Error: ${error.message}`;
+                            }
+                        } else {
+                            result = 'Module not loaded';
+                        }
+                    } else {
+                        result = 'Error: Invalid binary format.';
+                    }
+                } else if (/^\/ using binary2float=/.test(cmd.toLowerCase())) {
+                    const match = cmd.match(/^\/ using binary2float=([01]{32})$/i);
+                    if (match) {
+                        const binaryStr = match[1];
+                        if (window.binaryConverterModule) {
+                            try {
+                                const binaryPtr = window.binaryConverterModule._malloc(binaryStr.length + 1);
+                                window.binaryConverterModule.stringToUTF8(binaryStr, binaryPtr, binaryStr.length + 1);
+                                const floatResult = window.binaryConverterModule._binary_to_float(binaryPtr);
+                                window.binaryConverterModule._free(binaryPtr);
+                                result = `Binary ${binaryStr} → Float: ${floatResult}`;
+                            } catch (error) {
+                                result = `Error: ${error.message}`;
+                            }
+                        } else {
+                            result = 'Module not loaded';
+                        }
+                    } else {
+                        result = 'Error: Must be exactly 32 bits (0/1 only).';
+                    }
+                }
                 typewriterInsertLineCM5(
                     cm,
-                    prompt.text + "\n\n`Press Enter to begin`",
+                    result + "" + "\n\n`Press Enter to begin`",
                     cursor.line,
-                    prompt.speed,
-                    () => removePressEnterHint(cm)
+                    speedArgs.fast,
+                    // Cursor JMP
+                    () => {
+                        if (/Error:/i.test(result)) {
+                            // index of / using binary=<int>, binary2int=<int>, binary2float=<int>
+                            const lineCount = cm.lineCount();
+                            let foundLine = 0;
+                            for (let i = 0; i < lineCount; i++) {
+                                const text = cm.getLine(i);
+                                if (/\/ using binary(2int|2float)?=/.test(text)) {
+                                    foundLine = i;
+                                    break;
+                                }
+                            }
+                            const text = cm.getLine(foundLine);
+                            cm.setCursor({ line: foundLine, ch: text.length });
+                        } else {
+                            cm.setCursor({ line: cursor.line + 1, ch: 0 });
+                        }
+                        removePressEnterHint(cm);
+                    }
                 );
                 return;
             }
-            // Auto-correct: ถ้าใกล้เคียง ให้แทรก prompt ที่ใกล้เคียงที่สุด
+
             if (/^\/(create|html|test|help)/.test(cmd.toLowerCase())) {
                 e.preventDefault();
                 const suggestions = getClosestPrompt(cmd);
@@ -351,6 +458,29 @@ function setupIntellisense(editor) {
             }
         }
     });
+
+    // overlay highlighting
+    const commandList = Object.keys(promptMap)
+        .map(cmd => cmd.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&'))
+        .sort((a, b) => b.length - a.length);
+    const commandPattern = new RegExp('^\\s*(' + commandList.join('|') + ')', 'i');
+
+    if (typeof CodeMirror !== 'undefined' && CodeMirror.defineMode) {
+        CodeMirror.defineMode("slash-command-overlay", function (config, parserConfig) {
+            var overlay = {
+                token: function (stream, state) {
+                    if (stream.sol() && stream.match(commandPattern)) {
+                        stream.skipToEnd();
+                        return "command";
+                    }
+                    while (!stream.eol()) stream.next();
+                    return null;
+                }
+            };
+            return CodeMirror.overlayMode(CodeMirror.getMode(config, parserConfig.backdrop || "markdown"), overlay);
+        });
+        editor.setOption('mode', { name: 'slash-command-overlay', backdrop: 'markdown' });
+    }
 }
 
 function removePressEnterHint(cm) {

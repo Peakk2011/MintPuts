@@ -507,13 +507,20 @@ export const WebContent = {
         const transitionAll = transitions.all;
 
         const GlobalCSS = `
+            :root {
+                --sidebar-width: 260px;
+                --sidebar-width-mobile: 0px;
+                --sidebar-width-tablet: 200px;
+                --container-padding: ${spacing[4]};
+                --container-padding-mobile: ${spacing[2]};
+            }
+
             * {
                 ${normalizeCallReset}
                 ${textRenderForce}
                 font-family: ${Typeface[8]}, ${DefaultFontFallback};
                 color: ${FormatTextColors};
                 line-height: 1.8;
-                /* Fallback */
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
@@ -527,30 +534,50 @@ export const WebContent = {
                 border-radius: 0${pixel};
                 background-color: ${colorPrimary};
             }
-
             *::-webkit-scrollbar-track:hover {
                 background-color: ${colorPrimary};
             }
-
             *::-webkit-scrollbar-track:active {
                 background-color: ${colorPrimary};
             }
-
             *::-webkit-scrollbar-thumb {
                 border-radius: 20${pixel};
                 background-color: #484848;
             }
-
             *::-webkit-scrollbar-thumb:hover {
                 background-color: #727272;
             }
-
             *::-webkit-scrollbar-thumb:active {
                 background-color: #999999;
             }
             
+            body {
+                background-color: ${colorPrimary};
+                overflow-x: hidden;
+            }
+
+            #mobile-menu-toggle {
+                display: none;
+                position: fixed;
+                top: ${spacing[4]};
+                left: ${spacing[4]};
+                z-index: 9999;
+                background: ${colorPrimary};
+                border: ${FormatBorderColors} solid 1${pixel};
+                border-radius: 6${pixel};
+                padding: ${spacing[2]};
+                cursor: pointer;
+                -webkit-app-region: no-drag;
+            }
+
+            #mobile-menu-toggle svg {
+                width: 20${pixel};
+                height: 20${pixel};
+                fill: ${textColorPrimaryDisplay};
+            }
+
             #titlebar {
-                width: 260${pixel};
+                width: var(--sidebar-width);
                 height: 100${vh};
                 background-color: ${SIDEBAR};
                 -webkit-app-region: drag;
@@ -558,6 +585,11 @@ export const WebContent = {
                 position: ${fixed};
                 z-index: 10;
                 border-right: ${FormatBorderColors} solid 1${pixel};
+                transition: transform 0.3s ease;
+            }
+
+            #titlebar.mobile-hidden {
+                transform: translateX(-100%);
             }
 
             #TitleLinks {
@@ -569,6 +601,7 @@ export const WebContent = {
                 gap: 16${pixel};
                 z-index: 9999;
                 transform: translateX(-50${percent});
+                flex-wrap: wrap;
             }
 
             #TitleLinks li {
@@ -599,14 +632,11 @@ export const WebContent = {
                 align-items: center;
                 justify-content: space-between;
                 width: fit-content;
-
                 border: ${FormatBorderColors} solid 1${pixel};
-                width: fit-content;
                 height: 40${pixel};
                 background-color: ${colorPrimary};
                 -webkit-app-region: drag;
                 border-radius: ${borderRadiusFull};
-                padding: 0 ${spacing[1]};
             }
 
             #drag-region {
@@ -619,14 +649,14 @@ export const WebContent = {
                 left: ${spacing[4]};
                 top: ${spacing[3.5]};
                 margin-top: ${(() => {
-                if (isBrowserOpening()) {
-                    return '0';
-                } else if (isMacOS()) {
-                    return spacing[4];
-                } else {
-                    return '0';
-                }
-            })()};
+                    if (isBrowserOpening()) {
+                        return '0';
+                    } else if (isMacOS()) {
+                        return spacing[4];
+                    } else {
+                        return '0';
+                    }
+                })()};
             }
 
             #SBCloseButtons {
@@ -638,14 +668,14 @@ export const WebContent = {
                 height: ${auto};
                 -webkit-app-region: no-drag;
                 margin-top: ${(() => {
-                if (isBrowserOpening()) {
-                    return '0';
-                } else if (isMacOS()) {
-                    return spacing[4];
-                } else {
-                    return '0';
-                }
-            })()};
+                    if (isBrowserOpening()) {
+                        return '0';
+                    } else if (isMacOS()) {
+                        return spacing[4];
+                    } else {
+                        return '0';
+                    }
+                })()};
             }
 
             #icon, #icon path, #icon rect {
@@ -693,20 +723,17 @@ export const WebContent = {
             }
 
             .RecentsFiles {
-                margin-top: ${spacing[3]}
-            }
-
-            body {
-                background-color: ${colorPrimary};
+                margin-top: ${spacing[3]};
             }
 
             .container {
                 overflow: hidden;
                 backdrop-filter: blur(10${pixel});
                 height: 100${vh};
-                width: calc(100${vw} - 260${pixel});
+                width: calc(100${vw} - var(--sidebar-width));
                 position: ${fixed};
-                left: 260${pixel};
+                left: var(--sidebar-width);
+                transition: all 0.3s ease;
             }
 
             .main-content {
@@ -720,7 +747,7 @@ export const WebContent = {
             .input-section, .output-section {
                 display: flex;
                 flex-direction: column;
-                padding: ${spacing[4]};
+                padding: var(--container-padding);
                 width: 100${percent};
             }
 
@@ -728,7 +755,7 @@ export const WebContent = {
                 position: fixed;
                 top: 20px;
                 right: -30px;
-                width: calc(100vw - 260px);
+                width: calc(100vw - var(--sidebar-width));
                 height: 100vh;
                 background-color: ${colorPrimary};
                 z-index: 5;
@@ -743,9 +770,9 @@ export const WebContent = {
                 max-width: 850px;
                 margin: auto;
                 height: 100%;
-                padding: 24px 32px;
-                background: ${OutputBackground.PrimarySec};
-                border-radius: 8px;
+                padding: 24${pixel} 32${pixel};
+                /* background: ${OutputBackground.PrimarySec}; */
+                border-radius: 8${pixel};
                 box-shadow: 0 2px 8px rgba(0,0,0,0.04);
             }
 
@@ -771,7 +798,7 @@ export const WebContent = {
                 position: ${fixed};
                 bottom: 0;
                 right: 0;
-                width: calc(100${vw} - 260${pixel});
+                width: calc(100${vw} - var(--sidebar-width));
                 height: 60${pixel};
                 margin: auto;
                 background-color: ${colorPrimary};
@@ -782,7 +809,7 @@ export const WebContent = {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding: 0 ${spacing[6]};
+                padding: 0 var(--container-padding);
                 width: 100${vw};
             }
 
@@ -792,6 +819,7 @@ export const WebContent = {
                 font-size: 13.5${pixel};
                 color: #A2A2A2;
                 font-family: ${Typeface[0]},${DefaultFontFallback};
+                flex-wrap: wrap;
             }
 
             pre {
@@ -928,40 +956,49 @@ export const WebContent = {
                 opacity: 0.5;
             }
             
-            .cm-header { color: #ffc799 !important; }                         /* Header: Orange */
-            .cm-strong { color: #DCDCAA !important; }                         /* Bold: Yellow */
-            .cm-em { color: #CE9178 !important; font-style: italic; }         /* Italic: Orange */
+            .cm-header { color: #ffc799 !important; }
+            .cm-strong { color: #DCDCAA !important; }
+            .cm-em { color: #CE9178 !important; font-style: italic; }
             .cm-link, .cm-url { color: #569CD6 !important; text-decoration: underline; }  
             .cm-quote { color: #6A9955 !important; background-color: #222520; }         
-            .cm-list { color: #DCDCAA !important; }                           /* List: Yellow */
-            .cm-variable-2 { color: #CE9178 !important; }                     /* Inline code: Orange */
-            .cm-formatting { color: #808080 !important; }                     /* Formatting: Gray */
-            .cm-error { color: #F44747 !important; }                          /* Error: Red */
-            .cm-string { color: #CE9178 !important; }                         /* String: Orange */
-            .cm-keyword { color: #569CD6 !important; }                        /* Keyword: Blue */
+            .cm-list { color: #DCDCAA !important; }
+            .cm-variable-2 { color: #CE9178 !important; }
+            .cm-formatting { color: #808080 !important; }
+            .cm-error { color: #F44747 !important; }
+            .cm-string { color: #CE9178 !important; }
+            .cm-keyword { color: #569CD6 !important; }
             .cm-comment { color: #6A9955 !important; }   
-            .cm-number { color: #DCDCAA !important; }                         /* Number: Yellow */
-            .cm-property { color: #4EC9B0 !important; }                       /* Property: Cyan */
-            .cm-operator { color: #DCDCAA !important; }                       /* Operator: Yellow */
-            .cm-tag { color: #569CD6 !important; }                            /* Tag: Blue */
-            .cm-attribute { color: #DCDCAA !important; }                      /* Attribute: Yellow */
-            .cm-builtin { color: #4EC9B0 !important; }                        /* Builtin: Cyan */
-            .cm-type { color: #4EC9B0 !important; }                           /* Type: Cyan */
-            .cm-function { color: #DCDCAA !important; }                       /* Function: Yellow */
-            .cm-meta { color: #808080 !important; }                           /* Meta: Gray */
-            .cm-qualifier { color: #569CD6 !important; }                      /* Qualifier: Blue */
-            .cm-atom { color: #569CD6 !important; }                           /* Atom: Blue */
-            .cm-punctuation { color: #D4D4D4 !important; }                    /* Punctuation: Light Gray */
-            .cm-bracket { color: #D4D4D4 !important; }                        /* Bracket: Light Gray */
+            .cm-number { color: #DCDCAA !important; }
+            .cm-property { color: #4EC9B0 !important; }
+            .cm-operator { color: #DCDCAA !important; }
+            .cm-tag { color: #569CD6 !important; }
+            .cm-attribute { color: #DCDCAA !important; }
+            .cm-builtin { color: #4EC9B0 !important; }
+            .cm-type { color: #4EC9B0 !important; }
+            .cm-function { color: #DCDCAA !important; }
+            .cm-meta { color: #808080 !important; }
+            .cm-qualifier { color: #569CD6 !important; }
+            .cm-atom { color: #569CD6 !important; }
+            .cm-punctuation { color: #D4D4D4 !important; }
+            .cm-bracket { color: #D4D4D4 !important; }
 
-            @media ${DirectThemes[1]} {
-                #icon,#SBCloseButtons  {
-                    filter: invert(100${percent});
-                }
+            .cm-command {
+                background: #1d2021 !important;
+                color: #8ec07c !important;
+                border-radius: 6px;
+                transition: background 0.2s;
+                padding: ${spacing[1]} ${spacing[3]};
+                display: inline-block;
+                vertical-align: middle;
+                line-height: 1.4;
             }
 
-            ${textRenderSpecific}; 
-            
+            .CodeMirror-line.has-command::after {
+                content: '';
+                display: block;
+                height: 8px;
+            }
+
             #TemplatesDropdownBar {
                 position: relative;
             }
@@ -1045,6 +1082,265 @@ export const WebContent = {
             .dropdown-template-btn:active {
                 background: transparent;
             }
+            
+            @media (min-width: 1200px) {
+                :root {
+                    --sidebar-width: 250px;
+                }
+                
+                #html-output {
+                    max-width: 1000px;
+                    padding: 32${pixel} 40${pixel};
+                }
+            }
+
+            @media (max-width: 768px) {
+                :root {
+                    --sidebar-width: var(--sidebar-width-tablet);
+                    --container-padding: ${spacing[3]};
+                }
+
+                #TitleLinks {
+                    gap: 12${pixel};
+                    top: ${spacing[4]};
+                    min-width: max-content;
+                    right: 20px;
+                    transform: translateX(0);
+                }
+
+                #TitleLinks li a {
+                    padding: ${spacing[2]} ${spacing[4]};
+                    font-size: 13${pixel};
+                }
+
+                .TitleSubLinks, .TitlePrimaryLinks {
+                    height: 40${pixel};
+                }
+
+                .stats {
+                    gap: 12${pixel};
+                    font-size: 12${pixel};
+                }
+
+                .controlsContent {
+                    flex-direction: column;
+                    gap: ${spacing[2]};
+                    padding: ${spacing[2]};
+                }
+
+                .controls {
+                    height: auto;
+                    min-height: 60${pixel};
+                    padding: ${spacing[2]} 0;
+                }
+
+                #html-output {
+                    padding: 16${pixel} 20${pixel};
+                    max-width: none;
+                    margin: 0;
+                }
+
+                .CodeMirror-sizer {
+                    margin-left: 35${pixel} !important;
+                }
+
+                .CodeMirror-linenumber {
+                    min-width: 30${pixel};
+                    width: 30${pixel};
+                }
+
+                #DropdownPresetMenu {
+                    min-width: 200${pixel};
+                    left: ${spacing[2]};
+                }
+            }
+
+            @media (max-width: 640px) {
+                :root {
+                    --sidebar-width: var(--sidebar-width-mobile);
+                    --container-padding: var(--container-padding-mobile);
+                }
+
+                #mobile-menu-toggle {
+                    display: block;
+                }
+
+                #titlebar {
+                    width: 280${pixel};
+                    transform: translateX(-100%);
+                }
+
+                #titlebar.mobile-show {
+                    transform: translateX(0);
+                }
+
+                .container {
+                    width: 100${vw};
+                    left: 0;
+                    background: ${colorPrimary} !important;
+                }
+
+                .output-section {
+                    width: 100${vw};
+                    right: 0;
+                }
+
+                .controls {
+                    width: 100${vw};
+                }
+
+                #TitleLinks {
+                    position: static;
+                    transform: none;
+                    margin: ${spacing[4]} 0;
+                    flex-direction: row;
+                    flex-wrap: wrap;
+                    justify-content: center;
+                }
+
+                .TitleSubLinks,
+                .TitlePrimaryLinks {
+                    height: 35${pixel};
+                }
+
+                .stats {
+                    justify-content: center;
+                    gap: 8${pixel};
+                    font-size: 14${pixel};
+                }
+
+                #html-output {
+                    padding: 12${pixel} 16${pixel};
+                }
+
+                .CodeMirror-code {
+                    margin-top: 10${pixel} !important;
+                }
+
+                .CodeMirror-sizer {
+                    margin-left: 25${pixel} !important;
+                    background: ${colorPrimary} !important;
+                }
+
+                .CodeMirror-scroll {
+                    background: ${colorPrimary} !important;
+                }
+
+                .CodeMirror-linenumber {
+                    min-width: 25${pixel};
+                    width: 25${pixel};
+                    font-size: 11${pixel};
+                }
+
+                #markdown-input {
+                    font-size: 13${pixel};
+                }
+
+                #DropdownPresetMenu {
+                    min-width: 180${pixel};
+                    left: ${spacing[1]};
+                    top: 110${pixel};
+                }
+
+                .dropdown-template-btn {
+                    font-size: 13${pixel};
+                    padding: 4${pixel} 8${pixel};
+                }
+
+            }
+
+            @media (max-width: 420px) {
+                #TitleLinks {
+                    margin: ${spacing[3]} 0;
+                }
+
+                #TitleLinks li a {
+                    padding: ${spacing[2]} ${spacing[3]};
+                    font-size: 12${pixel};
+                    letter-spacing: 0.3px;
+                }
+            
+                .TitleSubLinks, .TitlePrimaryLinks {
+                    border: none;
+                    background: transparent;
+                }
+
+                #TitleLinks li a {
+                    font-size: 14${pixel};
+                }
+            }
+
+            @media (max-width: 320px) {
+                :root {
+                    --container-padding-mobile: ${spacing[1]};
+                }
+
+                #TitleLinks li a {
+                    padding: ${spacing[0.5]} ${spacing[1]};
+                    font-size: 11${pixel};
+                }
+
+                .stats {
+                    font-size: 10${pixel};
+                    gap: 6${pixel};
+                }
+
+                #html-output {
+                    padding: 8${pixel} 12${pixel};
+                }
+
+                #markdown-input {
+                    font-size: 12${pixel};
+                }
+            }
+
+            @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+                * {
+                    -webkit-font-smoothing: antialiased;
+                    -moz-osx-font-smoothing: grayscale;
+                }
+            }
+
+            /* Dark Theme Media Query */
+            @media ${DirectThemes[1]} {
+                #icon, #SBCloseButtons {
+                    filter: invert(100${percent});
+                }
+            }
+
+            @media print {
+                #titlebar,
+                .controls,
+                #mobile-menu-toggle,
+                #DropdownPresetMenu {
+                    display: none !important;
+                }
+
+                .container {
+                    position: static;
+                    width: 100% !important;
+                    left: 0 !important;
+                    height: auto !important;
+                }
+
+                #html-output {
+                    box-shadow: none;
+                    border: 1${pixel} solid #ccc;
+                    max-width: none;
+                    margin: 0;
+                }
+            }
+
+            /* Reduced Motion */
+            @media (prefers-reduced-motion: reduce) {
+                * {
+                    animation-duration: 0.01ms !important;
+                    animation-iteration-count: 1 !important;
+                    transition-duration: 0.01ms !important;
+                }
+            }
+
+            ${textRenderSpecific};
         `;
         // Mintputs/Output
         const htmlOutputModernCSS = `
