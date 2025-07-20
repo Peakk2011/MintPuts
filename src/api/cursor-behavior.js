@@ -184,3 +184,15 @@ window.cursorController = {
         applyModeEffects(currentMode);
     }
 };
+
+/*
+        <div class="input-section">
+            <label class="input-label">ใส่ตัวเลข (Integer หรือ Float):</label>
+            <input type="text" id="numberInput" class="input-field" placeholder="เช่น 42 หรือ 3.14159">
+        </div>
+        
+        <div class="button-group">
+            <button class="btn btn-integer" onclick="convertInteger()">Int</button>
+            <button class="btn btn-float" onclick="convertFloat()">Float</button>
+        </div>
+*/

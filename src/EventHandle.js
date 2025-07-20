@@ -3,15 +3,34 @@ import '/Content.js';
 import { typewriterInsertCM5, typewriterInsertLineCM5, setupIntellisense } from './intellisense.js';
 
 export const Webfunctions = async (Main) => {
+
+    async function initBinaryConverter() {
+        try {
+            if (typeof BinaryConverter !== 'undefined') {
+                window.binaryConverterModule = await BinaryConverter();
+                if (typeof showNotification === 'function') {
+                    // showNotification('Binary converter', 'success');
+                } else {
+                    return;
+                }
+            } else {
+                setTimeout(initBinaryConverter, 100);
+            }
+        } catch (error) {
+            console.error('Failed to initialize binary converter:', error);
+        }
+    }
+
+    initBinaryConverter();
+
     async function SyncFavicons() {
         try {
             const faviconLink = document.getElementById('favicon');
             if (!faviconLink) {
-                console.error('id="favicon" not found.');
                 return;
             }
-            const lightModeFaviconPath = '/assets/FavIcons/lightmode.svg';
-            const darkModeFaviconPath = '/assets/FavIcons/darkmode.svg';
+            const lightModeFaviconPath = '/assets/MintLogoPage.svg';
+            const darkModeFaviconPath = '/assets/MintLogoPage.svg';
             const checkFaviconExists = async (path) => {
                 try {
                     const response = await fetch(path, { method: 'HEAD' });
@@ -418,6 +437,138 @@ Wrap up your thoughts and provide a call to action.
         });
         editor.setOption('mode', { name: 'slash-command-overlay', backdrop: 'markdown' });
 
+        window.editor = editor;
+
+        // resetStr(); --force :reset=all & resetStr(); :reset
+        editor.on('keydown', function (cm, event) {
+            if ((event.key === 'Enter' || event.keyCode === 13)) {
+                const value = cm.getValue().trim();
+                if (typeof window.resetStr === 'function' && (value === 'resetStr(); --force' || value === ':reset=all')) {
+                    window.resetStr();
+                    cm.setValue('');
+                    if (typeof showNotification === 'function') {
+                        showNotification('Storage cleared!', 'success');
+                    } else {
+                        alert('Storage cleared!');
+                    }
+                    event.preventDefault();
+                } else if (typeof window.cleanLocalStorageForMintputs === 'function' && (value === 'resetStr();' || value === ':reset')) {
+                    window.cleanLocalStorageForMintputs();
+                    cm.setValue('');
+                    if (typeof showNotification === 'function') {
+                        showNotification('Storage cleaned!', 'success');
+                    } else {
+                        alert('Storage cleaned!');
+                    }
+                    event.preventDefault();
+                } else if ((/^resetThis\s*\(\s*\)\s*;?.*/.test(value) || value === 'resetThis' || value === ':clear') && typeof clearAll === 'function') {
+                    clearAll();
+                    cm.setValue('');
+                    if (typeof showNotification === 'function') {
+                        showNotification('Cleared!', 'success');
+                    } else {
+                        alert('Cleared!');
+                    }
+                    event.preventDefault();
+                } else if (/^binary\s+(-?\d+(?:\.\d+)?)\s*$/.test(value)) {
+                    const match = value.match(/^binary\s+(-?\d+(?:\.\d+)?)\s*$/);
+                    const number = parseFloat(match[1]);
+                    
+                    if (window.binaryConverterModule) {
+                        try {
+                            let result = '';
+                            if (Number.isInteger(number)) {
+                                // Integer to binary
+                                const binaryPtr = window.binaryConverterModule._int_to_binary(number);
+                                const binary = window.binaryConverterModule.UTF8ToString(binaryPtr);
+                                result = `Integer ${number} → Binary: ${binary}`;
+                            } else {
+                                // Float to binary
+                                const binaryPtr = window.binaryConverterModule._float_to_binary(number);
+                                const binary = window.binaryConverterModule.UTF8ToString(binaryPtr);
+                                const sign = window.binaryConverterModule._get_sign_bit(number);
+                                const exponent = window.binaryConverterModule._get_exponent(number);
+                                const mantissa = window.binaryConverterModule._get_mantissa(number);
+                                result = `Float ${number} → Binary: ${binary}\nIEEE 754: Sign=${sign}, Exponent=${exponent}, Mantissa=${mantissa}`;
+                            }
+                            
+                            cm.setValue(result);
+                            if (typeof showNotification === 'function') {
+                                showNotification('Conversion completed!', 'success');
+                            }
+                        } catch (error) {
+                            cm.setValue(`Error: ${error.message}`);
+                            if (typeof showNotification === 'function') {
+                                showNotification('Binary conversion failed!', 'error');
+                            }
+                        }
+                    } else {
+                        cm.setValue('Binary converter module not loaded. Please wait...');
+                        if (typeof showNotification === 'function') {
+                            showNotification('Loading binary converter...', 'info');
+                        }
+                    }
+                    event.preventDefault();
+                } else if (/^binary2int\s+([01]+)\s*$/.test(value)) {
+                    const match = value.match(/^binary2int\s+([01]+)\s*$/);
+                    const binaryStr = match[1];
+                    
+                    if (window.binaryConverterModule) {
+                        try {
+                            const binaryPtr = window.binaryConverterModule._malloc(binaryStr.length + 1);
+                            window.binaryConverterModule.stringToUTF8(binaryStr, binaryPtr, binaryStr.length + 1);
+                            const result = window.binaryConverterModule._binary_to_int(binaryPtr);
+                            window.binaryConverterModule._free(binaryPtr);
+                            
+                            cm.setValue(`Binary ${binaryStr} → Integer: ${result}`);
+                            if (typeof showNotification === 'function') {
+                                showNotification('Binary to integer conversion completed!', 'success');
+                            }
+                        } catch (error) {
+                            cm.setValue(`Error: ${error.message}`);
+                            if (typeof showNotification === 'function') {
+                                showNotification('Binary to integer conversion failed!', 'error');
+                            }
+                        }
+                    } else {
+                        cm.setValue('Binary converter module not loaded. Please wait...');
+                        if (typeof showNotification === 'function') {
+                            showNotification('Loading binary converter...', 'info');
+                        }
+                    }
+                    event.preventDefault();
+                } else if (/^binary2float\s+([01]{32})\s*$/.test(value)) {
+                    const match = value.match(/^binary2float\s+([01]{32})\s*$/);
+                    const binaryStr = match[1];
+                    
+                    if (window.binaryConverterModule) {
+                        try {
+                            const binaryPtr = window.binaryConverterModule._malloc(binaryStr.length + 1);
+                            window.binaryConverterModule.stringToUTF8(binaryStr, binaryPtr, binaryStr.length + 1);
+                            const result = window.binaryConverterModule._binary_to_float(binaryPtr);
+                            window.binaryConverterModule._free(binaryPtr);
+                            
+                            cm.setValue(`Binary ${binaryStr} → Float: ${result}`);
+                            if (typeof showNotification === 'function') {
+                                showNotification('Binary to float conversion completed!', 'success');
+                            }
+                        } catch (error) {
+                            cm.setValue(`Error: ${error.message}`);
+                            if (typeof showNotification === 'function') {
+                                showNotification('Binary to float conversion failed!', 'error');
+                            }
+                        }
+                    } else {
+                        cm.setValue('Binary converter module not loaded. Please wait...');
+                        if (typeof showNotification === 'function') {
+                            showNotification('Loading binary converter...', 'info');
+                        }
+                    }
+                    event.preventDefault();
+                }
+            }
+        });
+
         const originalInput = input;
         input = {
             value: '',
@@ -510,9 +661,9 @@ Wrap up your thoughts and provide a call to action.
         CodeMirror.defineMIME("text/x-sql", "sql");
         CodeMirror.defineMIME("text/x-yaml", "yaml");
         CodeMirror.defineMIME("text/x-toml", "toml");
-        CodeMirror.defineMIME("text/x-dockerfile", "dockerfile");
+        // CodeMirror.defineMIME("text/x-dockerfile", "dockerfile");
         CodeMirror.defineMIME("text/x-vue", "vue");
-        CodeMirror.defineMIME("text/x-rustsrc", "rust");
+        // CodeMirror.defineMIME("text/x-rustsrc", "rust");
         CodeMirror.defineMIME("text/x-swift", "swift");
         CodeMirror.defineMIME("text/x-perl", "perl");
         CodeMirror.defineMIME("text/x-powershell", "powershell");
@@ -573,7 +724,7 @@ Wrap up your thoughts and provide a call to action.
     if (!input) {
         console.error("Markdown input element ('markdown-input') not found. Markdown editor functionality will be disabled.");
         if (output) {
-            output.innerHTML = "<p style='color:red;'>Error: Markdown input UI component failed to load. Please refresh.</p>";
+            Mint.injectHTML('#html-output', "<p style='color:red;'>Error: Markdown input UI component failed to load. Please refresh.</p>");
         }
         return;
     }
@@ -591,7 +742,7 @@ Wrap up your thoughts and provide a call to action.
         const wordCount = parser.getWordCount(markdown);
         const readingTime = parser.getReadingTime(markdown);
 
-        if (output) output.innerHTML = html;
+        if (output) Mint.injectHTML('#html-output', html);
         if (parseTimeEl) parseTimeEl.textContent = `${parser.getLastParseTime().toFixed(2)}ms`;
         if (charCountEl) charCountEl.textContent = `${markdown.length}`;
         if (wordCountEl) wordCountEl.textContent = `${wordCount}`;
@@ -600,7 +751,7 @@ Wrap up your thoughts and provide a call to action.
 
     function clearAll() {
         input.value = '';
-        if (output) output.innerHTML = '';
+        if (output) Mint.injectHTML('#html-output', '');
         if (parseTimeEl) parseTimeEl.textContent = '0ms';
         if (charCountEl) charCountEl.textContent = '0';
         if (wordCountEl) wordCountEl.textContent = '0';
@@ -613,7 +764,7 @@ Wrap up your thoughts and provide a call to action.
             alert('Error: Cannot copy HTML, output display area not found.');
             return;
         }
-        const html = output.innerHTML;
+        const html = output.innerHTML; 
         navigator.clipboard.writeText(html).then(() => {
             showNotification('HTML copied to clipboard!', 'success');
         }).catch(err => {
@@ -694,15 +845,14 @@ body {
 }
 
 @keyframes fadeIn {
-  from {
-    scale: 80%;
+  100% {
     opacity: 0;
   }
   70% {
     opacity: 1;
   }
-  to {
-    scale: 100%;
+  100% {
+    opacity: 1;
   }
 }
 
@@ -958,33 +1108,39 @@ ${output.innerHTML}
     });
 
     input.addEventListener('paste', async (event) => {
-        const items = (event.clipboardData || event.originalEvent.clipboardData)?.items;
-        if (!items) return;
-
-        let imageFile = null;
-        for (const item of items) {
-            if (item.type.indexOf('image') !== -1) {
-                imageFile = item.getAsFile();
-                break;
+        try {
+            const clipboardData = event.clipboardData || (event.originalEvent && event.originalEvent.clipboardData);
+            if (!clipboardData || !clipboardData.items) {
+                return; 
             }
-        }
 
-        if (imageFile) {
-            event.preventDefault();
-            showNotification('Image pasting...', 'info');
+            let imageFile = null;
+            for (const item of clipboardData.items) {
+                if (item && item.type && item.type.indexOf('image') !== -1) {
+                    imageFile = item.getAsFile();
+                    break;
+                }
+            }
 
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const base64Image = e.target.result;
-                const timestamp = new Date().getTime();
-                const htmlImageTag = `<img src="${base64Image}" alt="Pasted Image ${timestamp}" loading="lazy" />`;
-                insertText(htmlImageTag, '', '');
-                showNotification('Image pasted', 'success');
-            };
-            reader.onerror = function () {
-                showNotification('Failed to read image file.', 'error');
-            };
-            reader.readAsDataURL(imageFile);
+            if (imageFile) {
+                event.preventDefault();
+                showNotification('Image pasting...', 'info');
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const base64Image = e.target.result;
+                    const timestamp = new Date().getTime();
+                    const htmlImageTag = `<img src="${base64Image}" alt="Pasted Image ${timestamp}" loading="lazy" />`;
+                    insertText(htmlImageTag, '', '');
+                    showNotification('Image pasted', 'success');
+                };
+                reader.onerror = function () {
+                    showNotification('Failed to read image file.', 'error');
+                };
+                reader.readAsDataURL(imageFile);
+            }
+        } catch (error) {
+            console.warn('Paste error:', error);
         }
     });
 
@@ -1024,12 +1180,12 @@ ${output.innerHTML}
     // Dropdown
     const toggle = document.getElementById('ToggleDropdownPreset');
     const menu = document.getElementById('DropdownPresetMenu');
-    if(toggle && menu){
-        toggle.addEventListener('click', function(e){
+    if (toggle && menu) {
+        toggle.addEventListener('click', function (e) {
             e.stopPropagation();
             menu.classList.toggle('open');
         });
-        document.addEventListener('click', function(){
+        document.addEventListener('click', function () {
             menu.classList.remove('open');
         });
     }
@@ -1068,6 +1224,6 @@ ${output.innerHTML}
             });
         });
     } else {
-        console.warn('One or more elements for view toggling (TitleLinks, main-content, output-section) not found.');
+        console.warn('(TitleLinks, main-content, output-section) not found.');
     }
 };

@@ -37,7 +37,8 @@
     "electron": "^36.4.0",
     "electron-builder": "^26.0.12",
     "electron-is-dev": "^3.0.1",
-    "electron-reload": "^2.0.0-alpha.1"
+    "electron-reload": "^2.0.0-alpha.1",
+    "@types/bun": "latest"
   },
   "build": {
     "appId": "com.yourcompany.yourapp",
@@ -62,5 +63,9 @@
     "linux": {
       "target": "AppImage"
     }
+  },
+  "private": true,
+  "peerDependencies": {
+    "typescript": "^5"
   }
 }

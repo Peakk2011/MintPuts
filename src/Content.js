@@ -1,156 +1,192 @@
-// Content.js Example to making content inside this file
+import { WebElements } from './redistributables/units.js';
+import { Mint } from './mintkit/mint.js';
 
-export const WebElements = {
-    StoredFontFamily: "@import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@100..700&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Manrope:wght@200..800&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&family=Trirong:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');",
-    Typeface: [
-        '"Inter Tight", sans-serif;',
-        '"Merriweather", serif;',
-        '"Trirong", serif;',
-        '"Anuphan", sans-serif;',
-        '"JetBrains Mono", monospace;',
-        '"Manrope", sans-serif;',
-        '"Instrument Sans", sans-serif;',
-        '"Source Serif 4", serif;',
-        '"Inter Tight", Anuphan, sans-serif',
-        '"JetBrains Mono", Anuphan, sans-serif',
-        '"Source Serif 4", "Trirong", serif;',
-    ],
-    DefaultFontFallback: '"Leelawadee UI", "Segoe UI", -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", sans-serif',
-    Units: {
-        CSSPosition: ['static', 'relative', 'fixed', 'absolute', 'sticky'],
-        CSSSize: {
-            AbsoluteLengths: {
-                StaticCM: 'cm',
-                StaticMM: 'mm',
-                StaticIN: 'in',
-                StaticPT: 'pt',
-                StaticPC: 'pc',
-                StaticPX: 'px'
-            },
-            RelativeLengths: {
-                RelativeEM: 'em',
-                RelativeREM: 'rem',
-                RelativeVW: 'vw',
-                RelativeVH: 'vh',
-                RelativePERCENT: '%',
-                RelativeVMAX: 'vmax',
-                RelativeMXCON: 'max-content',
-            },
-            AUTO: 'auto',
-            boxSizing: 'border-box',
-        },
-        weights: {
-            light: '300',
-            normal: '400',
-            medium: '500',
-            semibold: '600',
-            bold: '700',
-            extrabold: '800'
-        },
-    },
-    DirectThemes: [
-        '(prefers-color-scheme: dark)',
-        '(prefers-color-scheme: light)'
-    ],
-    get BorderRadius() {
-        return {};
-    },
-    get layout() {
-        return {
-            zIndex: {
-                Hidden: '-1',
-                Base: '0',
-                Dropdown: '1000',
-                Modal: '1050',
-                Tooltip: '1100'
-            },
-            Overflow: {
-                Hidden: 'hidden',
-                Scroll: 'scroll',
-                Auto: 'auto'
-            },
-            MediaQuery: [
-                '(min-width: 1280px)',
-                '(min-width: 768px)',
-                '(min-width: 576px)',
-                '(min-width: 380px)',
-                '(min-width: 320px)',
-            ],
-        };
-    },
-    get Transition() {
-        return {};
-    },
-    spacing: {
-        0: '0',
-        px: '1px',
-        0.5: '0.125rem',  // 2px
-        1: '0.25rem',     // 4px
-        1.5: '0.375rem',  // 6px
-        2: '0.5rem',      // 8px
-        2.5: '0.625rem',  // 10px
-        3: '0.75rem',     // 12px
-        3.5: '0.875rem',  // 14px
-        4: '1rem',        // 16px
-        5: '1.25rem',     // 20px
-        6: '1.5rem',      // 24px
-        7: '1.75rem',     // 28px
-        8: '2rem',        // 32px
-        10: '2.5rem',     // 40px
-        12: '3rem',       // 48px
-        14: '3.5rem',
-        16: '4rem',
-        18: '4.5rem',
-        20: '5rem',       // 80px
-        24: '6rem',       // 96px
-        32: '8rem',       // 128px
-    },
-    borderRadius: {
-        none: '0',
-        sm: '0.125rem',          // 2px
-        DEFAULT: '0.25rem',      // 4px
-        md: '0.375rem',          // 6px
-        lg: '0.5rem',            // 8px
-        xl: '0.75rem',           // 12px
-        '2xl': '1rem',           // 16px
-        '3xl': '1.5rem',         // 24px
-        full: '100vmax'
-    },
-    shadows: {
-        sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-        DEFAULT: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
-        md: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-        lg: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
-        xl: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
-        '2xl': '0 25px 50px -12px rgb(0 0 0 / 0.25)',
-        inner: 'inset 0 2px 4px 0 rgb(0 0 0 / 0.05)',
-        none: 'none'
-    },
-    transitions: {
-        none: 'none',
-        all: 'all 150ms cubic-bezier(0.4, 0, 0.2, 1)',
-        DEFAULT: 'color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter 150ms cubic-bezier(0.4, 0, 0.2, 1)',
-        colors: 'color, background-color, border-color, text-decoration-color, fill, stroke 150ms cubic-bezier(0.4, 0, 0.2, 1)',
-        opacity: 'opacity 150ms cubic-bezier(0.4, 0, 0.2, 1)',
-        shadow: 'box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1)',
-        transform: 'transform 150ms cubic-bezier(0.4, 0, 0.2, 1)',
-    },
-    easings: {
-        linear: 'linear',
-        in: 'cubic-bezier(0.4, 0, 1, 1)',
-        out: 'cubic-bezier(0, 0, 0.2, 1)',
-        'in-out': 'cubic-bezier(0.4, 0, 0.2, 1)',
-        bounce: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
-        smooth: 'cubic-bezier(0.19, 1, 0.22, 1)',
-    },
-    breakpoints: {
-        mb: '411px',
-        sm: '450px',
-        md: '768px',
-        lg: '1024px',
-        xl: '1280px',
-        '2xl': '1536px'
+const RECENTS_KEY = 'mintputs_recents';
+const FILE_PREFIX = 'mintputs_file_';
+const MAX_RECENTS = 10;
+let _modalCSSInjected = false;
+
+function mint_getRecents() {
+    const saved = localStorage.getItem(RECENTS_KEY);
+    return saved ? JSON.parse(saved) : [];
+}
+
+function mint_saveRecents(list) {
+    localStorage.setItem(RECENTS_KEY, JSON.stringify(list));
+}
+
+function mint_addRecent(filename) {
+    let recents = mint_getRecents();
+    recents = recents.filter(f => f !== filename);
+    recents.unshift(filename);
+    if (recents.length > MAX_RECENTS) recents = recents.slice(0, MAX_RECENTS);
+    mint_saveRecents(recents);
+}
+
+function mint_saveFile(filename, content) {
+    // console.log('[DEBUG] Saving file:', filename, '| content:', content, '| typeof:', typeof content, '| length:', content ? content.length : 0);
+    localStorage.setItem('mintputs_file_' + filename, encodeURIComponent(content));
+    mint_addRecent(filename);
+    // console.log('[DEBUG] Saved file:', filename, 'content:', content);
+}
+
+function mint_loadFile(filename) {
+    const raw = localStorage.getItem('mintputs_file_' + filename);
+    if (!raw) return '';
+    try {
+        return decodeURIComponent(raw);
+    } catch (e) {
+        return raw;
     }
+}
+
+function mint_showSaveModal(onSave, onCancel) {
+    if (!_modalCSSInjected) {
+        Mint.injectCSS(`
+            #mintputs-save-modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+            }
+            .mintputs-modal-backdrop {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100vw;
+                height: 100vh;
+                background: rgba(0,0,0,0.18);
+                z-index: 0;
+            }
+            .mintputs-modal-content {
+                position: relative;
+                z-index: 1;
+                background: #fff;
+                border-radius: 12px;
+                box-shadow: 0 4px 32px rgba(0,0,0,0.13);
+                padding: 2.2em 2.5em 1.5em 2.5em;
+                min-width: 320px;
+                max-width: 90vw;
+                min-height: 120px;
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .mintputs-modal-content h2 {
+                margin-top: 0;
+            }
+            #mintputs-save-filename {
+                width: 100%;
+                padding: 8px;
+                font-size: 1.1em;
+                margin-bottom: 1em;
+                border-radius: 6px;
+                border: 1px solid #ccc;
+            }
+            .mintputs-modal-content button {
+                padding: 8px 18px;
+                border-radius: 6px;
+                border: none;
+                cursor: pointer;
+            }
+            #mintputs-save-cancel {
+                background: #eee;
+            }
+            #mintputs-save-confirm {
+                background: #2d8cff;
+                color: #fff;
+            }
+            @media (prefers-color-scheme: dark) {
+                .mintputs-modal-content {
+                    background: #232323;
+                    color: #fafafa;
+                }
+            }
+        `);
+        _modalCSSInjected = true;
+    }
+    let modal = document.getElementById('mintputs-save-modal');
+    if (!modal) {
+        Mint.injectHTML('body', `
+            <div id="mintputs-save-modal">
+                <div class="mintputs-modal-backdrop"></div>
+                <div class="mintputs-modal-content">
+                    <h2>บันทึกไฟล์</h2>
+                    <input id="mintputs-save-filename" type="text" placeholder="Files name" autofocus />
+                    <div style="display:flex;gap:1em;justify-content:flex-end;">
+                        <button id="mintputs-save-cancel">Cancel</button>
+                        <button id="mintputs-save-confirm">Save</button>
+                    </div>
+                </div>
+            </div>
+        ` + document.body.innerHTML);
+        modal = document.getElementById('mintputs-save-modal');
+    }
+    modal.style.display = 'flex';
+    const input = document.getElementById('mintputs-save-filename');
+    input.value = '';
+    input.focus();
+    document.getElementById('mintputs-save-cancel').onclick = () => {
+        mint_hideSaveModal();
+        if (typeof onCancel === 'function') onCancel();
+    };
+    document.getElementById('mintputs-save-confirm').onclick = () => {
+        const filename = input.value.trim();
+        if (!filename) {
+            input.focus();
+            return;
+        }
+        mint_hideSaveModal();
+        if (typeof onSave === 'function') onSave(filename);
+    };
+    input.onkeydown = (e) => {
+        if (e.key === 'Enter') document.getElementById('mintputs-save-confirm').click();
+        if (e.key === 'Escape') document.getElementById('mintputs-save-cancel').click();
+    };
+}
+
+function mint_hideSaveModal() {
+    const modal = document.getElementById('mintputs-save-modal');
+    if (modal) modal.style.display = 'none';
+}
+
+function mint_bindCtrlS(getContent, setCurrentFile, updateRecentsUI) {
+    window.addEventListener('keydown', function (e) {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+            e.preventDefault();
+            mint_showSaveModal(
+                (filename) => {
+                    const content = getContent();
+                    mint_saveFile(filename, content);
+                    if (typeof updateRecentsUI === 'function') updateRecentsUI();
+                    if (typeof setCurrentFile === 'function') setCurrentFile(filename);
+                },
+                () => { }
+            );
+        }
+    });
+}
+
+function mint_updateRecentsUI(onClickFile) {
+    const recentsDiv = document.querySelector('.RecentsFiles');
+    if (!recentsDiv) return;
+    recentsDiv.innerHTML = '';
+    mint_getRecents().forEach(name => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = 'javascript:void(0)';
+        a.textContent = name;
+        a.onclick = () => {
+            if (typeof onClickFile === 'function') onClickFile(name);
+        };
+        li.appendChild(a);
+        recentsDiv.appendChild(li);
+    });
 }
 
 const lightThemeColors = {
@@ -180,7 +216,7 @@ const darkThemeColors = {
     TextColorPrimaryText: '#D9D9D9;',
     HighlightPrimary: '#413c3c;',
     FormatTextColors: '#D9D9D9',
-    FormatBorderColors: '#262626',
+    FormatBorderColors: '#292929',
     PrimaryHeaderText: '#dfffeb',
     PublicFormatBorderColors: '#343434',
     btnSecondary: {
@@ -217,7 +253,7 @@ const isBrowserOpening = () => {
 
 export const WebContent = {
     _cachedCSS: null,
-    PageTitle: 'Markdown Parser',
+    PageTitle: 'Mintputs',
     CSScolor: {},
     _themeChangeCallback: null,
 
@@ -254,10 +290,16 @@ export const WebContent = {
             return `
 
                 <div id="TitleLinks">
-                    <li><a id="Highlight" data-base-id="ToggleMDEditer" href="javascript:void(0)">Markdown Editer</a></li>
-                    <li><a id="ToggleHTMLOUTPUT" data-base-id="ToggleHTMLOUTPUT" href="javascript:void(0)">HTML Output</a></li>
+                    <div class="TitlePrimaryLinks">
+                        <li><a id="Highlight" data-base-id="ToggleMDEditer" href="javascript:void(0)">Editer</a></li>
+                        <li><a id="ToggleHTMLOUTPUT" data-base-id="ToggleHTMLOUTPUT" href="javascript:void(0)"> Output</a></li>
+                    </div>
+                    <div class="TitleSubLinks">
+                        <li><a id="ToggleDownload" data-base-id="ToggleDownload" href="javascript:void(0)" onclick="downloadHtml()">Download</a></li>
+                        <li><a id="CopyHTML" data-base-id="CopyHTML" href="javascript:void(0)" onclick="copyHtml()">Copy code</a></li>
+                    </div>
+                    <!-- clearAll() -->
                 </div>
-
 
                 <div id="titlebar">
                     <div id="drag-region">
@@ -303,9 +345,7 @@ export const WebContent = {
                         <span>Recent files</span>
                         <li><a href="javascript:void(0)" id="CurrentFiles">Untitled</a></li>
                         <div class="RecentsFiles">
-                            <li><a href="javascript:void(0)">ซ้อมวิชาไทย</a></li>
-                            <li><a href="javascript:void(0)">โครงงานวิทยาศาสตร์</a></li>
-                            <li><a href="javascript:void(0)">Math projects</a></li>
+                            <li><a href="javascript:void(0)"></a></li>
                         </div>
                     </div>
                 </div>
@@ -317,25 +357,16 @@ export const WebContent = {
                             </div>
                         </div>
                     </div>
+                    <div class="output-section">
+                        <div id="html-output"></div>
+                    </div>
                 </div>
-
-                <div class="output-section">
-                            <div class="section-title" id="HTML_outputText">
-                                HTML Output
-                            </div>
-                            <div id="html-output"></div>
-                        </div>
 
                 <div class="controls">
                     <div class="controlsContent">
-                        <div class="Buttons">
-                            <button class="btn btn-secondary" onclick="clearAll()">Clear All</button>
-                            <button class="btn btn-primary" onclick="copyHtml()">Copy HTML</button>
-                            <button class="btn btn-primary" onclick="downloadHtml()">Download HTML</button>
-                        </div>
                         <div class="stats">
-                            <span id="parse-time">Parse time: 0ms</span>
-                            <span id="char-count">Characters: 0</span>
+                            <span id="parse-time">0ms</span>
+                            <span id="char-count">0</span>
                         </div>
                     </div>
                 </div>
@@ -439,12 +470,13 @@ export const WebContent = {
             Units,
             spacing,
             borderRadius,
-            easings,
-            breakpoints,
+            shadows,
+            transitions,
+            weights,
+            DirectThemes,
         } = WebElements;
-        const { weights } = Units;
 
-        const normalizeCallReset = this.Normalize.CALLReset;
+        const normalizeCallReset = `${Units.CSSSize.boxSizing};`;
         const textRenderForce = this.TextRendering.ForceGrayStyleRendering;
         const textRenderSpecific = this.TextRendering.SpecificTargetingRendering;
 
@@ -459,23 +491,40 @@ export const WebContent = {
         const OutputBackground = this.CSScolor.OutputBackground;
         const SIDEBAR = this.CSScolor.SIDEBAR;
 
-        const pixel = WebElements.Units.CSSSize.AbsoluteLengths.StaticPX;
+        const pixel = Units.CSSSize.AbsoluteLengths.StaticPX;
+        const percent = Units.CSSSize.RelativeLengths.RelativePERCENT;
+        const rem = Units.CSSSize.RelativeLengths.RelativeREM;
+        const em = Units.CSSSize.RelativeLengths.RelativeEM;
+        const vw = Units.CSSSize.RelativeLengths.RelativeVW;
+        const vh = Units.CSSSize.RelativeLengths.RelativeVH;
+        const auto = Units.CSSSize.AUTO;
+        const absolute = Units.CSSPosition[3];
+        const fixed = Units.CSSPosition[2];
+        const bold = Units.weights.bold;
+        const borderRadiusLg = borderRadius.lg;
+        const borderRadiusFull = borderRadius.full;
+        const shadowMd = shadows.md;
+        const transitionAll = transitions.all;
 
         const GlobalCSS = `
             * {
-                ${normalizeCallReset};
-                ${textRenderForce};
-                font-family: ${WebElements.Typeface[8]};
+                ${normalizeCallReset}
+                ${textRenderForce}
+                font-family: ${Typeface[8]}, ${DefaultFontFallback};
                 color: ${FormatTextColors};
                 line-height: 1.8;
+                /* Fallback */
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
             }
 
             *::-webkit-scrollbar {
-                height: 5px;
-                width: 5px;
+                height: 5${pixel};
+                width: 5${pixel};
             }
             *::-webkit-scrollbar-track {
-                border-radius: 0px;
+                border-radius: 0${pixel};
                 background-color: ${colorPrimary};
             }
 
@@ -488,7 +537,7 @@ export const WebContent = {
             }
 
             *::-webkit-scrollbar-thumb {
-                border-radius: 20px;
+                border-radius: 20${pixel};
                 background-color: #484848;
             }
 
@@ -499,33 +548,27 @@ export const WebContent = {
             *::-webkit-scrollbar-thumb:active {
                 background-color: #999999;
             }
-
+            
             #titlebar {
-                width: 260px;
-                height: 100vh;
+                width: 260${pixel};
+                height: 100${vh};
                 background-color: ${SIDEBAR};
                 -webkit-app-region: drag;
                 user-select: none;
-                position: fixed;
+                position: ${fixed};
                 z-index: 10;
-                border-right: ${FormatBorderColors} solid 1px;
+                border-right: ${FormatBorderColors} solid 1${pixel};
             }
 
             #TitleLinks {
                 display: flex;
                 align-items: center;
-                position: fixed;
+                position: ${fixed};
                 top: ${spacing[4]};
-                left: 50%;
-                transform: translateX(-50%);
-                border: ${FormatBorderColors} solid 1px;
-                z-index: 10;
-                width: fit-content;
-                height: 40px;
-                background-color: ${colorPrimary};
-                -webkit-app-region: drag;
-                border-radius: ${borderRadius.full};
-                padding: 0 ${spacing[1]};
+                left: 50${percent};
+                gap: 16${pixel};
+                z-index: 9999;
+                transform: translateX(-50${percent});
             }
 
             #TitleLinks li {
@@ -543,20 +586,36 @@ export const WebContent = {
                 opacity: 0.6;
                 -webkit-app-region: no-drag;
                 text-decoration: none;
-                transition: 0.2s ease;
+                transition: ${transitionAll};
             }
 
             #TitleLinks li a:hover {
                 opacity: 1;
             }
 
+            .TitleSubLinks,
+            .TitlePrimaryLinks {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: fit-content;
+
+                border: ${FormatBorderColors} solid 1${pixel};
+                width: fit-content;
+                height: 40${pixel};
+                background-color: ${colorPrimary};
+                -webkit-app-region: drag;
+                border-radius: ${borderRadiusFull};
+                padding: 0 ${spacing[1]};
+            }
+
             #drag-region {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                width: 88%;
-                gap: 8px;
-                position: absolute;
+                width: 88${percent};
+                gap: 8${pixel};
+                position: ${absolute};
                 left: ${spacing[4]};
                 top: ${spacing[3.5]};
                 margin-top: ${(() => {
@@ -576,7 +635,7 @@ export const WebContent = {
 
             #icon {
                 width: 70${pixel};
-                height: auto;
+                height: ${auto};
                 -webkit-app-region: no-drag;
                 margin-top: ${(() => {
                 if (isBrowserOpening()) {
@@ -613,24 +672,24 @@ export const WebContent = {
             }
 
             #TitlebarLinks li a svg {
-                width: 20px;
-                height: 20px;
+                width: 20${pixel};
+                height: 20${pixel};
                 margin-right: ${spacing[1.5]};
-                transform: translateY(3px);
+                transform: translateY(3${pixel});
             }
 
             #TitlebarLinks span {
                 padding: ${spacing[2]} ${spacing[0.5]};
                 font-size: 14${pixel};
-                opacity: 60%;
+                opacity: 60${percent};
             }
 
             #CurrentFiles {
                 padding: ${spacing[1]} ${spacing[3]} !important;
                 background-color: ${OutputBackground.PrimarySec};
                 display: block;
-                border-radius: ${borderRadius.lg};
-                outline: ${FormatBorderColors} solid 1px;
+                border-radius: ${borderRadiusLg};
+                outline: ${FormatBorderColors} solid 1${pixel};
             }
 
             .RecentsFiles {
@@ -644,51 +703,50 @@ export const WebContent = {
             .container {
                 overflow: hidden;
                 backdrop-filter: blur(10${pixel});
-                height: 100vh;
-                width: calc(100vw - 260px);
-                position: fixed;
-                left: 260px;
+                height: 100${vh};
+                width: calc(100${vw} - 260${pixel});
+                position: ${fixed};
+                left: 260${pixel};
             }
 
             .main-content {
                 display: flex;
                 margin: auto;
-                height: 100vh;
-                position: ${WebElements.Units.CSSPosition[1]};
-                right: -15px;
+                height: 100${vh};
+                position: ${Units.CSSPosition[1]};
+                right: -15${pixel};
             }
 
             .input-section, .output-section {
                 display: flex;
                 flex-direction: column;
                 padding: ${spacing[4]};
-                width: 100%;
+                width: 100${percent};
             }
 
             .output-section {
                 position: fixed;
-                top: 0;
+                top: 20px;
                 right: -30px;
                 width: calc(100vw - 260px);
                 height: 100vh;
                 background-color: ${colorPrimary};
                 z-index: 5;
                 display: none;
+                flex-direction: column;
             }
 
-            .section-title {
-                font-size: 20px;
-                font-weight: 600;
-                margin-bottom: ${spacing[4]};
-                color: ${textColorPrimaryText};
-                display: flex;
-                align-items: center;
-                font-family: ${WebElements.Typeface[4]};
-                margin-top: ${spacing[10]};
-            }
-
-            #HTML_outputText {
-                margin-top: ${spacing[12]};
+            #html-output {
+                flex: 1;
+                overflow-y: auto;
+                width: 100%;
+                max-width: 850px;
+                margin: auto;
+                height: 100%;
+                padding: 24px 32px;
+                background: ${OutputBackground.PrimarySec};
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
             }
 
             #markdown-input {
@@ -701,15 +759,8 @@ export const WebContent = {
                 transition: all 0.3s ease;
                 background-color: transparent;
                 color: ${FormatTextColors};
-                font-family: ${WebElements.Typeface[9]};
+                font-family: ${Typeface[9]};
                 font-weight: 480;
-            }
-
-            #html-output {
-                flex: 1;
-                overflow-y: auto;
-                width: 850px;
-                margin: auto;
             }
 
             .controls {
@@ -717,10 +768,10 @@ export const WebContent = {
                 align-items: center;
                 justify-content: space-between;
                 flex-wrap: wrap;
-                position: fixed;
+                position: ${fixed};
                 bottom: 0;
                 right: 0;
-                width: calc(100vw - 260px);
+                width: calc(100${vw} - 260${pixel});
                 height: 60${pixel};
                 margin: auto;
                 background-color: ${colorPrimary};
@@ -732,36 +783,7 @@ export const WebContent = {
                 justify-content: space-between;
                 align-items: center;
                 padding: 0 ${spacing[6]};
-                width: 100vw;
-            }
-
-            .Buttons {
-                display: flex;
-            }
-
-            .btn {
-                padding: ${spacing[2]} ${spacing[4]};
-                border: none;
-                font-weight: 400;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                font-size: 13.5${pixel};
-                border-radius: 50${pixel};
-                font-family: ${WebElements.Typeface[6]},${DefaultFontFallback};
-                margin-right: ${spacing[1.5]};
-                line-height: 1.2;
-            }
-
-            .btn-primary {
-                color: ${FormatTextColors};
-                background: transparent;
-                border: solid 1${pixel} ${PublicFormatBorderColors};
-            }
-
-            .btn-secondary {
-                background: ${btnSecondary.background};
-                border: ${btnSecondary.border};  
-                color: ${btnSecondary.color};
+                width: 100${vw};
             }
 
             .stats {
@@ -769,7 +791,7 @@ export const WebContent = {
                 gap: 18.5${pixel};
                 font-size: 13.5${pixel};
                 color: #A2A2A2;
-                font-family: ${WebElements.Typeface[0]},${DefaultFontFallback};
+                font-family: ${Typeface[0]},${DefaultFontFallback};
             }
 
             pre {
@@ -778,26 +800,26 @@ export const WebContent = {
                 padding: ${spacing[2]} ${spacing[4]};
                 overflow-x: auto;
                 margin: 10${pixel} 0;
-                border: 1px solid ${PublicFormatBorderColors};
+                border: 1${pixel} solid ${PublicFormatBorderColors};
             }
 
             pre code {
                 background: none;
                 padding: 0;
                 border-radius: 0;
-                font-family: ${WebElements.Typeface[9]};
+                font-family: ${Typeface[9]};
                 color: ${textColorPrimaryText};
             }
 
             .input-section, #markdown-input-container {
-                position: fixed !important;
+                position: ${fixed} !important;
                 inset: 0 !important;
-                width: 100vw !important;
-                height: calc(100vh - 40px) !important;
-                min-width: calc(100vh - 40px) !important;
-                min-height: calc(100vh - 40px) !important;
-                max-width: 100vw !important;
-                max-height: calc(100vh - 40px) !important;
+                width: 100${vw} !important;
+                height: calc(100${vh} - 40${pixel}) !important;
+                min-width: calc(100${vh} - 40${pixel}) !important;
+                min-height: calc(100${vh} - 40${pixel}) !important;
+                max-width: 100${vw} !important;
+                max-height: calc(100${vh} - 40${pixel}) !important;
                 margin: 0 !important;
                 padding: 0 !important;
                 z-index: 10;
@@ -807,9 +829,9 @@ export const WebContent = {
             }
 
             #markdown-input-container {
-                height: calc(100vh - 40px) !important;
-                min-height: calc(100vh - 40px) !important;
-                max-height: calc(100vh - 40px) !important; 
+                height: calc(100${vh} - 40${pixel}) !important;
+                min-height: calc(100${vh} - 40${pixel}) !important;
+                max-height: calc(100${vh} - 40${pixel}) !important; 
                 bottom: 0 !important;
             }
 
@@ -821,36 +843,36 @@ export const WebContent = {
             }
 
             .CodeMirror-code {
-                margin-top: 80px !important;
+                margin-top: 80${pixel} !important;
             }
 
             .CodeMirror-scroll, .CodeMirror-sizer {
-                height: calc(100vh - 40px) !important;
-                min-height: calc(100vh - 40px) !important;
-                max-height: calc(100vh - 40px) !important;
-                margin-left:   0rem !important;
-                margin-right:  0rem !important;
-                margin-top:    0rem !important;
-                margin-bottom: 0rem !important;
+                height: calc(100${vh} - 40${pixel}) !important;
+                min-height: calc(100${vh} - 40${pixel}) !important;
+                max-height: calc(100${vh} - 40${pixel}) !important;
+                margin-left:   0${rem} !important;
+                margin-right:  0${rem} !important;
+                margin-top:    0${rem} !important;
+                margin-bottom: 0${rem} !important;
                 bottom: 0 !important;
             }
 
-            .CodeMirror-sizer {
-                margin-left: 55px !important;
+            .CodeMirror-sizer{
+                margin-left: 55${pixel} !important;
             }
 
             .CodeMirror-gutters, .CodeMirror-gutter {
-                height: calc(100vh - 40px) !important;
-                min-height: calc(100vh - 40px) !important;
-                max-height: calc(100vh - 40px) !important;
+                height: calc(100${vh} - 40${pixel}) !important;
+                min-height: calc(100${vh} - 40${pixel}) !important;
+                max-height: calc(100${vh} - 40${pixel}) !important;
                 background: transparent !important;
                 bottom: 0 !important;
             }
 
             .CodeMirror-linenumber {
-                min-width: 45px;
-                width: 45px;
-                padding: 0 4px 0 0 !important;
+                min-width: 45${pixel};
+                width: 45${pixel};
+                padding: 0 4${pixel} 0 0 !important;
                 color: #8A8A8A !important;
                 background: transparent !important;
                 text-align: right !important;
@@ -858,7 +880,7 @@ export const WebContent = {
             }
 
             .CodeMirror-foldgutter {
-                width: 20px;
+                width: 20${pixel};
                 background: transparent !important;
             }
 
@@ -871,17 +893,16 @@ export const WebContent = {
 
             .CodeMirror-foldgutter-open:after {
                 content: "▼";
-                font-size: 10px;
+                font-size: 10${pixel};
             }
 
             .CodeMirror-foldgutter-folded:after {
                 content: "▶";
-                font-size: 10px;
+                font-size: 10${pixel};
             }
-
+            
             .cm-s-monokai.CodeMirror {
                 background: transparent !important;
-
             }
 
             .CodeMirror-wrap pre.CodeMirror-line, .CodeMirror-wrap pre.CodeMirror-line-like {
@@ -899,11 +920,11 @@ export const WebContent = {
                 
             .CodeMirror-code .cm-tab:before {
                 content: "";
-                position: absolute;
+                position: ${absolute};
                 left: 0;
                 top: 0;
                 bottom: 0;
-                border-left: 1px solid #e0e0e0;
+                border-left: 1${pixel} solid #e0e0e0;
                 opacity: 0.5;
             }
             
@@ -933,53 +954,9 @@ export const WebContent = {
             .cm-punctuation { color: #D4D4D4 !important; }                    /* Punctuation: Light Gray */
             .cm-bracket { color: #D4D4D4 !important; }                        /* Bracket: Light Gray */
 
-            /* Markdown Output Styles */
-            #html-output h1, #html-output h2, #html-output h3, #html-output h4, #html-output h5, #html-output h6 {
-                color: ${textColorPrimaryDisplay};
-                margin: 18.5${pixel} 0 18.5${pixel} 0;
-                ${WebElements.Typeface[8]};
-            }
-
-            #html-output h1 { font-size: 2.4em; font-family: ${WebElements.Typeface[8]}; line-height: 1.4; border-bottom: ${FormatBorderColors} solid 1px; margin: 10${pixel} 0 10${pixel} 0; color: ${PrimaryHeaderText} }
-            #html-output h2 { font-size: 2em; line-height: 1.4; }
-            #html-output h3 { font-size: 1.8em; line-height: 1.45; opacity: 0.72; }
-            #html-output h4 { font-size: 1.6em; line-height: 1.5; opacity: 0.65; }
-            #html-output h5 { font-size: 1.4em; line-height: 1.65; opacity: 0.60; }
-            #html-output h6 { font-size: 1.2em; line-height: 1.82; opacity: 0.55; }
-
-            #html-output p { margin: 10px 0; line-height: 1.6; color: ${textColorPrimaryText}; }
-            #html-output code { background: transparnt; padding: 2${pixel} 6px; border-radius: 4px; font-family: ${WebElements.Typeface[9]}; }
-            #html-output blockquote { border-left: 4px solid ${textColorPrimaryDisplay}; padding-left: 15px; margin: 15px 0; color: ${textColorPrimaryDisplay}; opacity: 0.8; }
-            #html-output ul, #html-output ol { margin: 10px 0 10px 30px; }
-            #html-output li { margin: 5px 0; }
-            #html-output li a,strong { color: ${textColorPrimaryText}; }
-            #html-output a { color: ${OutputBackground.LinksBackground}; text-decoration: none; margin: 18.5${pixel} 0 18.5${pixel} 0; }
-            #html-output a:hover { text-decoration: underline; }
-            #html-output table { border-collapse: collapse; width: 100%; margin: 10px 0; margin-bottom: ${spacing[3.5]}; }
-            #html-output th, #html-output td { border-bottom: 1px solid ${PublicFormatBorderColors}; padding: ${spacing[2]} ${spacing[4]}; text-align: left; }
-            #html-output th { font-weight: 600; }
-
-            /* Responsive adjustments */
-            @media (max-width: ${breakpoints.mb}), (max-width: ${breakpoints.sm}) {
-                .btn {
-                    font-size: 12.5${pixel};
-                    padding: ${spacing[2]} ${spacing[3]};
-                }
-
-                .stats {
-                    display: none;
-                }
-            }
-            @media (max-width: ${breakpoints.md}) {}
-            @media (min-width: ${breakpoints.lg}) {}
-            @media (max-width: ${breakpoints.xl}) {
-                #html-output {
-                    width: 100%;
-                }
-            }
-            @media ${WebElements.DirectThemes[1]} {
+            @media ${DirectThemes[1]} {
                 #icon,#SBCloseButtons  {
-                    filter: invert(100%);
+                    filter: invert(100${percent});
                 }
             }
 
@@ -993,72 +970,72 @@ export const WebContent = {
                 padding: ${spacing[1.5]} ${spacing[0]};
                 border: none;
                 cursor: pointer;
-                transition: all 0.5s;
+                transition: ${transitionAll};
                 background: transparent;
                 font-size: 14${pixel};
             }
 
             #ToggleDropdownPreset svg {
-                width: 20px;
-                height: 20px;
+                width: 20${pixel};
+                height: 20${pixel};
                 margin-right: ${spacing[1.5]};
-                transform: translateY(4px);
+                transform: translateY(4${pixel});
             }
             
             #DropdownPresetMenu {
                 display: block;
-                position: absolute;
-                left: 12px;
-                top: 130px;
+                position: ${absolute};
+                left: 12${pixel};
+                top: 130${pixel};
                 background-color: ${colorPrimary};
-                border: ${FormatBorderColors} solid 1px;
-                border-radius: 6px;
-                min-width: 230px;
-                height: 100px;
+                border: ${FormatBorderColors} solid 1${pixel};
+                border-radius: 6${pixel};
+                min-width: 230${pixel};
+                height: 100${pixel};
                 z-index: 100;
-                padding: 4px 0;
+                padding: 4${pixel} 0;
                 overflow: hidden;
                 opacity: 0;
                 pointer-events: none;
-                transition: all cubic-bezier(0.22, 1, 0.36, 1) 300ms;
+                transition: ${transitionAll};
                 -webkit-app-region: no-drag;
             }
 
             #DropdownPresetMenu hr {
-                width: 88%;
-                margin-top: 0.2rem;
-                margin-bottom: 0.6rem;
+                width: 88${percent};
+                margin-top: 0.2${rem};
+                margin-bottom: 0.6${rem};
                 margin-left: auto;
                 margin-right: auto;
-                opacity: 10%;
+                opacity: 10${percent};
             }
 
             #DropdownPresetMenu span {
-                padding: 14px 16px;
+                padding: 14${pixel} 16${pixel};
                 font-size: 12${pixel};
-                opacity: 60%;
+                opacity: 60${percent};
             }
                 
             #DropdownPresetMenu.open {
-                height: 205px;
+                height: 205${pixel};
                 opacity: 1;
                 pointer-events: auto;
             }
 
             .dropdown-template-btn {
                 display: block;
-                width: 95%;
+                width: 95${percent};
                 margin: auto;
-                margin-bottom: 0.15rem;
+                margin-bottom: 0.15${rem};
                 text-align: left;
-                padding: 5px 10px;
+                padding: 5${pixel} 10${pixel};
                 border: none;
                 background: none;
                 cursor: pointer;
                 font-size: 14.5${pixel};
                 color: ${textColorPrimaryDisplay};
-                opacity: 80%;
-                border-radius: 8px;
+                opacity: 80${percent};
+                border-radius: 8${pixel};
                 transition: background 0.15s, color 0.15s;
                 -webkit-app-region: no-drag;
             }
@@ -1069,10 +1046,352 @@ export const WebContent = {
                 background: transparent;
             }
         `;
-        this._cachedCSS = GlobalCSS;
-        return GlobalCSS;
-    }
+        // Mintputs/Output
+        const htmlOutputModernCSS = `
+            @import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Anuphan:wght@400;600;700&display=swap');
 
+            #html-output {
+                --text: #000;
+                --background: #faf9f5;
+                --muted: #666;
+                --border: #a7a6a3;
+                --code-bg: #eae9e5;
+                --heading-border: #a7a6a3;
+                --Links: rgb(50, 50, 153);
+
+                font-family: 'Inter Tight', 'Anuphan', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                max-width: 900px;
+                margin: 0 auto;
+                padding: 2.5rem;
+                line-height: 1.75;
+                color: var(--text);
+                background-color: var(--background);
+                animation: fadeIn 400ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+                height: 100%;
+                overflow-y: auto;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            }
+
+            @media (prefers-color-scheme: dark) {
+                #html-output {
+                    --text: #f4f4f4;
+                    --background: #141414;
+                    --muted: #999;
+                    --border: #343434;
+                    --code-bg: #1f1f1f;
+                    --heading-border: #333;
+                    --Links: rgb(108, 108, 243);
+                }
+            }
+
+            #html-output p {
+                margin: 0 0 1.5rem;
+            }
+
+            #html-output h1, #html-output h2, #html-output h3, #html-output h4, #html-output h5, #html-output h6 {
+                margin-top: 32px;
+                margin-bottom: 16px;
+                font-weight: 550;
+                line-height: 1.25; 
+                letter-spacing: -1px;
+            }
+
+            #html-output h1 {
+                font-size: 42px;
+                border-bottom: 1px solid var(--heading-border);
+                padding-bottom: 10px;
+            }
+
+            #html-output h2 {
+                font-size: 36px;
+                border-bottom: 1px solid var(--heading-border);
+                padding-bottom: 8px;
+            }
+
+            #html-output h3 { font-size: 1.7em; }
+            #html-output h4 { font-size: 1.425em; }
+            #html-output h5 { font-size: 1.245em; }
+            #html-output h6 { font-size: 1em; }
+
+            #html-output a {
+                color: var(--Links);
+                text-decoration: underline;
+                transition: color 0.2s ease;
+            }
+
+            #html-output a:hover, #html-output a:focus {
+                color: var(--muted);
+            }
+
+            #html-output code {
+                background: var(--code-bg);
+                padding: 2px 4px;
+                border-radius: 3px;
+                font-family: Consolas, Menlo, Monaco, "Courier New", monospace;
+                font-size: 0.95em;
+            }
+
+            #html-output pre {
+                background: var(--code-bg);
+                padding: 16px;
+                border-radius: 6px;
+                overflow-x: auto;
+                margin: 0 0 1.5rem;
+            }
+
+            #html-output pre code {
+                background: none;
+                padding: 0;
+                border-radius: 0;
+                font-size: 0.95em;
+                color: inherit;
+            }
+
+            #html-output blockquote {
+                border-left: 4px solid var(--border);
+                margin: 0 0 1.5rem;
+                padding-left: 16px;
+                color: var(--muted);
+                font-style: italic;
+            }
+
+            #html-output ul, #html-output ol {
+                margin-left: 2rem;
+                margin-right: 0rem;
+                margin-top: 2rem;
+                margin-bottom: 2rem;
+                padding: 0;
+            }
+
+            #html-output li {
+                margin-bottom: 0.5rem;
+            }
+
+            #html-output li > ul, #html-output li > ol {
+                margin-top: 0.5rem;
+            }
+
+            #html-output hr {
+                border: none;
+                border-top: 1px solid var(--border);
+                margin: 2rem 0;
+            }
+
+            #html-output table {
+                border-collapse: collapse;
+                width: 100%;
+                margin-bottom: 1.5rem;
+            }
+
+            #html-output th, #html-output td {
+                border: 1px solid var(--border);
+                padding: 8px 12px;
+                text-align: left;
+            }
+
+            #html-output th {
+                background: var(--code-bg);
+                font-weight: 600;
+            }
+
+            #html-output img {
+                max-width: 100%;
+                height: auto;
+                display: block;
+                margin: 1rem auto;
+            }
+
+            @media (max-width: 640px) {
+                #html-output {
+                    padding: 1.5rem;
+                }
+            }
+
+            @keyframes fadeIn {
+                0% {
+                    opacity: 0;
+                }
+                100% {
+                    opacity: 1;
+                }
+            }
+        `;
+        this._cachedCSS = GlobalCSS + htmlOutputModernCSS;
+        return this._cachedCSS;
+    },
 };
+
+// MintputsStorage * UI
+function getContent() {
+    if (window.editor && typeof window.editor.getValue === 'function') {
+        const value = window.editor.getValue();
+        // console.log('[DEBUG] getContent (CodeMirror):', value, '| editor:', window.editor);
+        return value;
+    }
+    const textarea = document.getElementById('markdown-input');
+    const value = textarea ? textarea.value : '';
+    // console.log('[DEBUG] getContent (textarea):', value, '| textarea:', textarea);
+    return value;
+}
+
+function setCurrentFile(filename) {
+    const currentFile = document.getElementById('CurrentFiles');
+    if (currentFile) currentFile.textContent = filename;
+}
+
+function updateRecentsUI() {
+    // console.log('[DEBUG] updateRecentsUI called');
+    let recents = mint_getRecents();
+    // console.log('[DEBUG] recents:', recents);
+    const recentsDiv = document.querySelector('.RecentsFiles');
+    // console.log('[DEBUG] recentsDiv:', recentsDiv);
+    if (!recentsDiv) return;
+    recentsDiv.innerHTML = '';
+    recents.forEach(name => {
+        if (!name) return;
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = 'javascript:void(0)';
+        a.textContent = name;
+        a.onclick = () => {
+            const content = mint_loadFile(name);
+            const textarea = document.getElementById('markdown-input');
+            if (window.editor && typeof window.editor.setValue === 'function') {
+                window.editor.setValue(content);
+                setCurrentFile(name);
+                window.editor.focus();
+            } else if (textarea) {
+                textarea.value = content;
+                setCurrentFile(name);
+                textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                textarea.focus();
+            } else {
+                // console.warn('[DEBUG] Did not set editor or textarea. content:', content);
+            }
+        };
+        li.appendChild(a);
+        recentsDiv.appendChild(li);
+    });
+    // console.log('[DEBUG] RecentsFiles innerHTML:', recentsDiv.innerHTML);
+}
+window.updateRecentsUI = updateRecentsUI;
+
+function observeRecentsDivAndUpdate() {
+    const targetSelector = '.RecentsFiles';
+    const found = document.querySelector(targetSelector);
+    if (found) {
+        updateRecentsUI();
+        return;
+    }
+    const observer = new MutationObserver(() => {
+        const recentsDiv = document.querySelector(targetSelector);
+        if (recentsDiv) {
+            updateRecentsUI();
+            observer.disconnect();
+        }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+}
+
+if (typeof window !== 'undefined') {
+    window.addEventListener('DOMContentLoaded', () => {
+        observeRecentsDivAndUpdate();
+    });
+}
+
+// Clean localStorage
+function cleanLocalStorageForMintputs() {
+    const recents = mint_getRecents();
+    let cleaned = false;
+    recents.forEach(name => {
+        const key = FILE_PREFIX + name;
+        const raw = localStorage.getItem(key);
+        if (raw && /<textarea|<div|<span|<p|<br|<script|<style/i.test(raw)) {
+            localStorage.removeItem(key);
+            cleaned = true;
+            // console.log('[CLEAN] Removed old HTML file from localStorage:', key);
+        }
+    });
+    if (cleaned) {
+        const newRecents = mint_getRecents().filter(name => {
+            return !!localStorage.getItem(FILE_PREFIX + name);
+        });
+        mint_saveRecents(newRecents);
+        updateRecentsUI();
+    }
+}
+window.cleanLocalStorageForMintputs = cleanLocalStorageForMintputs;
+
+if (typeof window !== 'undefined') {
+    window.addEventListener('DOMContentLoaded', () => {
+        cleanLocalStorageForMintputs();
+        const recents = mint_getRecents();
+        // console.log('Startup recents:', recents);
+        if (recents.length > 0) {
+            const firstFile = recents[0];
+            const key = FILE_PREFIX + firstFile;
+            const raw = localStorage.getItem(key);
+            let decoded = '';
+            if (raw) {
+                try {
+                    decoded = decodeURIComponent(raw);
+                } catch (e) {
+                    decoded = raw;
+                }
+            }
+            // console.log('Trying to load:', key, 'raw:', raw, 'decoded:', decoded);
+            const textarea = document.getElementById('markdown-input');
+            if (window.editor && typeof window.editor.setValue === 'function') {
+                window.editor.setValue(decoded);
+                setCurrentFile(firstFile);
+                window.editor.focus();
+            } else if (textarea) {
+                textarea.value = decoded;
+                setCurrentFile(firstFile);
+                textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                textarea.focus();
+            } else {
+                // console.warn('[DEBUG] Did not set editor or textarea. content:', content);
+            }
+        }
+        updateRecentsUI();
+    });
+}
+
+if (typeof window !== 'undefined') {
+    mint_bindCtrlS(getContent, setCurrentFile, updateRecentsUI);
+}
+
+/**
+ * @function clear
+ * @desc 
+ */
+ 
+function clearAllRecentFiles() {
+    localStorage.removeItem('mintputs_recents');
+    const recents = mint_getRecents();
+    recents.forEach(name => {
+        if (name) localStorage.removeItem('mintputs_file_' + name);
+    });
+    updateRecentsUI();
+}
+
+if (typeof window !== 'undefined') {
+    window.clearAllRecentFiles = clearAllRecentFiles;
+}
+
+function resetStr() {
+    localStorage.removeItem('mintputs_recents');
+    Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('mintputs_file_')) {
+            localStorage.removeItem(key);
+        }
+    });
+    updateRecentsUI();
+}
+if (typeof window !== 'undefined') {
+    window.resetStr = resetStr;
+}
 
 WebContent.initThemeSystem();

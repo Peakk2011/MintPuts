@@ -4,71 +4,49 @@ contextBridge.exposeInMainWorld('electronAPI', {
   platform: process.platform,
   getVersion: () => ipcRenderer.invoke('get-app-version'),
 
-  getPerformanceMetrics: () => {
-    return {
-      memory: process.memoryUsage(),
-      cpuUsage: process.cpuUsage(),
-      timestamp: Date.now()
-    };
-  },
+  getPerformanceMetrics: () => ipcRenderer.invoke('get-performance-metrics'),
 
-  // Window controls
   minimizeWindow: () => ipcRenderer.invoke('minimize-window'),
   maximizeWindow: () => ipcRenderer.invoke('maximize-window'),
   closeWindow: () => ipcRenderer.invoke('close-window'),
 
-  // File operations (if needed)
   selectFile: () => ipcRenderer.invoke('select-file'),
   saveFile: (content) => ipcRenderer.invoke('save-file', content),
 
-  // Theme management
   setTheme: (theme) => ipcRenderer.invoke('set-theme', theme),
   getTheme: () => ipcRenderer.invoke('get-theme'),
 
-  // Development utilities
   isDev: () => ipcRenderer.invoke('is-dev'),
   openDevTools: () => ipcRenderer.invoke('open-dev-tools'),
 
-  // Event listeners
   onWindowStateChange: (callback) => ipcRenderer.on('window-state-changed', callback),
   onThemeChange: (callback) => ipcRenderer.on('theme-changed', callback),
 
-  // Cleanup
   removeAllListeners: (channel) => ipcRenderer.removeAllListeners(channel)
 });
 
-// Performance monitoring
 if (process.env.NODE_ENV === 'development') {
   contextBridge.exposeInMainWorld('devTools', {
-    log: (...args) => console.log('[Preload]', ...args),
-    error: (...args) => console.error('[Preload]', ...args),
-    warn: (...args) => console.warn('[Preload]', ...args),
-
-    // Performance profiling
-    startProfile: (name) => console.profile(name),
-    endProfile: (name) => console.profileEnd(name),
-
-    // Memory tracking
-    getMemoryUsage: () => process.memoryUsage(),
-
-    // Timing utilities
-    time: (label) => console.time(label),
-    timeEnd: (label) => console.timeEnd(label)
+    log: (...args) => ipcRenderer.send('devtools-log', ...args),
+    error: (...args) => ipcRenderer.send('devtools-error', ...args),
+    warn: (...args) => ipcRenderer.send('devtools-warn', ...args),
+    startProfile: (name) => ipcRenderer.send('devtools-profile-start', name),
+    endProfile: (name) => ipcRenderer.send('devtools-profile-end', name),
+    getMemoryUsage: () => ipcRenderer.invoke('get-performance-metrics'),
+    time: (label) => ipcRenderer.send('devtools-time', label),
+    timeEnd: (label) => ipcRenderer.send('devtools-timeEnd', label)
   });
 }
 
-// Global error handling
 window.addEventListener('error', (event) => {
-  console.error('Global error:', event.error);
+  console.error('Global error occurred');
 });
 
 window.addEventListener('unhandledrejection', (event) => {
-  console.error('Unhandled promise rejection:', event.reason);
+  console.error('Unhandled promise rejection');
 });
 
-// Optimize loading
 document.addEventListener('DOMContentLoaded', () => {
-  // Performance optimization: Remove unused CSS
   const unusedStyleSheets = Array.from(document.styleSheets).filter(sheet => {
     try {
       return sheet.cssRules.length === 0;

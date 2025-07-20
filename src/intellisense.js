@@ -236,7 +236,7 @@ const promptMap = {
         speed: speedArgs.normal
     },
     "/ help": {
-        text: "## Help\n- Type /create heading with subtitle To create a topic\n- Type /create heading To create a heading\n- Type /create list To create a list\n- Type /create table To create a table\n- Type /create quote box To create a quote\n- Type /create social links To create social links\n- Type /create about me section To create an about me section\n- Type /create code block To create a code block\n- Type /create image To create an image\n- Type /create link To create a link\n- Type /create warning To create a warning box\n- Type /create info To create an info box\n- Type /create todo To create a todo list\n- Type /create contact To create a contact section\n- Type /create profile To create a profile section\n- Type /create faq To create a FAQ section",
+        text: "## Help\n- Type /create heading with subtitle To create a topic\n- Type /create heading To create a heading\n- Type /create list To create a list\n- Type /create table To create a table\n- Type /create quote To create a quote\n- Type /create social links To create social links\n- Type /create about me section To create an about me section\n- Type /create code block To create a code block\n- Type /create image To create an image\n- Type /create link To create a link\n- Type /create warning To create a warning box\n- Type /create info To create an info box\n- Type /create todo To create a todo list\n- Type /create contact To create a contact section\n- Type /create profile To create a profile section\n- Type /create faq To create a FAQ section\n\n## Binary Converter:\n- Type /binary help for binary converter commands\n- Type `binary <number>` to convert number to binary\n- Type `binary2int <binary>` to convert binary to integer\n- Type `binary2float <32-bit-binary>` to convert binary to float",
         speed: speedArgs.veryFast
     },
     // Easter eggs
@@ -246,6 +246,31 @@ const promptMap = {
     },
     "/ test.girlfriend": {
         text: `\n# เพลงที่คนสร้างอยากสื่อถือแฟนเก่า\n## คิด(แต่ไม่)ถึง\n\nอยากรู้เพียงว่าความคิดถึงของเธอกับฉันมันเท่ากันหรือเปล่า\nถามจริง ๆ ว่าใจเธอเปลี่ยนไปหรือเปล่า\nฉันไม่คิดไปเองใช่ไหม\nความคิดถึงที่ฉันได้เคยส่งไป\nส่งไปได้เพียงในความทรงจำที่มีเราเรื่อยมา\nแค่นึกภาพตอนนั้น ฉันก็มีน้ำตา\nรู้บ้างไหมว่าเจ็บแค่ไหน\nความคิดถึงที่ฉันได้เคยส่งไป\nส่งไปไม่เคยถึงเธอเลย\n\n(คิดแต่ไม่ถึง คิด คิด แต่ไม่ถึงเธอ) => x4\n\nว่าความคิดถึงของเธอกับฉันมันเท่ากันหรือเปล่า\nถามจริง ๆ ว่าใจเธอเปลี่ยนไปหรือเปล่า\nฉันไม่คิดไปเองใช่ไหม\nความคิดถึงที่ฉันได้เคยส่งไป\nส่งไปได้เพียงในความทรงจำที่มีเราเรื่อยมา\nแค่นึกภาพตอนนั้น ฉันก็มีน้ำตา\nรู้บ้างไหมว่าเจ็บแค่ไหน\nความคิดถึงที่ฉันได้เคยส่งไป\nส่งไปไม่เคยถึงเธอเลย\n                        `,
+        speed: speedArgs.veryFast
+    },
+    "/ binary help": {
+        text: `# Binary Converter Commands
+
+## Available Commands:
+- \`binary <number>\` - Convert number to binary
+  - Example: \`binary 42\` → Integer 42 to binary
+  - Example: \`binary 3.14\` → Float 3.14 to binary (IEEE 754)
+
+- \`binary2int <binary>\` - Convert binary to integer
+  - Example: \`binary2int 101010\` → Binary 101010 to integer
+
+- \`binary2float <32-bit-binary>\` - Convert 32-bit binary to float
+  - Example: \`binary2float 01000000010010001111010111000011\` → 32-bit binary to float
+
+## Usage:
+Just type the command and press Enter in the editor!
+
+## Examples:
+- \`binary 255\`
+- \`binary -42\`
+- \`binary 3.14159\`
+- \`binary2int 1101\`
+- \`binary2float 01000000010010001111010111000011\``,
         speed: speedArgs.veryFast
     },
 };

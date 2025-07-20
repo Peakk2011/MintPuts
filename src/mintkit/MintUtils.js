@@ -492,9 +492,9 @@ export const AdjustHook = (options = {}) => {
             stats.lastCheckTime = requestTime;
             
             // Log performance stats every 10 requests if monitoring is enabled
-            if (config.performanceMonitoring && stats.requests % 10 === 0) {
-                console.log(`AdjustHook Stats: ${stats.requests} requests, ${stats.errors} errors, Avg: ${stats.avgTime.toFixed(2)}ms, Last: ${requestTime.toFixed(2)}ms`);
-            }
+            // if (config.performanceMonitoring && stats.requests % 10 === 0) {
+            //     console.log(`AdjustHook Stats: ${stats.requests} requests, ${stats.errors} errors, Avg: ${stats.avgTime.toFixed(2)}ms, Last: ${requestTime.toFixed(2)}ms`);
+            // }
         }
     };
     
