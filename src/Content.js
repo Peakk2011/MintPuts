@@ -216,7 +216,7 @@ const darkThemeColors = {
     TextColorPrimaryText: '#D9D9D9;',
     HighlightPrimary: '#413c3c;',
     FormatTextColors: '#D9D9D9',
-    FormatBorderColors: '#262626',
+    FormatBorderColors: '#292929',
     PrimaryHeaderText: '#dfffeb',
     PublicFormatBorderColors: '#343434',
     btnSecondary: {
@@ -253,7 +253,7 @@ const isBrowserOpening = () => {
 
 export const WebContent = {
     _cachedCSS: null,
-    PageTitle: 'Markdown Parser',
+    PageTitle: 'Mintputs',
     CSScolor: {},
     _themeChangeCallback: null,
 
@@ -290,10 +290,16 @@ export const WebContent = {
             return `
 
                 <div id="TitleLinks">
-                    <li><a id="Highlight" data-base-id="ToggleMDEditer" href="javascript:void(0)">Markdown Editer</a></li>
-                    <li><a id="ToggleHTMLOUTPUT" data-base-id="ToggleHTMLOUTPUT" href="javascript:void(0)">HTML Output</a></li>
+                    <div class="TitlePrimaryLinks">
+                        <li><a id="Highlight" data-base-id="ToggleMDEditer" href="javascript:void(0)">Editer</a></li>
+                        <li><a id="ToggleHTMLOUTPUT" data-base-id="ToggleHTMLOUTPUT" href="javascript:void(0)"> Output</a></li>
+                    </div>
+                    <div class="TitleSubLinks">
+                        <li><a id="ToggleDownload" data-base-id="ToggleDownload" href="javascript:void(0)" onclick="downloadHtml()">Download</a></li>
+                        <li><a id="CopyHTML" data-base-id="CopyHTML" href="javascript:void(0)" onclick="copyHtml()">Copy code</a></li>
+                    </div>
+                    <!-- clearAll() -->
                 </div>
-
 
                 <div id="titlebar">
                     <div id="drag-region">
@@ -352,23 +358,15 @@ export const WebContent = {
                         </div>
                     </div>
                     <div class="output-section">
-                        <div class="section-title" id="HTML_outputText">
-                            HTML Output
-                        </div>
                         <div id="html-output"></div>
                     </div>
                 </div>
 
                 <div class="controls">
                     <div class="controlsContent">
-                        <div class="Buttons">
-                            <button class="btn btn-secondary" onclick="clearAll()">Clear All</button>
-                            <button class="btn btn-primary" onclick="copyHtml()">Copy HTML</button>
-                            <button class="btn btn-primary" onclick="downloadHtml()">Download HTML</button>
-                        </div>
                         <div class="stats">
-                            <span id="parse-time">Parse time: 0ms</span>
-                            <span id="char-count">Characters: 0</span>
+                            <span id="parse-time">0ms</span>
+                            <span id="char-count">0</span>
                         </div>
                     </div>
                 </div>
@@ -568,15 +566,9 @@ export const WebContent = {
                 position: ${fixed};
                 top: ${spacing[4]};
                 left: 50${percent};
+                gap: 16${pixel};
+                z-index: 9999;
                 transform: translateX(-50${percent});
-                border: ${FormatBorderColors} solid 1${pixel};
-                z-index: 10;
-                width: fit-content;
-                height: 40${pixel};
-                background-color: ${colorPrimary};
-                -webkit-app-region: drag;
-                border-radius: ${borderRadiusFull};
-                padding: 0 ${spacing[1]};
             }
 
             #TitleLinks li {
@@ -599,6 +591,22 @@ export const WebContent = {
 
             #TitleLinks li a:hover {
                 opacity: 1;
+            }
+
+            .TitleSubLinks,
+            .TitlePrimaryLinks {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: fit-content;
+
+                border: ${FormatBorderColors} solid 1${pixel};
+                width: fit-content;
+                height: 40${pixel};
+                background-color: ${colorPrimary};
+                -webkit-app-region: drag;
+                border-radius: ${borderRadiusFull};
+                padding: 0 ${spacing[1]};
             }
 
             #drag-region {
@@ -718,7 +726,7 @@ export const WebContent = {
 
             .output-section {
                 position: fixed;
-                top: 0;
+                top: 20px;
                 right: -30px;
                 width: calc(100vw - 260px);
                 height: 100vh;
@@ -739,21 +747,6 @@ export const WebContent = {
                 background: ${OutputBackground.PrimarySec};
                 border-radius: 8px;
                 box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            }
-
-            .section-title {
-                font-size: 20${pixel};
-                font-weight: ${bold};
-                margin-bottom: ${spacing[4]};
-                color: ${textColorPrimaryText};
-                display: flex;
-                align-items: center;
-                font-family: ${Typeface[4]};
-                margin-top: ${spacing[10]};
-            }
-
-            #HTML_outputText {
-                margin-top: ${spacing[12]};
             }
 
             #markdown-input {
@@ -791,35 +784,6 @@ export const WebContent = {
                 align-items: center;
                 padding: 0 ${spacing[6]};
                 width: 100${vw};
-            }
-
-            .Buttons {
-                display: flex;
-            }
-
-            .btn {
-                padding: ${spacing[2]} ${spacing[4]};
-                border: none;
-                font-weight: 400;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                font-size: 13.5${pixel};
-                border-radius: 50${pixel};
-                font-family: ${Typeface[6]},${DefaultFontFallback};
-                margin-right: ${spacing[1.5]};
-                line-height: 1.2;
-            }
-
-            .btn-primary {
-                color: ${FormatTextColors};
-                background: transparent;
-                border: solid 1${pixel} ${PublicFormatBorderColors};
-            }
-
-            .btn-secondary {
-                background: ${btnSecondary.background};
-                border: ${btnSecondary.border};  
-                color: ${btnSecondary.color};
             }
 
             .stats {
@@ -1128,8 +1092,9 @@ export const WebContent = {
             #html-output h1, #html-output h2, #html-output h3, #html-output h4, #html-output h5, #html-output h6 {
                 margin-top: 32px;
                 margin-bottom: 16px;
-                font-weight: 600;
+                font-weight: 550;
                 line-height: 1.25; 
+                letter-spacing: -1px;
             }
 
             #html-output h1 {
@@ -1192,7 +1157,7 @@ export const WebContent = {
             }
 
             #html-output ul, #html-output ol {
-                margin-left: 0rem;
+                margin-left: 2rem;
                 margin-right: 0rem;
                 margin-top: 2rem;
                 margin-bottom: 2rem;

@@ -112,7 +112,6 @@ const InitialMintkit = () => {
     });
 
     Main.set({});
-    Logger.info('Mintkit initialized');
 };
 
 const startMintkit = () => {

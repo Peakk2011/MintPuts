@@ -374,7 +374,6 @@ public:
             }
         });
         
-        logger.info("Server started on port " + std::to_string(port));
         return true;
     }
     
@@ -401,7 +400,7 @@ public:
         std::string url = "http://localhost:" + std::to_string(port);
         
 #ifdef _WIN32
-        ShellExecuteA(nullptr, "open", url.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
+        ShellExecuteA(nullptr, "open", url.c_str(), nullptr, nullptr, SW_HIDE);
 #elif defined(__APPLE__)
         system(("open " + url).c_str());
 #else
@@ -435,6 +434,8 @@ private:
             serveReload(client);
         } else if (path == "/live-reload.js") {
             serveLiveReloadScript(client);
+        } else if (path == "/favicon.ico") {
+            serveFavicon(client);
         } else {
             std::string filename = (path == "/") ? "index.html" : std::string(path.substr(1));
             serveFile(client, filename);
@@ -470,7 +471,6 @@ private:
         response += content;
         
         client.send(response);
-        logger.info("Served: " + filename + " (" + std::to_string(content.length()) + " bytes)");
     }
     
     void serveReload(Socket& client) {
@@ -495,6 +495,14 @@ private:
                               "Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n"
                               "Pragma: no-cache\r\n"
                               "Expires: 0\r\n\r\n" + liveReloadScript;
+        
+        client.send(response);
+    }
+    
+    void serveFavicon(Socket& client) {
+        std::string response = "HTTP/1.1 302 Found\r\n"
+                              "Location: /assets/FavIcons/lightmode.svg\r\n"
+                              "Cache-Control: max-age=3600\r\n\r\n";
         
         client.send(response);
     }
@@ -535,7 +543,6 @@ private:
                 
                 auto writeTime = fs::last_write_time(entry.path());
                 if (writeTime > lastCheckTime) {
-                    logger.info("File changed: " + entry.path().string());
                     filesChanged = true;
                 }
             }
@@ -572,19 +579,17 @@ const std::string HTTPServer::notFoundResponse =
 
 const std::string HTTPServer::liveReloadScript = R"(
 (function() {
-    console.log('Live reload script loaded');
-    
     function checkForReload() {
         fetch('/reload')
             .then(response => response.json())
             .then(data => {
                 if (data.reload) {
-                    console.log('Reloading page...');
                     location.reload();
                 }
             })
             .catch(error => {
-                console.error('Live reload error:', error);
+                return;
+                console.error('Error:', error);
             });
     }
     
@@ -608,28 +613,18 @@ private:
 #else
         system("clear");
 #endif
-        logger.info("=== LOG CLEARED ===");
-        logger.info("Server still running on: http://localhost:" + std::to_string(server.getPort()));
-        logger.info("Press Ctrl+C to stop");
-        logger.info("Linux/macOS: Send 'kill -USR1 <PID>' for manual clear");
-        logger.info("==================");
+        // 
     }
 
 public:
     Mintputs(int port = 3000) : server(port) {}
     
-    bool start() {
-        logger.info("Starting Live Server...");
-        
+    bool start() {        
         if (!server.start()) {
             logger.error("Failed to start server");
             return false;
         }
-        
-        logger.info("Server ready!");
-        logger.info("Local: http://localhost:" + std::to_string(server.getPort()));
-        logger.info("Press Ctrl+C to stop");
-        
+                
         server.openBrowser();
         
         return true;
@@ -651,17 +646,13 @@ public:
         });
 #endif
         
-        logger.info("=== LOG CLEAR OPTIONS ===");
-        logger.info("Auto clear: Every 5 minutes");
-        logger.info("Manual clear: Send SIGUSR1 signal (Linux/macOS) or modify code");
-        logger.info("Disable auto clear: Set AUTO_CLEAR_ENABLED = false");
-        logger.info("========================");
+        // 
         
 #ifndef _WIN32
         static auto clearLogHandler = [](int signal, Mintputs* server) {
             if (server) {
                 server->clearLog();
-                server->logger.info("Manual log clear triggered");
+                // 
             }
         };
 
@@ -673,7 +664,6 @@ public:
         while (running) {
             std::this_thread::sleep_for(std::chrono::seconds(1));
 
-            // Auto clear if in use
             if (this->AUTO_CLEAR_ENABLED && 
                 std::chrono::duration_cast<std::chrono::minutes>(std::chrono::steady_clock::now() - lastLogResetTime) >= logResetInterval) {
                 clearLog();
@@ -718,7 +708,7 @@ int main(int argc, char* argv[]) {
 
 /*    
     WINDOWS (MinGW):
-    g++ -x c++ -std=c++20 -static -O3 -DNDEBUG -flto -march=native Mintputs.cpp -o Mintputs.exe -lstdc++ -lws2_32
+    g++ -x c++ -std=c++20 -static -O3 -DNDEBUG -flto -march=native -mwindows live/mintputs.cpp -o live/Mintputs.exe -lstdc++ -lws2_32
     
     LINUX:
     g++ -std=c++20 -O3 -DNDEBUG -flto -march=native Mintputs.cpp -o Mintputs -lpthread
