@@ -1941,43 +1941,51 @@ window.updateRecentsUI = updateRecentsUI;
 function setupAutoSaveReminder() {
     let reminderShown = false;
     let timerStarted = false;
-    const REMINDER_DELAY = 2000;
+    const REMINDER_DELAY = 5 * 60 * 1000;;
 
     const onEditorChange = (cm, change) => {
-        const isUserInput = change && change.origin && ['+input', '+delete', 'paste', 'cut'].includes(change.origin);
-        if (!isUserInput) {
-            return;
-        }
+        const userOrigins = ['+input', '+delete', 'paste', 'cut', 'drag'];
+        const isUserInput = change && change.origin && userOrigins.includes(change.origin);
+        
+        if (!isUserInput) return;
 
-        if (reminderShown || timerStarted || window.innerWidth > 600) {
-            return;
-        }
+        if (reminderShown || timerStarted) return;
 
         timerStarted = true;
         setTimeout(() => {
             if (reminderShown) return;
-            reminderShown = true; // Mark as shown to prevent re-triggering
-            mint_showSaveModal(
-                (filename) => {
-                    const content = getContent();
-                    mint_saveFile(filename, content);
-                    updateRecentsUI();
-                    setCurrentFile(filename);
-                },
-                () => { /* User cancelled, do nothing. The reminder won't show again. */ }
-            );
+            reminderShown = true;
+            
+            if (typeof mint_showSaveModal === 'function') {
+                mint_showSaveModal(
+                    (filename) => {
+                        const content = getContent();
+                        mint_saveFile(filename, content);
+                        updateRecentsUI();
+                        setCurrentFile(filename);
+                    },
+                    () => {}
+                );
+            } else {
+                console.error('mint_showSaveModal is not available');
+            }
         }, REMINDER_DELAY);
     };
 
     const checkEditorAndBind = () => {
-        if (window.editor) {
+        if (window.editor && typeof window.editor.on === 'function') {
             window.editor.on('change', onEditorChange);
+            console.log('Auto save reminder setup complete');
         } else {
             setTimeout(checkEditorAndBind, 500);
         }
     };
 
-    checkEditorAndBind();
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', checkEditorAndBind);
+    } else {
+        checkEditorAndBind();
+    }
 }
 
 function observeRecentsDivAndUpdate() {
