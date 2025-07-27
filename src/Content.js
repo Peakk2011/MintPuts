@@ -24,10 +24,8 @@ function mint_addRecent(filename) {
 }
 
 function mint_saveFile(filename, content) {
-    // console.log('[DEBUG] Saving file:', filename, '| content:', content, '| typeof:', typeof content, '| length:', content ? content.length : 0);
     localStorage.setItem('mintputs_file_' + filename, encodeURIComponent(content));
     mint_addRecent(filename);
-    // console.log('[DEBUG] Saved file:', filename, 'content:', content);
 }
 
 function mint_loadFile(filename) {
@@ -43,6 +41,53 @@ function mint_loadFile(filename) {
 function mint_showSaveModal(onSave, onCancel) {
     if (!_modalCSSInjected) {
         Mint.injectCSS(`
+            :root {
+                --primary-background-color: rgba(250, 249, 246, 1);
+                --primary-TextBG: #000000;
+                --primary-accent: hsl(180, 16%, 30%);
+                
+                --modal-background: #ffffff;
+                --modal-text: #000000;
+                --modal-text-secondary: #4B4B4B;
+                --modal-border: #deddd9;
+                --modal-input-border: #ccc;
+                --modal-shadow: 0px 12px 24px rgba(0, 0, 0, 0.10), 
+                                0px 14px 128px rgba(0, 0, 0, 0.07), 
+                                0px 60px 300px rgba(0, 0, 0, 0.05);
+                
+                /* Button Colors - Light Theme */
+                --button-bg-gradient: linear-gradient(180deg, hsl(48 50% 96.1%), hsl(176 17% 81.6%));
+                --button-border-gradient: linear-gradient(180deg, hsl(0 0% 100%), hsl(0 0% 82.7%), hsl(197 10% 59%));
+                --button-text: #4B4B4B;
+                --button-shadow: 0 6px 10px rgba(191, 200, 230, 0.4), 0 4px 20px rgba(191, 200, 230, 0.2);
+                --button-hover-bg: hsl(0, 0%, 0%);
+                --button-hover-text: hsl(0, 0%, 100%);
+                --button-hover-shadow: transarent;
+            }
+
+            @media (prefers-color-scheme: dark) {
+                :root {
+                    --primary-background-color: rgba(27, 27, 27, 1);
+                    --modal-background: #141414;
+                    --modal-text: #FFFFFF;
+                    --modal-text-secondary: #b9bebe;
+                    --primary-accent: hsl(180, 35%, 92%);
+                    --modal-border: #3a3a3a;
+                    --modal-input-border: #555;
+                    --modal-shadow: 0px 12px 24px rgba(0, 0, 0, 0.40), 
+                                    0px 14px 128px rgba(0, 0, 0, 0.30), 
+                                    0px 60px 300px rgba(0, 0, 0, 0.20);
+                    
+                    --button-bg-gradient: linear-gradient(180deg, hsl(176 10% 20%), hsl(0 0% 12%));
+                    --button-border-gradient: linear-gradient(180deg, hsl(0 0% 20%), hsl(198 10% 25%), hsl(199 10% 50%));
+                    --button-text: #e0e0e0;
+                    --button-shadow: transparent;
+                    --button-hover-bg: hsl(0, 0%, 100%);
+                    --button-hover-text: hsl(0, 0%, 0%);
+                    --button-hover-shadow: transparent;
+                }
+            }
+
             #mintputs-save-modal {
                 display: none;
                 position: fixed;
@@ -54,99 +99,363 @@ function mint_showSaveModal(onSave, onCancel) {
                 justify-content: center;
                 z-index: 9999;
             }
+
             .mintputs-modal-backdrop {
                 position: absolute;
                 left: 0;
                 top: 0;
-                width: 100vw;
+                width:  100vw;
                 height: 100vh;
-                background: rgba(0,0,0,0.18);
                 z-index: 0;
             }
+
             .mintputs-modal-content {
                 position: relative;
                 z-index: 1;
-                background: #fff;
-                border-radius: 12px;
-                box-shadow: 0 4px 32px rgba(0,0,0,0.13);
-                padding: 2.2em 2.5em 1.5em 2.5em;
+                border-radius: 10px;
+                background: var(--modal-background);
+                color: var(--modal-text);
+                box-shadow: var(--modal-shadow);
+                padding: 1.75rem 1.5rem 1.75rem 1.5rem;
                 min-width: 320px;
-                max-width: 90vw;
-                min-height: 120px;
+                max-width: 360px;
+                min-height: 360px;
                 display: flex;
                 flex-direction: column;
                 align-items: stretch;
+                border: 1px solid var(--modal-border);
+                transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
             }
+
             .mintputs-modal-content h2 {
-                margin-top: 0;
+                margin-top: 0.5rem;
+                color: var(--modal-text);
             }
+
+            .mintputs-modal-content p {
+                margin: 0.5rem 0;
+                margin-bottom: 1rem;
+                font-size: 0.9em;
+                color: var(--modal-text-secondary);
+                font-weight: 500;
+                line-height: 1.4;
+                letter-spacing: -0.4px;
+            }
+
+            .mintputs-modal-content img {
+                width: 55px;
+                height: auto;
+                filter: var(--icon-filter, none);
+            }
+
             #mintputs-save-filename {
                 width: 100%;
-                padding: 8px;
-                font-size: 1.1em;
+                padding: 0.5rem 0rem;
+                font-size: 0.95em;
                 margin-bottom: 1em;
-                border-radius: 6px;
-                border: 1px solid #ccc;
+                border: none;
+                border-bottom: 1.5px solid var(--modal-input-border);
+                background: transparent;
+                color: var(--modal-text);
+                transition: border-color 0.2s ease, color 0.3s ease;
             }
+
+            #mintputs-save-filename:focus {
+                outline: none;
+                border-bottom: 1.5px solid var(--primary-accent);
+            }
+
+            #mintputs-save-filename::placeholder {
+                color: var(--modal-text-secondary);
+                transition: color 0.3s ease;
+            }
+
+            #mintputs-save-filename:focus::placeholder {
+                color: var(--primary-accent);
+            }
+
             .mintputs-modal-content button {
                 padding: 8px 18px;
                 border-radius: 6px;
                 border: none;
                 cursor: pointer;
             }
+
             #mintputs-save-cancel {
-                background: #eee;
+                box-shadow: none;
+                background: transparent;
             }
-            #mintputs-save-confirm {
-                background: #2d8cff;
-                color: #fff;
+
+            #mintputs-save-cancel-inner {
+                background: transparent;
+                box-shadow: none;
+                color: var(--modal-text-secondary);
+                transition: color 0.2s ease;
             }
-            @media (prefers-color-scheme: dark) {
+
+            #mintputs-save-cancel:hover #mintputs-save-cancel-inner {
+                color: var(--modal-text);
+            }
+            
+            .MintputsSaveButtons {
+                position: relative;
+                background: var(--button-border-gradient);
+                padding: 2px;
+                border-radius: 100vmax;
+                display: inline-block;
+                border: none;
+                cursor: pointer;
+                text-decoration: none;
+                transition: all 0.2s ease-out;
+            }
+
+            .MintputsSaveButtons-inner {
+                background: var(--button-bg-gradient);
+                border-radius: 100vmax;
+                text-align: center;
+                color: var(--button-text);
+                font-size: 14px;
+                font-weight: 450;
+                letter-spacing: 0.2px;
+                padding: 0.3rem 1.25rem;
+                transition: all 0.3s ease-out;
+                box-shadow: var(--button-shadow);
+            }
+
+            .MintputsSaveButtons:hover {
+                background: var(--button-hover-bg);
+            }
+
+            .MintputsSaveButtons:hover .MintputsSaveButtons-inner {
+                background: var(--button-hover-bg);
+                box-shadow: var(--button-hover-shadow);
+                color: var(--button-hover-text);
+            }
+
+            .MintputsSaveButtons:active {
+                transform: translateY(0px) scale(0.96);
+                transition: all 0.08s ease-out;
+            }
+
+            .MintputsSaveButtons:active .MintputsSaveButtons-inner {
+                transform: scale(0.92);
+                transition: all 0.08s ease-out;
+            }
+
+            .MintputsSaveButtonsContainer {
+                display: flex;
+                gap: 0.15em;
+                justify-content: flex-end;
+                position: absolute;
+                bottom: 1.5rem;
+                right: 1.5rem;
+            }
+
+            @media (max-width: 480px) {
                 .mintputs-modal-content {
-                    background: #232323;
-                    color: #fafafa;
+                    min-width: 280px;
+                    max-width: 320px;
+                    margin: 1rem;
                 }
+            }
+
+            #mintputs-save-filename {
+                position: relative;
+            }
+
+            #mintputs-save-filename.error {
+                border-bottom-color: #ff6b6b;
+                animation: shake 0.3s ease;
+            }
+
+            #mintputs-save-modal {
+                animation: modalFadeIn 400ms cubic-bezier(0.19, 1, 0.22, 1) forwards;
+            }
+
+            @keyframes modalFadeIn {
+                from {
+                    opacity: 0;
+                    transform: scale(0.8);
+                }
+                to {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+            }
+
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
             }
         `);
         _modalCSSInjected = true;
     }
+
     let modal = document.getElementById('mintputs-save-modal');
     if (!modal) {
-        Mint.injectHTML('body', `
+        const modalHTML = `
             <div id="mintputs-save-modal">
                 <div class="mintputs-modal-backdrop"></div>
                 <div class="mintputs-modal-content">
-                    <h2>บันทึกไฟล์</h2>
-                    <input id="mintputs-save-filename" type="text" placeholder="Files name" autofocus />
-                    <div style="display:flex;gap:1em;justify-content:flex-end;">
-                        <button id="mintputs-save-cancel">Cancel</button>
-                        <button id="mintputs-save-confirm">Save</button>
+                    <img src="./assets/folderIcons.svg" alt="Mintputs Logo">
+                    <h2>Save</h2>
+                    <p>
+                        Save your file to this browser's storage.<br>
+                        Only you can access it on this device.
+                    </p>
+                    <input id="mintputs-save-filename" type="text" placeholder="Enter filename..." autofocus />
+                    <div class="MintputsSaveButtonsContainer">
+                        <a class="MintputsSaveButtons" href="javascript:void(0)" id="mintputs-save-cancel">
+                            <div class="MintputsSaveButtons-inner" id="mintputs-save-cancel-inner">
+                                Cancel
+                            </div>
+                        </a>
+                        <a class="MintputsSaveButtons" href="javascript:void(0)" id="mintputs-save-confirm">
+                            <div class="MintputsSaveButtons-inner">
+                                Save
+                            </div>
+                        </a>
                     </div>
                 </div>
             </div>
-        ` + document.body.innerHTML);
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
         modal = document.getElementById('mintputs-save-modal');
     }
+
     modal.style.display = 'flex';
     const input = document.getElementById('mintputs-save-filename');
     input.value = '';
-    input.focus();
+
+    let typewriterTimeout;
+    let currentIndex = 0;
+    let currentText = '';
+    let isDeleting = false;
+    let isTyping = false;
+
+    const placeholderTexts = [
+        "Enter Your Filename",
+        "My Awesome Project",
+        "Annual Report 2025",
+        "Mintkit documentation",
+        "Top Secret Document"
+    ];
+
+    function typeWriter() {
+        // Stop if focused on input
+        if (document.activeElement === input || input.value.trim() !== '') {
+            return;
+        }
+
+        isTyping = true;
+        const fullText = placeholderTexts[currentIndex];
+        let typeSpeed = 50;
+
+        if (isDeleting) {
+            currentText = fullText.substring(0, currentText.length - 1);
+            typeSpeed = 25;
+        } else {
+            currentText = fullText.substring(0, currentText.length + 1);
+            typeSpeed = 50;
+        }
+
+        input.placeholder = currentText;
+
+        if (!isDeleting && currentText === fullText) {
+            // Wait before starting to delete
+            typewriterTimeout = setTimeout(() => {
+                isDeleting = true;
+                typeWriter();
+            }, 2000);
+        } else if (isDeleting && currentText === '') {
+            // Move to next text
+            isDeleting = false;
+            currentIndex = (currentIndex + 1) % placeholderTexts.length;
+            typewriterTimeout = setTimeout(typeWriter, 500);
+        } else {
+            // Continue typing/deleting
+            typewriterTimeout = setTimeout(typeWriter, typeSpeed);
+        }
+    }
+
+    function startTypewriter() {
+        // Clear any existing timeout
+        clearTimeout(typewriterTimeout);
+
+        // Reset state if needed
+        if (!isTyping) {
+            currentIndex = 0;
+            currentText = '';
+            isDeleting = false;
+        }
+
+        // Only start if input is not focused and empty
+        if (document.activeElement !== input && input.value.trim() === '') {
+            typeWriter();
+        }
+    }
+
+    function stopTypewriter() {
+        clearTimeout(typewriterTimeout);
+        isTyping = false;
+    }
+
+    // Event listeners
+    input.addEventListener('focus', () => {
+        stopTypewriter();
+        input.placeholder = "Enter filename...";
+    });
+
+    input.addEventListener('blur', () => {
+        if (input.value.trim() === '') {
+            // Small delay before starting typewriter again
+            setTimeout(startTypewriter, 300);
+        }
+    });
+
+    input.addEventListener('input', () => {
+        if (input.value.trim() !== '') {
+            stopTypewriter();
+        }
+    });
+
+    // Start typewriter effect
+    startTypewriter();
+
+    // Focus the input
+    setTimeout(() => input.focus(), 100);
+
+    // Button event handlers
     document.getElementById('mintputs-save-cancel').onclick = () => {
+        stopTypewriter();
         mint_hideSaveModal();
         if (typeof onCancel === 'function') onCancel();
     };
+
     document.getElementById('mintputs-save-confirm').onclick = () => {
         const filename = input.value.trim();
         if (!filename) {
+            input.classList.add('error');
+            setTimeout(() => input.classList.remove('error'), 300);
             input.focus();
             return;
         }
+        stopTypewriter();
         mint_hideSaveModal();
         if (typeof onSave === 'function') onSave(filename);
     };
+
+    // Keyboard shortcuts
     input.onkeydown = (e) => {
-        if (e.key === 'Enter') document.getElementById('mintputs-save-confirm').click();
-        if (e.key === 'Escape') document.getElementById('mintputs-save-cancel').click();
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            document.getElementById('mintputs-save-confirm').click();
+        }
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            document.getElementById('mintputs-save-cancel').click();
+        }
     };
 }
 
@@ -157,7 +466,7 @@ function mint_hideSaveModal() {
 
 function mint_bindCtrlS(getContent, setCurrentFile, updateRecentsUI) {
     window.addEventListener('keydown', function (e) {
-        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        if ((e.ctrlKey || e.metaKey) && e.code === 'KeyS') {
             e.preventDefault();
             mint_showSaveModal(
                 (filename) => {
@@ -190,33 +499,41 @@ function mint_updateRecentsUI(onClickFile) {
 }
 
 const lightThemeColors = {
-    ColorPrimary: '#faf8f0;',
+    ColorPrimary: '#faf9f5;',
     TextColorPrimaryDisplay: '#080707;',
     TextColorPrimaryText: '#333333;',
     HighlightPrimary: '#ffe9e9;',
     FormatTextColors: '#242424',
-    FormatBorderColors: '#cfcec7',
+    FormatBorderColors: '#deddd9',
     PrimaryHeaderText: '#303e35',
     PublicFormatBorderColors: '#b8b6b0',
     btnSecondary: {
-        background: "#f4f1e6",
+        background: "#f4f2ee",
         border: "solid 1px #96948f",
         color: "#000",
     },
     OutputBackground: {
-        PrimarySec: "#f4f1e6",
+        PrimarySec: "#ecebe7",
         LinksBackground: "rgb(50, 50, 153)",
     },
-    SIDEBAR: "#ffffff",
+    SIDEBAR: "#f6f5f3",
+    Shadow: {
+        Deep: "inset 4px 4px 10px #e4e3df, inset -4px -4px 10px #ffffff, 2px 2px 20px rgba(0, 0, 0, 0.1)",
+        hover: "inset 2px 2px 10px #dddcd8, inset -2px -2px 10px #ffffff, 2px 2px 30px #d5d5d5, -2px -2px 30px #ffffff",
+        inner: {
+            Shadow: "inset 2px 2px 6px #deddd9,inset -8px -8px 12px rgba(255, 255, 255, 1)",
+            background: "linear-gradient(180deg, #ffffff, #faf9f5)"
+        }
+    }
 };
 
 const darkThemeColors = {
-    ColorPrimary: '#141414;',
+    ColorPrimary: '#0f0f0f;',
     TextColorPrimaryDisplay: '#faf8f0;',
     TextColorPrimaryText: '#D9D9D9;',
     HighlightPrimary: '#413c3c;',
     FormatTextColors: '#D9D9D9',
-    FormatBorderColors: '#292929',
+    FormatBorderColors: '#202020',
     PrimaryHeaderText: '#dfffeb',
     PublicFormatBorderColors: '#343434',
     btnSecondary: {
@@ -225,10 +542,18 @@ const darkThemeColors = {
         color: "#a2a2a2",
     },
     OutputBackground: {
-        PrimarySec: "#1e1e1e",
+        PrimarySec: "#161616",
         LinksBackground: "rgb(108, 108, 243)",
     },
     SIDEBAR: "#0c0c0c",
+    Shadow: {
+        Deep: "inset 2px 2px 8px #080808, inset -2px -2px 8px #202020, 2px 4px 10px rgba(20, 20, 20, 0.900)",
+        hover: "inset 2px 2px 8px #050505, inset -2px -2px 8px #262626, 2px 4px 15px rgba(20, 20, 20, 0.900)",
+        inner: {
+            Shadow: "inset 2px 2px 8px #080808, inset -2px -2px 8px #1a1a1aff, 2px 4px 10px rgba(20, 20, 20, 0.900)",
+            background: "linear-gradient(145deg, #0c0c0c, #161616)"
+        }
+    }
 };
 
 const getPlatformInfo = () => {
@@ -289,18 +614,6 @@ export const WebContent = {
             const DisplayName = Name || this.Name;
             return `
 
-                <div id="TitleLinks">
-                    <div class="TitlePrimaryLinks">
-                        <li><a id="Highlight" data-base-id="ToggleMDEditer" href="javascript:void(0)">Editer</a></li>
-                        <li><a id="ToggleHTMLOUTPUT" data-base-id="ToggleHTMLOUTPUT" href="javascript:void(0)"> Output</a></li>
-                    </div>
-                    <div class="TitleSubLinks">
-                        <li><a id="ToggleDownload" data-base-id="ToggleDownload" href="javascript:void(0)" onclick="downloadHtml()">Download</a></li>
-                        <li><a id="CopyHTML" data-base-id="CopyHTML" href="javascript:void(0)" onclick="copyHtml()">Copy code</a></li>
-                    </div>
-                    <!-- clearAll() -->
-                </div>
-
                 <div id="titlebar">
                     <div id="drag-region">
                         <svg width="892" height="210" viewBox="0 0 892 210" fill="none" xmlns="http://www.w3.org/2000/svg" id="icon">
@@ -322,15 +635,15 @@ export const WebContent = {
                     </div>
                     <div id="TitlebarLinks">
                         <li><a href="javascript:void(0)">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M440-120v-320H120v-80h320v-320h80v320h320v80H520v320h-80Z"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M440-120v-320H120v-80h320v-320h80v320h320v80H520v320h-80Z"/></svg>
                         New files</a></li>
                         <li><a href="javascript:void(0)">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg>
                         About Mintputs</a></li>
                         
                         <div id="TemplatesDropdownBar">
                         <button id="ToggleDropdownPreset">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M240-160q-33 0-56.5-23.5T160-240q0-33 23.5-56.5T240-320q33 0 56.5 23.5T320-240q0 33-23.5 56.5T240-160Zm240 0q-33 0-56.5-23.5T400-240q0-33 23.5-56.5T480-320q33 0 56.5 23.5T560-240q0 33-23.5 56.5T480-160Zm240 0q-33 0-56.5-23.5T640-240q0-33 23.5-56.5T720-320q33 0 56.5 23.5T800-240q0 33-23.5 56.5T720-160ZM240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400ZM240-640q-33 0-56.5-23.5T160-720q0-33 23.5-56.5T240-800q33 0 56.5 23.5T320-720q0 33-23.5 56.5T240-640Zm240 0q-33 0-56.5-23.5T400-720q0-33 23.5-56.5T480-800q33 0 56.5 23.5T560-720q0 33-23.5 56.5T480-640Zm240 0q-33 0-56.5-23.5T640-720q0-33 23.5-56.5T720-800q33 0 56.5 23.5T800-720q0 33-23.5 56.5T720-640Z"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M240-160q-33 0-56.5-23.5T160-240q0-33 23.5-56.5T240-320q33 0 56.5 23.5T320-240q0 33-23.5 56.5T240-160Zm240 0q-33 0-56.5-23.5T400-240q0-33 23.5-56.5T480-320q33 0 56.5 23.5T560-240q0 33-23.5 56.5T480-160Zm240 0q-33 0-56.5-23.5T640-240q0-33 23.5-56.5T720-320q33 0 56.5 23.5T800-240q0 33-23.5 56.5T720-160ZM240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400ZM240-640q-33 0-56.5-23.5T160-720q0-33 23.5-56.5T240-800q33 0 56.5 23.5T320-720q0 33-23.5 56.5T240-640Zm240 0q-33 0-56.5-23.5T400-720q0-33 23.5-56.5T480-800q33 0 56.5 23.5T560-720q0 33-23.5 56.5T480-640Zm240 0q-33 0-56.5-23.5T640-720q0-33 23.5-56.5T720-800q33 0 56.5 23.5T800-720q0 33-23.5 56.5T720-640Z"/></svg>
                         Templates</button>
                         <div id="DropdownPresetMenu">
                                 <span>TEMPLATES PRESET</span>
@@ -350,6 +663,17 @@ export const WebContent = {
                     </div>
                 </div>
                 <div class="container">
+                    <div id="TitleLinks">
+                        <div class="TitlePrimaryLinks">
+                            <li><a id="Highlight" data-base-id="ToggleMDEditer" href="javascript:void(0)">Editer</a></li>
+                            <li><a id="ToggleHTMLOUTPUT" data-base-id="ToggleHTMLOUTPUT" href="javascript:void(0)"> Output</a></li>
+                        </div>
+                        <div class="TitleSubLinks">
+                            <li><a id="ToggleDownload" data-base-id="ToggleDownload" href="javascript:void(0)" onclick="downloadHtml()">Download</a></li>
+                            <li><a id="CLearALL" data-base-id="CLearALL" href="javascript:void(0)" onclick="clearAll()">Clear Texts</a></li>
+                        </div>
+                        <!-- clearAll() -->
+                    </div>
                     <div class="main-content">
                         <div class="input-section" style="font-family: "JetBrains Mono", "Anuphan", sans-serif !important;">
                             <div id="markdown-input-container" style="font-family: "JetBrains Mono", "Anuphan", sans-serif !important;">
@@ -506,6 +830,9 @@ export const WebContent = {
         const shadowMd = shadows.md;
         const transitionAll = transitions.all;
 
+        // Shadow intregration
+        const shadowNew = this.CSScolor.Shadow;
+
         const GlobalCSS = `
             :root {
                 --sidebar-width: 260px;
@@ -520,6 +847,7 @@ export const WebContent = {
                 ${textRenderForce}
                 font-family: ${Typeface[8]}, ${DefaultFontFallback};
                 color: ${FormatTextColors};
+                fill: ${FormatTextColors};
                 line-height: 1.8;
                 margin: 0;
                 padding: 0;
@@ -532,17 +860,17 @@ export const WebContent = {
             }
             *::-webkit-scrollbar-track {
                 border-radius: 0${pixel};
-                background-color: ${colorPrimary};
+                background-color: transparent;
             }
             *::-webkit-scrollbar-track:hover {
-                background-color: ${colorPrimary};
+                background-color: transparent;
             }
             *::-webkit-scrollbar-track:active {
-                background-color: ${colorPrimary};
+                background-color: transparent;
             }
             *::-webkit-scrollbar-thumb {
                 border-radius: 20${pixel};
-                background-color: #484848;
+                background-color: transparent;
             }
             *::-webkit-scrollbar-thumb:hover {
                 background-color: #727272;
@@ -602,6 +930,7 @@ export const WebContent = {
                 z-index: 9999;
                 transform: translateX(-50${percent});
                 flex-wrap: wrap;
+                min-width: max-content;
             }
 
             #TitleLinks li {
@@ -637,6 +966,13 @@ export const WebContent = {
                 background-color: ${colorPrimary};
                 -webkit-app-region: drag;
                 border-radius: ${borderRadiusFull};
+                box-shadow: ${shadowNew.inner.Shadow};
+                background: ${shadowNew.inner.background};
+            }
+                
+            .TitlePrimaryLinks {
+                overflow: hidden;
+                position: relative;
             }
 
             #drag-region {
@@ -649,18 +985,19 @@ export const WebContent = {
                 left: ${spacing[4]};
                 top: ${spacing[3.5]};
                 margin-top: ${(() => {
-                    if (isBrowserOpening()) {
-                        return '0';
-                    } else if (isMacOS()) {
-                        return spacing[4];
-                    } else {
-                        return '0';
-                    }
-                })()};
+                if (isBrowserOpening()) {
+                    return '0';
+                } else if (isMacOS()) {
+                    return spacing[4];
+                } else {
+                    return '0';
+                }
+            })()};
             }
 
             #SBCloseButtons {
                 fill: #fff;
+                opacity: 0;
             }
 
             #icon {
@@ -668,14 +1005,14 @@ export const WebContent = {
                 height: ${auto};
                 -webkit-app-region: no-drag;
                 margin-top: ${(() => {
-                    if (isBrowserOpening()) {
-                        return '0';
-                    } else if (isMacOS()) {
-                        return spacing[4];
-                    } else {
-                        return '0';
-                    }
-                })()};
+                if (isBrowserOpening()) {
+                    return '0';
+                } else if (isMacOS()) {
+                    return spacing[4];
+                } else {
+                    return '0';
+                }
+            })()};
             }
 
             #icon, #icon path, #icon rect {
@@ -698,7 +1035,10 @@ export const WebContent = {
                 padding: ${spacing[1]} ${spacing[0]};
                 padding-bottom: ${spacing[1]};
                 font-size: 14${pixel};
+                font-weight: 500;
+                letter-spacing: -0.3${pixel};
                 display: block;
+                opacity: 0.8;
             }
 
             #TitlebarLinks li a svg {
@@ -709,7 +1049,7 @@ export const WebContent = {
             }
 
             #TitlebarLinks span {
-                padding: ${spacing[2]} ${spacing[0.5]};
+                padding: ${spacing[3]} ${spacing[0.5]};
                 font-size: 14${pixel};
                 opacity: 60${percent};
             }
@@ -720,6 +1060,12 @@ export const WebContent = {
                 display: block;
                 border-radius: ${borderRadiusLg};
                 outline: ${FormatBorderColors} solid 1${pixel};
+                transition: ${transitionAll};
+                box-shadow: ${shadowNew.Deep};
+            }
+
+            #CurrentFiles:hover {
+                box-shadow: ${shadowNew.hover};
             }
 
             .RecentsFiles {
@@ -786,7 +1132,6 @@ export const WebContent = {
                 transition: all 0.3s ease;
                 background-color: transparent;
                 color: ${FormatTextColors};
-                font-family: ${Typeface[9]};
                 font-weight: 480;
             }
 
@@ -801,7 +1146,7 @@ export const WebContent = {
                 width: calc(100${vw} - var(--sidebar-width));
                 height: 60${pixel};
                 margin: auto;
-                background-color: ${colorPrimary};
+                background: transparent;
                 z-index: 6;
             }
 
@@ -809,8 +1154,10 @@ export const WebContent = {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding: 0 var(--container-padding);
                 width: 100${vw};
+                flex-direction: column;
+                gap: ${spacing[2]};
+                padding: ${spacing[2]};
             }
 
             .stats {
@@ -842,9 +1189,8 @@ export const WebContent = {
             .input-section, #markdown-input-container {
                 position: ${fixed} !important;
                 inset: 0 !important;
-                width: 100${vw} !important;
+                width: 100% !important;
                 height: calc(100${vh} - 40${pixel}) !important;
-                min-width: calc(100${vh} - 40${pixel}) !important;
                 min-height: calc(100${vh} - 40${pixel}) !important;
                 max-width: 100${vw} !important;
                 max-height: calc(100${vh} - 40${pixel}) !important;
@@ -852,18 +1198,11 @@ export const WebContent = {
                 padding: 0 !important;
                 z-index: 10;
                 background: transparent !important;
-                overflow: hidden !important;
+                overflow: auto !important;
                 bottom: 0 !important;
             }
 
             #markdown-input-container {
-                height: calc(100${vh} - 40${pixel}) !important;
-                min-height: calc(100${vh} - 40${pixel}) !important;
-                max-height: calc(100${vh} - 40${pixel}) !important; 
-                bottom: 0 !important;
-            }
-
-            .CodeMirror {
                 margin-right: 0 !important;
                 margin-bottom: 0 !important;
                 margin-left: 0 !important;
@@ -895,6 +1234,8 @@ export const WebContent = {
                 max-height: calc(100${vh} - 40${pixel}) !important;
                 background: transparent !important;
                 bottom: 0 !important;
+                border-right: none !important;
+                border-left: none !important;
             }
 
             .CodeMirror-linenumber {
@@ -933,12 +1274,7 @@ export const WebContent = {
                 background: transparent !important;
             }
 
-            .CodeMirror-wrap pre.CodeMirror-line, .CodeMirror-wrap pre.CodeMirror-line-like {
-                cursor: default !important;
-                font-family: "JetBrains Mono", "Anuphan", sans-serif !important;
-            }
-
-            .CodeMirror-wrap pre.CodeMirror-line span, .CodeMirror-wrap pre.CodeMirror-line-like span {
+            .CodeMirror, .CodeMirror-gutters, .CodeMirror-code, .CodeMirror pre, .CodeMirror-line, .CodeMirror-line span {
                 font-family: "JetBrains Mono", "Anuphan", sans-serif !important;
             }
 
@@ -956,47 +1292,98 @@ export const WebContent = {
                 opacity: 0.5;
             }
             
-            .cm-header { color: #ffc799 !important; }
-            .cm-strong { color: #DCDCAA !important; }
-            .cm-em { color: #CE9178 !important; font-style: italic; }
-            .cm-link, .cm-url { color: #569CD6 !important; text-decoration: underline; }  
-            .cm-quote { color: #6A9955 !important; background-color: #222520; }         
-            .cm-list { color: #DCDCAA !important; }
-            .cm-variable-2 { color: #CE9178 !important; }
-            .cm-formatting { color: #808080 !important; }
-            .cm-error { color: #F44747 !important; }
-            .cm-string { color: #CE9178 !important; }
-            .cm-keyword { color: #569CD6 !important; }
-            .cm-comment { color: #6A9955 !important; }   
-            .cm-number { color: #DCDCAA !important; }
-            .cm-property { color: #4EC9B0 !important; }
-            .cm-operator { color: #DCDCAA !important; }
-            .cm-tag { color: #569CD6 !important; }
-            .cm-attribute { color: #DCDCAA !important; }
-            .cm-builtin { color: #4EC9B0 !important; }
-            .cm-type { color: #4EC9B0 !important; }
-            .cm-function { color: #DCDCAA !important; }
-            .cm-meta { color: #808080 !important; }
-            .cm-qualifier { color: #569CD6 !important; }
-            .cm-atom { color: #569CD6 !important; }
-            .cm-punctuation { color: #D4D4D4 !important; }
-            .cm-bracket { color: #D4D4D4 !important; }
+            .cm-header { color: #bbdcad !important; font-weight: 400; }
+            .cm-strong { color: #c55d68 !important; font-weight: 400; }
+            .cm-em { color: #d6bb91 !important; font-style: italic; }
+            .cm-link, .cm-url { color: #9CAF88 !important; text-decoration: underline; text-decoration-color: #8B9D83; }
+            .cm-quote { color: #8B9D83 !important; background-color: rgba(107, 127, 95, 0.2); border-left: 3px solid #6B7F5F; padding: ${spacing[1]} ${spacing[3]}; }
+            .cm-list { color: #D4A264 !important; }
+            .cm-variable-2 { color: #B8956A !important; }
+            .cm-formatting { color: #A0A0A0 !important; opacity: 0.8; }
+            .cm-error { color: #B85450 !important; text-decoration: underline wavy; background-color: rgba(184, 84, 80, 0.1); }
+            .cm-string { color: #d6bb91 !important; }
+            .cm-keyword { color: #9CAF88 !important; font-weight: 400; }
+            .cm-comment { color: #8B9D83 !important; font-style: italic; opacity: 0.9; }
+            .cm-number { color: #d39f67ff !important; font-weight: 400; }
+            .cm-property { color: #B8956A !important; }
+            .cm-operator { color: #D4A264 !important; font-weight: 400; }
+            .cm-tag { color: #9CAF88 !important; font-weight: 400; }
+            .cm-attribute { color: #d39f67ff !important; }
+            .cm-builtin { color: #8B6F47 !important; font-weight: 400; }
+            .cm-type { color: #B8956A !important; font-weight: 400; }
+            .cm-function { color: #D4A264 !important; font-weight: 400; }
+            .cm-meta { color: #A0A0A0 !important; opacity: 0.8; }
+            .cm-qualifier { color: #9CAF88 !important; }
+            .cm-atom { color: #d39f67ff !important; }
+            .cm-punctuation { color: #F5E6D3 !important; opacity: 0.9; }
+            .cm-bracket { color: #F5E6D3 !important; font-weight: 400; }
+
+            .CodeMirror-matchingbracket {
+                background-color: rgba(255, 255, 255, 0.1) !important;
+                color: #ffdf8e !important;
+                border-bottom: 1px solid #ffdf8e;
+                border-radius: 2px;
+                font-weight: bold;
+            }
 
             .cm-command {
-                background: #1d2021 !important;
-                color: #8ec07c !important;
-                border-radius: 6px;
+                background-color: rgba(107, 127, 95, 0.2);
+                color: #8B9D83;
                 transition: background 0.2s;
                 padding: ${spacing[1]} ${spacing[3]};
                 display: inline-block;
                 vertical-align: middle;
                 line-height: 1.4;
+                border-left: 3px solid #6B7F5F;
+                padding-left: 12${pixel}
+            }
+
+            @media ${DirectThemes[1]} {
+                .cm-header { color: #126420ff !important; font-weight: 400; font-size: 16.5${pixel}; }
+                .cm-strong { color: #7A4B12 !important; font-weight: 400; }
+                .cm-em { color: #6B4B26 !important; font-style: italic; }
+                .cm-link, .cm-url { color: #3A5A2A !important; text-decoration: underline; text-decoration-color: #4A6B3A; }
+                .cm-quote { color: #2A4B1A !important; background-color: rgba(74, 107, 58, 0.15); border-left: 3px solid #4A6B3A; padding: ${spacing[1]} ${spacing[3]}; }
+                .cm-list { color: #7A4B12 !important; }
+                .cm-variable-2 { color: #7c0a0a !important; }
+                .cm-formatting { color: #4A4A4A !important; opacity: 0.9; }
+                .cm-error { color: #A0342F !important; text-decoration: underline wavy; background-color: rgba(160, 52, 47, 0.1); }
+                .cm-string { color: #6B3A15 !important; }
+                .cm-keyword { color: #2A4B1A !important; font-weight: 400; }
+                .cm-comment { color: #3A5A2A !important; font-style: italic; opacity: 0.85; }
+                .cm-number { color: #7A4B12 !important; font-weight: 600; }
+                .cm-property { color: #6B3625 !important; }
+                .cm-operator { color: #6B4B26 !important; font-weight: 400; }
+                .cm-tag { color: #2A4B1A !important; font-weight: 600; }
+                .cm-attribute { color: #7A4B12 !important; }
+                .cm-builtin { color: #566361 !important; font-weight: 400; }
+                .cm-type { color: #6B3625 !important; font-weight: 600; }
+                .cm-function { color: #6B4B26 !important; font-weight: 400; }
+                .cm-meta { color: #4A4A4A !important; opacity: 0.9; }
+                .cm-qualifier { color: #2A4B1A !important; }
+                .cm-atom { color: #7A4B12 !important; }
+                .cm-punctuation { color: #2A2A2A !important; opacity: 1; }
+                .cm-bracket { color: #2A2A2A !important; font-weight: 400; }
+
+                .CodeMirror-matchingbracket {
+                    background-color: rgba(0, 0, 0, 0.08) !important;
+                    color: #000000 !important;
+                    border-bottom: 1px solid #444;
+                    border-radius: 2px;
+                    font-weight: bold;
+                }
+
+                .cm-command {
+                    color: #2A4B1A !important;
+                    background-color: rgba(74, 107, 58, 0.15);
+                    border-left: 3px solid #4A6B3A;
+                }
             }
 
             .CodeMirror-line.has-command::after {
                 content: '';
                 display: block;
-                height: 8px;
+                height: 8${pixel};
             }
 
             #TemplatesDropdownBar {
@@ -1010,6 +1397,9 @@ export const WebContent = {
                 transition: ${transitionAll};
                 background: transparent;
                 font-size: 14${pixel};
+                font-weight: 500;
+                letter-spacing: -0.5${pixel};
+                opacity: 0.8;
             }
 
             #ToggleDropdownPreset svg {
@@ -1083,18 +1473,18 @@ export const WebContent = {
                 background: transparent;
             }
             
-            @media (min-width: 1200px) {
+            @media (min-width: 1200${pixel}) {
                 :root {
-                    --sidebar-width: 250px;
+                    --sidebar-width: 250${pixel};
                 }
                 
                 #html-output {
-                    max-width: 1000px;
+                    max-width: 1000${pixel};
                     padding: 32${pixel} 40${pixel};
                 }
             }
 
-            @media (max-width: 768px) {
+            @media (max-width: 768${pixel}) {
                 :root {
                     --sidebar-width: var(--sidebar-width-tablet);
                     --container-padding: ${spacing[3]};
@@ -1104,13 +1494,6 @@ export const WebContent = {
                     gap: 12${pixel};
                     top: ${spacing[4]};
                     min-width: max-content;
-                    right: 20px;
-                    transform: translateX(0);
-                }
-
-                #TitleLinks li a {
-                    padding: ${spacing[2]} ${spacing[4]};
-                    font-size: 13${pixel};
                 }
 
                 .TitleSubLinks, .TitlePrimaryLinks {
@@ -1122,16 +1505,9 @@ export const WebContent = {
                     font-size: 12${pixel};
                 }
 
-                .controlsContent {
-                    flex-direction: column;
-                    gap: ${spacing[2]};
-                    padding: ${spacing[2]};
-                }
-
                 .controls {
                     height: auto;
-                    min-height: 60${pixel};
-                    padding: ${spacing[2]} 0;
+                    min-height: 40${pixel};
                 }
 
                 #html-output {
@@ -1141,12 +1517,7 @@ export const WebContent = {
                 }
 
                 .CodeMirror-sizer {
-                    margin-left: 35${pixel} !important;
-                }
-
-                .CodeMirror-linenumber {
-                    min-width: 30${pixel};
-                    width: 30${pixel};
+                    margin-left: 50${pixel} !important;
                 }
 
                 #DropdownPresetMenu {
@@ -1155,7 +1526,7 @@ export const WebContent = {
                 }
             }
 
-            @media (max-width: 640px) {
+            @media (max-width: 600px) {
                 :root {
                     --sidebar-width: var(--sidebar-width-mobile);
                     --container-padding: var(--container-padding-mobile);
@@ -1186,21 +1557,12 @@ export const WebContent = {
                 }
 
                 .controls {
-                    width: 100${vw};
-                }
-
-                #TitleLinks {
-                    position: static;
-                    transform: none;
-                    margin: ${spacing[4]} 0;
-                    flex-direction: row;
-                    flex-wrap: wrap;
-                    justify-content: center;
+                    display: none;
                 }
 
                 .TitleSubLinks,
                 .TitlePrimaryLinks {
-                    height: 35${pixel};
+                    height: 42${pixel};
                 }
 
                 .stats {
@@ -1218,18 +1580,13 @@ export const WebContent = {
                 }
 
                 .CodeMirror-sizer {
-                    margin-left: 25${pixel} !important;
+                    margin-left: 55${pixel} !important;
+                    margin-top: 24${pixel} !important;
                     background: ${colorPrimary} !important;
                 }
 
                 .CodeMirror-scroll {
                     background: ${colorPrimary} !important;
-                }
-
-                .CodeMirror-linenumber {
-                    min-width: 25${pixel};
-                    width: 25${pixel};
-                    font-size: 11${pixel};
                 }
 
                 #markdown-input {
@@ -1247,26 +1604,31 @@ export const WebContent = {
                     padding: 4${pixel} 8${pixel};
                 }
 
+                #TitleLinks {
+                    top: auto;
+                    bottom: 25px;
+                    align-items: end;
+                    height: fit-content;
+                    margin: 0;
+                }
+
             }
 
             @media (max-width: 420px) {
-                #TitleLinks {
-                    margin: ${spacing[3]} 0;
-                }
-
                 #TitleLinks li a {
                     padding: ${spacing[2]} ${spacing[3]};
-                    font-size: 12${pixel};
                     letter-spacing: 0.3px;
-                }
-            
-                .TitleSubLinks, .TitlePrimaryLinks {
-                    border: none;
-                    background: transparent;
-                }
-
-                #TitleLinks li a {
                     font-size: 14${pixel};
+                }
+            }
+
+            @media (max-width: 380px) {
+                #TitleLinks li a {
+                    padding: 1vw 4vw;
+                    font-size: 12${pixel};
+                }
+                #TitleLinks {
+                    bottom: 20px;
                 }
             }
 
@@ -1303,8 +1665,16 @@ export const WebContent = {
 
             /* Dark Theme Media Query */
             @media ${DirectThemes[1]} {
-                #icon, #SBCloseButtons {
+                #icon {
                     filter: invert(100${percent});
+                }
+            }
+
+            @media ${DirectThemes[0]} {
+                .TitleSubLinks,
+                .TitlePrimaryLinks {
+                    box-shadow: ${shadowNew.inner.Shadow};
+                    background: ${shadowNew.inner.background};
                 }
             }
 
@@ -1522,12 +1892,10 @@ export const WebContent = {
 function getContent() {
     if (window.editor && typeof window.editor.getValue === 'function') {
         const value = window.editor.getValue();
-        // console.log('[DEBUG] getContent (CodeMirror):', value, '| editor:', window.editor);
         return value;
     }
     const textarea = document.getElementById('markdown-input');
     const value = textarea ? textarea.value : '';
-    // console.log('[DEBUG] getContent (textarea):', value, '| textarea:', textarea);
     return value;
 }
 
@@ -1537,11 +1905,8 @@ function setCurrentFile(filename) {
 }
 
 function updateRecentsUI() {
-    // console.log('[DEBUG] updateRecentsUI called');
     let recents = mint_getRecents();
-    // console.log('[DEBUG] recents:', recents);
     const recentsDiv = document.querySelector('.RecentsFiles');
-    // console.log('[DEBUG] recentsDiv:', recentsDiv);
     if (!recentsDiv) return;
     recentsDiv.innerHTML = '';
     recents.forEach(name => {
@@ -1573,6 +1938,48 @@ function updateRecentsUI() {
 }
 window.updateRecentsUI = updateRecentsUI;
 
+function setupAutoSaveReminder() {
+    let reminderShown = false;
+    let timerStarted = false;
+    const REMINDER_DELAY = 2000;
+
+    const onEditorChange = (cm, change) => {
+        const isUserInput = change && change.origin && ['+input', '+delete', 'paste', 'cut'].includes(change.origin);
+        if (!isUserInput) {
+            return;
+        }
+
+        if (reminderShown || timerStarted || window.innerWidth > 600) {
+            return;
+        }
+
+        timerStarted = true;
+        setTimeout(() => {
+            if (reminderShown) return;
+            reminderShown = true; // Mark as shown to prevent re-triggering
+            mint_showSaveModal(
+                (filename) => {
+                    const content = getContent();
+                    mint_saveFile(filename, content);
+                    updateRecentsUI();
+                    setCurrentFile(filename);
+                },
+                () => { /* User cancelled, do nothing. The reminder won't show again. */ }
+            );
+        }, REMINDER_DELAY);
+    };
+
+    const checkEditorAndBind = () => {
+        if (window.editor) {
+            window.editor.on('change', onEditorChange);
+        } else {
+            setTimeout(checkEditorAndBind, 500);
+        }
+    };
+
+    checkEditorAndBind();
+}
+
 function observeRecentsDivAndUpdate() {
     const targetSelector = '.RecentsFiles';
     const found = document.querySelector(targetSelector);
@@ -1593,6 +2000,7 @@ function observeRecentsDivAndUpdate() {
 if (typeof window !== 'undefined') {
     window.addEventListener('DOMContentLoaded', () => {
         observeRecentsDivAndUpdate();
+        setupAutoSaveReminder();
     });
 }
 
@@ -1606,7 +2014,6 @@ function cleanLocalStorageForMintputs() {
         if (raw && /<textarea|<div|<span|<p|<br|<script|<style/i.test(raw)) {
             localStorage.removeItem(key);
             cleaned = true;
-            // console.log('[CLEAN] Removed old HTML file from localStorage:', key);
         }
     });
     if (cleaned) {
@@ -1663,7 +2070,7 @@ if (typeof window !== 'undefined') {
  * @function clear
  * @desc 
  */
- 
+
 function clearAllRecentFiles() {
     localStorage.removeItem('mintputs_recents');
     const recents = mint_getRecents();

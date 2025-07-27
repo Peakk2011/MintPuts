@@ -1,9 +1,35 @@
-import { createState, AdjustHook, injectCSS, injectHTML, injectTitle } from './MintUtils.js';
-
-export const Mint = {
+import {
+    pipe,
+    compose,
     createState,
-    AdjustHook,
     injectCSS,
     injectHTML,
     injectTitle,
+    get,
+    include,
+    processIncludes,
+    AdjustHook,
+    MintUtils,
+    PerformanceMonitor,
+    ReloadPerformanceTracker,
+    clearInjectionCache,
+    getInjectionStats
+} from './MintUtils.js';
+
+export const Mint = {
+    pipe,
+    compose,
+    createState,
+    injectCSS,
+    injectHTML,
+    injectTitle,
+    get,
+    include,
+    processIncludes,
+    AdjustHook,
+    MintUtils,
+    PerformanceMonitor,
+    ReloadPerformanceTracker,
+    clearInjectionCache,
+    getInjectionStats
 };
