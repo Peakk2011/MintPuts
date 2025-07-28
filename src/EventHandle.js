@@ -1,5 +1,5 @@
 import { Mint } from './mintkit/mint.js';
-import '/Content.js';
+import './Content.js';
 import { typewriterInsertCM5, typewriterInsertLineCM5, setupIntellisense } from './intellisense.js';
 
 export const Webfunctions = async (Main) => {
@@ -390,16 +390,18 @@ Wrap up your thoughts and provide a call to action.
             },
             theme: 'monokai',
             lineNumbers: true,
-            lineWrapping: true,
-            autoCloseBrackets: true,
-            matchBrackets: true,
+            lineWrapping: false,
+            autoCloseBrackets: true, 
+            matchBrackets: { 
+                bothTags: true,
+                maxScanLineLength: 10000,
+                maxScanLines: 1000
+            },
             indentUnit: 2,
             tabSize: 4,
-            placeholder: "Input Your Markdown Syntax Here...",
+            placeholder: " ", // Will be replaced by rotating ones.
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
             foldGutter: true,
-            matchBrackets: true,
-            autoCloseBrackets: true,
             extraKeys: {
                 "Ctrl-B": function (cm) {
                     const selection = cm.getSelection();
@@ -425,7 +427,7 @@ Wrap up your thoughts and provide a call to action.
         CodeMirror.defineMode("slash-command-overlay", function (config, parserConfig) {
             var overlay = {
                 token: function (stream, state) {
-                    if (stream.sol() && stream.match(/^\s*\/[a-zA-Z].*$/)) {
+                    if (stream.sol() && stream.match(/^[\s]*\/[a-zA-Z].*$/)) {
                         stream.skipToEnd();
                         return "command";
                     }
@@ -435,7 +437,59 @@ Wrap up your thoughts and provide a call to action.
             };
             return CodeMirror.overlayMode(CodeMirror.getMode(config, parserConfig.backdrop || "markdown"), overlay);
         });
-        editor.setOption('mode', { name: 'slash-command-overlay', backdrop: 'markdown' });
+
+        const placeholders = [
+            "Input Your Markdown Syntax Here...",
+            "Type /help to see all commands...",
+            "Paste an image directly from your clipboard...",
+            "Press Ctrl+S to save your work...",
+            "Try our templates! Click on 'Templates' above."
+        ];
+        let placeholderIndex = 0;
+        const placeholderEl = editor.getWrapperElement().querySelector('.CodeMirror-placeholder');
+
+        if (placeholderEl) {
+            placeholderEl.style.opacity = '0.7';
+
+            let typewriterTimeout;
+            let rotationInterval;
+
+            const type = (text, i = 0) => {
+                if (i < text.length) {
+                    placeholderEl.textContent = text.slice(0, i + 1);
+                    typewriterTimeout = setTimeout(() => type(text, i + 1), 50);
+                }
+            };
+
+            const startAnimation = () => {
+                const run = () => {
+                    clearTimeout(typewriterTimeout);
+                    type(placeholders[placeholderIndex]);
+                    placeholderIndex = (placeholderIndex + 1) % placeholders.length;
+                };
+                run();
+                rotationInterval = setInterval(run, 3000);
+            };
+
+            const stopAnimation = () => {
+                clearTimeout(typewriterTimeout);
+                clearInterval(rotationInterval);
+                placeholderEl.textContent = '';
+            };
+
+            const onFirstChange = (cm) => {
+                if (cm.getValue() !== '') {
+                    stopAnimation();
+                    editor.off('change', onFirstChange);
+                }
+            };
+
+            // Start animation only if editor is empty
+            if (editor.getValue() === '') {
+                startAnimation();
+                editor.on('change', onFirstChange);
+            }
+        }
 
         window.editor = editor;
 
@@ -489,7 +543,7 @@ Wrap up your thoughts and provide a call to action.
                                 const sign = window.binaryConverterModule._get_sign_bit(number);
                                 const exponent = window.binaryConverterModule._get_exponent(number);
                                 const mantissa = window.binaryConverterModule._get_mantissa(number);
-                                result = `Float ${number} → Binary: ${binary}\nIEEE 754: Sign=${sign}, Exponent=${exponent}, Mantissa=${mantissa}`;
+                                result = `Float ${number} → Binary: ${binary}\nSign=${sign}, Exponent=${exponent}, Mantissa=${mantissa}`;
                             }
                             
                             cm.setValue(result);
@@ -503,9 +557,9 @@ Wrap up your thoughts and provide a call to action.
                             }
                         }
                     } else {
-                        cm.setValue('Binary converter module not loaded. Please wait...');
+                        cm.setValue('Module not loaded');
                         if (typeof showNotification === 'function') {
-                            showNotification('Loading binary converter...', 'info');
+                            return;
                         }
                     }
                     event.preventDefault();
@@ -522,19 +576,16 @@ Wrap up your thoughts and provide a call to action.
                             
                             cm.setValue(`Binary ${binaryStr} → Integer: ${result}`);
                             if (typeof showNotification === 'function') {
-                                showNotification('Binary to integer conversion completed!', 'success');
+                                showNotification('Binary to integer conversion completed', 'success');
                             }
                         } catch (error) {
                             cm.setValue(`Error: ${error.message}`);
                             if (typeof showNotification === 'function') {
-                                showNotification('Binary to integer conversion failed!', 'error');
+                                showNotification('Binary to integer conversion failed', 'error');
                             }
                         }
                     } else {
-                        cm.setValue('Binary converter module not loaded. Please wait...');
-                        if (typeof showNotification === 'function') {
-                            showNotification('Loading binary converter...', 'info');
-                        }
+                        return;
                     }
                     event.preventDefault();
                 } else if (/^binary2float\s+([01]{32})\s*$/.test(value)) {
@@ -550,21 +601,48 @@ Wrap up your thoughts and provide a call to action.
                             
                             cm.setValue(`Binary ${binaryStr} → Float: ${result}`);
                             if (typeof showNotification === 'function') {
-                                showNotification('Binary to float conversion completed!', 'success');
+                                showNotification('Binary to float conversion completed', 'success');
                             }
                         } catch (error) {
                             cm.setValue(`Error: ${error.message}`);
                             if (typeof showNotification === 'function') {
-                                showNotification('Binary to float conversion failed!', 'error');
+                                showNotification('Binary to float conversion failed', 'error');
                             }
                         }
                     } else {
-                        cm.setValue('Binary converter module not loaded. Please wait...');
+                        return;
+                    }
+                    event.preventDefault();
+                } else if (
+                    /^[\d\s\+\-\*\/\(\)\.]+$/.test(value.replace(/\n/g, '')) &&
+                    /[\+\-\*\/\(\)]/.test(value)
+                ) {
+                    try {
+                        const expr = value.replace(/\s+/g, '');
+                        // ป้องกัน empty string
+                        if (expr.length === 0) throw new Error('Empty expression');
+                        // eslint-disable-next-line no-new-func
+                        const result = Function(`"use strict";return (${expr})`)();
+                        if (typeof result === 'number' && isFinite(result)) {
+                            cm.setValue(`${result}`);
+                            setTimeout(() => {
+                                const doc = cm.getDoc();
+                                const lastLine = doc.lastLine();
+                                const lastCh = doc.getLine(lastLine).length;
+                                doc.setCursor({ line: lastLine, ch: lastCh });
+                            }, 0);
+                        } else {
+                            if (typeof showNotification === 'function') {
+                                showNotification('Invalid math expression', 'error');
+                            }
+                        }
+                    } catch (err) {
                         if (typeof showNotification === 'function') {
-                            showNotification('Loading binary converter...', 'info');
+                            showNotification('Invalid math expression', 'error');
                         }
                     }
                     event.preventDefault();
+                    return;
                 }
             }
         });
@@ -607,7 +685,6 @@ Wrap up your thoughts and provide a call to action.
 
         const cmElement = editor.getWrapperElement();
         cmElement.style.height = '100%';
-        cmElement.style.fontFamily = 'Inter Tight, Anuphan, sans-serif';
         cmElement.style.fontSize = '14px';
         cmElement.style.lineHeight = '1.6';
 
@@ -628,19 +705,15 @@ Wrap up your thoughts and provide a call to action.
 
         setTimeout(() => {
             editor.refresh();
-
             editor.setOption('mode', editor.getOption('mode'));
-
             editor.on('change', function () {
                 setTimeout(() => {
                     editor.refresh();
                 }, 10);
             });
-
             editor.on('cursorActivity', function () {
                 editor.refresh();
             });
-
             setTimeout(() => {
                 editor.setOption('mode', {
                     name: 'markdown',
@@ -648,10 +721,10 @@ Wrap up your thoughts and provide a call to action.
                     fencedCodeBlocks: true,
                     base: 'markdown'
                 });
-            }, 200);
+                editor.setOption('mode', { name: 'slash-command-overlay', backdrop: 'markdown' });
+            }, 250);
         }, 100);
 
-        // เรียกใช้ intellisense/editor command logic
         setupIntellisense(editor);
     }
 
@@ -661,9 +734,7 @@ Wrap up your thoughts and provide a call to action.
         CodeMirror.defineMIME("text/x-sql", "sql");
         CodeMirror.defineMIME("text/x-yaml", "yaml");
         CodeMirror.defineMIME("text/x-toml", "toml");
-        // CodeMirror.defineMIME("text/x-dockerfile", "dockerfile");
         CodeMirror.defineMIME("text/x-vue", "vue");
-        // CodeMirror.defineMIME("text/x-rustsrc", "rust");
         CodeMirror.defineMIME("text/x-swift", "swift");
         CodeMirror.defineMIME("text/x-perl", "perl");
         CodeMirror.defineMIME("text/x-powershell", "powershell");
@@ -1146,20 +1217,20 @@ ${output.innerHTML}
 
     input.addEventListener('keydown', (e) => {
         if (e.ctrlKey || e.metaKey) {
-            switch (e.key) {
-                case 'b':
+            switch (e.code) {
+                case 'KeyB':
                     e.preventDefault();
                     formatBold();
                     break;
-                case 'i':
+                case 'KeyI':
                     e.preventDefault();
                     formatItalic();
                     break;
-                case 'k':
+                case 'KeyK':
                     e.preventDefault();
                     insertLink();
                     break;
-                case '`':
+                case 'Backquote':
                     e.preventDefault();
                     formatCode();
                     break;

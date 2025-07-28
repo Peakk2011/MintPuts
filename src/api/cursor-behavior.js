@@ -13,10 +13,10 @@ const throttle = (fn, limit) => {
 
 let currentMode = 'mouse';
 
-const isInputElement = (element) => 
+const isInputElement = (element) =>
     element && (
-        element.tagName === 'INPUT' || 
-        element.tagName === 'TEXTAREA' || 
+        element.tagName === 'INPUT' ||
+        element.tagName === 'TEXTAREA' ||
         element.contentEditable === 'true'
     );
 
@@ -36,7 +36,7 @@ const applyCursorStyle = (mode, element) => {
 
 const applyCaretStyle = (mode, element) => {
     if (!isInputElement(element)) return element;
-    
+
     const style = element.style;
     if (mode === 'keyboard') {
         style.caretColor = 'transparent';
@@ -51,11 +51,11 @@ const applyCaretStyle = (mode, element) => {
 const injectGlobalStyles = (mode) => {
     const styleId = 'cursor-styles';
     const existingStyle = document.getElementById(styleId);
-    
+
     if (existingStyle) {
         existingStyle.remove();
     }
-    
+
     if (mode === 'keyboard') {
         const style = document.createElement('style');
         style.id = styleId;
@@ -79,6 +79,9 @@ const removeGlobalStyles = () => {
 };
 
 const handleKeyboardEvent = (event) => {
+    if (event.ctrlKey || event.metaKey) {
+        return;
+    }
     if (currentMode !== 'keyboard') {
         currentMode = 'keyboard';
         applyModeEffects('keyboard');
@@ -93,14 +96,14 @@ const handleMouseEvent = (event) => {
 };
 
 const applyModeEffects = (mode) => {
-    injectGlobalStyles(mode);    
+    injectGlobalStyles(mode);
     applyCursorStyle(mode, document.body);
-    applyCursorStyle(mode, document.documentElement);    
+    applyCursorStyle(mode, document.documentElement);
     getAllInputs().forEach(input => applyCaretStyle(mode, input));
 };
 
 const cleanupEffects = () => {
-    removeGlobalStyles();    
+    removeGlobalStyles();
     document.body.style.cursor = '';
     document.documentElement.style.cursor = '';
 
@@ -110,18 +113,18 @@ const cleanupEffects = () => {
     });
 };
 
-const createMutationHandler = () => 
+const createMutationHandler = () =>
     throttle((mutations) => {
         mutations.forEach(mutation => {
             mutation.addedNodes.forEach(node => {
                 if (node.nodeType === Node.ELEMENT_NODE) {
                     applyCursorStyle(currentMode, node);
-                    
+
                     if (node.querySelectorAll) {
                         const inputs = node.querySelectorAll('input, textarea, [contenteditable="true"]');
                         inputs.forEach(input => applyCaretStyle(currentMode, input));
                     }
-                    
+
                     if (isInputElement(node)) {
                         applyCaretStyle(currentMode, node);
                     }
@@ -133,26 +136,29 @@ const createMutationHandler = () =>
 const initializeCursorController = () => {
     const mutationHandler = createMutationHandler();
     const observer = new MutationObserver(mutationHandler);
-    
+
     const initialize = () => {
-        applyModeEffects('mouse');
+        const isDesktop = window.innerWidth >= 1280;
         
+        if (!isDesktop) return;
+        applyModeEffects('mouse');
+
         document.addEventListener('keydown', handleKeyboardEvent, { passive: true });
         document.addEventListener('mousemove', handleMouseEvent, { passive: true });
-        
+
         observer.observe(document.body, {
             childList: true,
             subtree: true
         });
     };
-    
+
     const cleanup = () => {
         document.removeEventListener('keydown', handleKeyboardEvent);
         document.removeEventListener('mousemove', handleMouseEvent);
         observer.disconnect();
         cleanupEffects();
     };
-    
+
     return { initialize, cleanup };
 };
 
@@ -184,15 +190,3 @@ window.cursorController = {
         applyModeEffects(currentMode);
     }
 };
-
-/*
-        <div class="input-section">
-            <label class="input-label">ใส่ตัวเลข (Integer หรือ Float):</label>
-            <input type="text" id="numberInput" class="input-field" placeholder="เช่น 42 หรือ 3.14159">
-        </div>
-        
-        <div class="button-group">
-            <button class="btn btn-integer" onclick="convertInteger()">Int</button>
-            <button class="btn btn-float" onclick="convertFloat()">Float</button>
-        </div>
-*/

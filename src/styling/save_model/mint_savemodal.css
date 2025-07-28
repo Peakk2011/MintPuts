@@ -1,0 +1,247 @@
+:root {
+    --primary-background-color: rgba(250, 249, 246, 1);
+    --primary-TextBG: #000000;
+    --primary-accent: hsl(180, 16%, 30%);
+    
+    --modal-background: #ffffff;
+    --modal-text: #000000;
+    --modal-text-secondary: #4B4B4B;
+    --modal-border: #deddd9;
+    --modal-input-border: #ccc;
+    --modal-shadow: 0px 12px 24px rgba(0, 0, 0, 0.10), 
+                    0px 14px 128px rgba(0, 0, 0, 0.07), 
+                    0px 60px 300px rgba(0, 0, 0, 0.05);
+    
+    /* Button Colors - Light Theme */
+    --button-bg-gradient: linear-gradient(180deg, hsl(48 50% 96.1%), hsl(176 17% 81.6%));
+    --button-border-gradient: linear-gradient(180deg, hsl(0 0% 100%), hsl(0 0% 82.7%), hsl(197 10% 59%));
+    --button-text: #4B4B4B;
+    --button-shadow: 0 6px 10px rgba(191, 200, 230, 0.4), 0 4px 20px rgba(191, 200, 230, 0.2);
+    --button-hover-bg: hsl(0, 0%, 0%);
+    --button-hover-text: hsl(0, 0%, 100%);
+    --button-hover-shadow: transarent;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --primary-background-color: rgba(27, 27, 27, 1);
+        --modal-background: #141414;
+        --modal-text: #FFFFFF;
+        --modal-text-secondary: #b9bebe;
+        --primary-accent: hsl(180, 35%, 92%);
+        --modal-border: #3a3a3a;
+        --modal-input-border: #555;
+        --modal-shadow: 0px 12px 24px rgba(0, 0, 0, 0.40), 
+                        0px 14px 128px rgba(0, 0, 0, 0.30), 
+                        0px 60px 300px rgba(0, 0, 0, 0.20);
+        
+        --button-bg-gradient: linear-gradient(180deg, hsl(176 10% 20%), hsl(0 0% 12%));
+        --button-border-gradient: linear-gradient(180deg, hsl(0 0% 20%), hsl(198 10% 25%), hsl(199 10% 50%));
+        --button-text: #e0e0e0;
+        --button-shadow: transparent;
+        --button-hover-bg: hsl(0, 0%, 100%);
+        --button-hover-text: hsl(0, 0%, 0%);
+        --button-hover-shadow: transparent;
+    }
+}
+
+#mintputs-save-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.mintputs-modal-backdrop {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width:  100vw;
+    height: 100vh;
+    z-index: 0;
+}
+
+.mintputs-modal-content {
+    position: relative;
+    z-index: 1;
+    border-radius: 10px;
+    background: var(--modal-background);
+    color: var(--modal-text);
+    box-shadow: var(--modal-shadow);
+    padding: 1.75rem 1.5rem 1.75rem 1.5rem;
+    min-width: 320px;
+    max-width: 360px;
+    min-height: 360px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    border: 1px solid var(--modal-border);
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.mintputs-modal-content h2 {
+    margin-top: 0.5rem;
+    color: var(--modal-text);
+}
+
+.mintputs-modal-content p {
+    margin: 0.5rem 0;
+    margin-bottom: 1rem;
+    font-size: 0.9em;
+    color: var(--modal-text-secondary);
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: -0.4px;
+}
+
+.mintputs-modal-content img {
+    width: 55px;
+    height: auto;
+    filter: var(--icon-filter, none);
+}
+
+#mintputs-save-filename {
+    width: 100%;
+    padding: 0.5rem 0rem;
+    font-size: 0.95em;
+    margin-bottom: 1em;
+    border: none;
+    border-bottom: 1.5px solid var(--modal-input-border);
+    background: transparent;
+    color: var(--modal-text);
+    transition: border-color 0.2s ease, color 0.3s ease;
+}
+
+#mintputs-save-filename:focus {
+    outline: none;
+    border-bottom: 1.5px solid var(--primary-accent);
+}
+
+#mintputs-save-filename::placeholder {
+    color: var(--modal-text-secondary);
+    transition: color 0.3s ease;
+}
+
+#mintputs-save-filename:focus::placeholder {
+    color: var(--primary-accent);
+}
+
+.mintputs-modal-content button {
+    padding: 8px 18px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+
+#mintputs-save-cancel {
+    box-shadow: none;
+    background: transparent;
+}
+
+#mintputs-save-cancel-inner {
+    background: transparent;
+    box-shadow: none;
+    color: var(--modal-text-secondary);
+    transition: color 0.2s ease;
+}
+
+#mintputs-save-cancel:hover #mintputs-save-cancel-inner {
+    color: var(--modal-text);
+}
+
+.MintputsSaveButtons {
+    position: relative;
+    background: var(--button-border-gradient);
+    padding: 2px;
+    border-radius: 100vmax;
+    display: inline-block;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease-out;
+}
+
+.MintputsSaveButtons-inner {
+    background: var(--button-bg-gradient);
+    border-radius: 100vmax;
+    text-align: center;
+    color: var(--button-text);
+    font-size: 14px;
+    font-weight: 450;
+    letter-spacing: 0.2px;
+    padding: 0.3rem 1.25rem;
+    transition: all 0.3s ease-out;
+    box-shadow: var(--button-shadow);
+}
+
+.MintputsSaveButtons:hover {
+    background: var(--button-hover-bg);
+}
+
+.MintputsSaveButtons:hover .MintputsSaveButtons-inner {
+    background: var(--button-hover-bg);
+    box-shadow: var(--button-hover-shadow);
+    color: var(--button-hover-text);
+}
+
+.MintputsSaveButtons:active {
+    transform: translateY(0px) scale(0.96);
+    transition: all 0.08s ease-out;
+}
+
+.MintputsSaveButtons:active .MintputsSaveButtons-inner {
+    transform: scale(0.92);
+    transition: all 0.08s ease-out;
+}
+
+.MintputsSaveButtonsContainer {
+    display: flex;
+    gap: 0.15em;
+    justify-content: flex-end;
+    position: absolute;
+    bottom: 1.5rem;
+    right: 1.5rem;
+}
+
+@media (max-width: 480px) {
+    .mintputs-modal-content {
+        min-width: 280px;
+        max-width: 320px;
+        margin: 1rem;
+    }
+}
+
+#mintputs-save-filename {
+    position: relative;
+}
+
+#mintputs-save-filename.error {
+    border-bottom-color: #ff6b6b;
+    animation: shake 0.3s ease;
+}
+
+#mintputs-save-modal {
+    animation: modalFadeIn 400ms cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
