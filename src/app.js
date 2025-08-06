@@ -2,6 +2,7 @@ import { Mint } from './mintkit/mint.js';
 import { Webfunctions } from './EventHandle.js';
 import { WebContent } from './Content.js';
 import { WebElements } from './redistributables/units.js';
+import page from './styling/mintputs_page.js';
 
 const ROOT = '#app';
 const MAIN_CONTAINER_ID = 'ROOT';
@@ -73,6 +74,9 @@ const queueRender = () => {
             if (!firstRenderComplete && Webfunctions) {
                 Webfunctions(Main).catch(err => Logger.error('Error in Webfunctions:', err));
                 firstRenderComplete = true;
+                if (typeof page !== 'undefined' && page.initTypingEffect) {
+                    page.initTypingEffect();
+                }
             }
         } else {
             console.log("No changes to render");

@@ -1,3 +1,5 @@
+// Mintputs /mintputs_page.js
+
 const page = {
     Introduce(Name) {
         const DisplayName = Name || this.Name;
@@ -104,6 +106,10 @@ const page = {
                 </div>
             </div>
 
+            <div class="titleformobile">
+                <h4 id="textsTitleForMB">Mintputs - Type your content to create a website</h4>
+            </div>
+
             <div class="controls">
                 <div class="controlsContent">
                     <div class="stats">
@@ -112,9 +118,44 @@ const page = {
                     </div>
                 </div>
             </div>
-            
+
             `
     },
+
+    initTypingEffect() {
+        const titleElement = document.getElementById('textsTitleForMB');
+        if (!titleElement) return;
+
+        const messages = [
+            "Mintputs - Type your content to create a website",
+            "Create beautiful websites with just typing",
+            "Transform ideas into web pages",
+        ];
+
+        let messageIndex = 0;
+
+        function typeMessage() {
+            const textToType = messages[messageIndex];
+            let i = 0;
+            titleElement.textContent = '';
+
+            function type() {
+                if (i < textToType.length) {
+                    titleElement.textContent += textToType.charAt(i);
+                    i++;
+                    setTimeout(type, 50);
+                } else {
+                    setTimeout(() => {
+                        messageIndex = (messageIndex + 1) % messages.length;
+                        typeMessage();
+                    }, 2000);
+                }
+            }
+            setTimeout(type, 500);
+        }
+
+        typeMessage();
+    }
 }
 
 export default page;

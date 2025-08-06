@@ -87,6 +87,8 @@
 .mintputs-modal-content h2 {
     margin-top: 0.5rem;
     color: var(--modal-text);
+    font-weight: 600;
+    letter-spacing: -0.3px;
 }
 
 .mintputs-modal-content p {

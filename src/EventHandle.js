@@ -391,8 +391,8 @@ Wrap up your thoughts and provide a call to action.
             theme: 'monokai',
             lineNumbers: true,
             lineWrapping: false,
-            autoCloseBrackets: true, 
-            matchBrackets: { 
+            autoCloseBrackets: true,
+            matchBrackets: {
                 bothTags: true,
                 maxScanLineLength: 10000,
                 maxScanLines: 1000
@@ -527,7 +527,7 @@ Wrap up your thoughts and provide a call to action.
                 } else if (/^binary\s+(-?\d+(?:\.\d+)?)\s*$/.test(value)) {
                     const match = value.match(/^binary\s+(-?\d+(?:\.\d+)?)\s*$/);
                     const number = parseFloat(match[1]);
-                    
+
                     if (window.binaryConverterModule) {
                         try {
                             let result = '';
@@ -545,7 +545,7 @@ Wrap up your thoughts and provide a call to action.
                                 const mantissa = window.binaryConverterModule._get_mantissa(number);
                                 result = `Float ${number} → Binary: ${binary}\nSign=${sign}, Exponent=${exponent}, Mantissa=${mantissa}`;
                             }
-                            
+
                             cm.setValue(result);
                             if (typeof showNotification === 'function') {
                                 showNotification('Conversion completed!', 'success');
@@ -566,14 +566,14 @@ Wrap up your thoughts and provide a call to action.
                 } else if (/^binary2int\s+([01]+)\s*$/.test(value)) {
                     const match = value.match(/^binary2int\s+([01]+)\s*$/);
                     const binaryStr = match[1];
-                    
+
                     if (window.binaryConverterModule) {
                         try {
                             const binaryPtr = window.binaryConverterModule._malloc(binaryStr.length + 1);
                             window.binaryConverterModule.stringToUTF8(binaryStr, binaryPtr, binaryStr.length + 1);
                             const result = window.binaryConverterModule._binary_to_int(binaryPtr);
                             window.binaryConverterModule._free(binaryPtr);
-                            
+
                             cm.setValue(`Binary ${binaryStr} → Integer: ${result}`);
                             if (typeof showNotification === 'function') {
                                 showNotification('Binary to integer conversion completed', 'success');
@@ -591,14 +591,14 @@ Wrap up your thoughts and provide a call to action.
                 } else if (/^binary2float\s+([01]{32})\s*$/.test(value)) {
                     const match = value.match(/^binary2float\s+([01]{32})\s*$/);
                     const binaryStr = match[1];
-                    
+
                     if (window.binaryConverterModule) {
                         try {
                             const binaryPtr = window.binaryConverterModule._malloc(binaryStr.length + 1);
                             window.binaryConverterModule.stringToUTF8(binaryStr, binaryPtr, binaryStr.length + 1);
                             const result = window.binaryConverterModule._binary_to_float(binaryPtr);
                             window.binaryConverterModule._free(binaryPtr);
-                            
+
                             cm.setValue(`Binary ${binaryStr} → Float: ${result}`);
                             if (typeof showNotification === 'function') {
                                 showNotification('Binary to float conversion completed', 'success');
@@ -835,7 +835,7 @@ Wrap up your thoughts and provide a call to action.
             alert('Error: Cannot copy HTML, output display area not found.');
             return;
         }
-        const html = output.innerHTML; 
+        const html = output.innerHTML;
         navigator.clipboard.writeText(html).then(() => {
             showNotification('HTML copied to clipboard!', 'success');
         }).catch(err => {
@@ -882,6 +882,26 @@ Wrap up your thoughts and provide a call to action.
     <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Anuphan:wght@400;600;700&display=swap');
 
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    line-height: var(--line-height-normal);
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
 :root {
   --text: #000;
   --background: #faf9f5;
@@ -900,7 +920,7 @@ Wrap up your thoughts and provide a call to action.
     --border: #343434;
     --code-bg: #1f1f1f;
     --heading-border: #333;
-    --Links: color:rgb(108, 108, 243);
+    --Links: color:hsla(240, 85%, 69%, 1.00);
   }
 }
 
@@ -956,9 +976,15 @@ h5 { font-size: 1.245em; }
 h6 { font-size: 1em; }
 
 a {
-  color: var(--Links);
-  text-decoration: underline;
-  transition: color 0.2s ease;
+    color: var(--Links);
+    text-decoration: underline;
+    transition: color 0.2s ease;
+    line-height: 0;
+    height: 30px;
+    display: inline-block;
+    align-content: center;
+    text-decoration: none;
+    border-bottom: solid 1px currentColor;
 }
 
 a:hover, a:focus {
@@ -1000,6 +1026,7 @@ blockquote {
 ul, ol {
   margin: 0 0 1.5rem 1.5rem;
   padding: 0;
+  margin-top: 1rem;
 }
 
 li {
@@ -1038,6 +1065,43 @@ img {
   height: auto;
   display: block;
   margin: 1rem auto;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    width: 1rem;
+    height: 1rem;
+    padding: 0;
+    margin-right: var(--space-2);
+    accent-color: var(--color-interactive-primary);
+    margin-right: 0.3rem;
+    transform: translateY(1.5px);
+}
+
+img,
+video,
+audio,
+iframe,
+embed,
+object {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+figcaption {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    text-align: center;
+    margin-top: var(--space-2);
+    font-style: italic;
+}
+
+section,
+article,
+aside,
+nav {
+    display: block;
 }
 
 @media (max-width: 640px) {
@@ -1182,7 +1246,7 @@ ${output.innerHTML}
         try {
             const clipboardData = event.clipboardData || (event.originalEvent && event.originalEvent.clipboardData);
             if (!clipboardData || !clipboardData.items) {
-                return; 
+                return;
             }
 
             let imageFile = null;
