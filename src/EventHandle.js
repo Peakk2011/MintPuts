@@ -1,8 +1,11 @@
 import { Mint } from './mintkit/mint.js';
 import './Content.js';
 import { typewriterInsertCM5, typewriterInsertLineCM5, setupIntellisense } from './intellisense.js';
+import './styling/mintputs_page.js';
 
 export const Webfunctions = async (Main) => {
+
+    let untitledFileCounter = 1;
 
     async function initBinaryConverter() {
         try {
@@ -101,7 +104,7 @@ export const Webfunctions = async (Main) => {
                 table: /^\|(.+)\|\s*\n\|[-:|\s]+\|\s*\n((?:\|.+\|\s*\n?)*)/gm,
                 taskList: /^[-*+]\s+\[([ xX])\]\s+(.+)$/gm,
                 lineBreak: /\n\n+/g,
-                paragraph: /^(?!#|>|[-*+]|\d+\.|```|---|$|\|).+$/gm
+                paragraph: /^(?!#|>|[-*+]|\d+\.|```|---|\$|\|).+$/gm
             };
 
             this.templates = {
@@ -419,6 +422,7 @@ Wrap up your thoughts and provide a call to action.
                     const selection = cm.getSelection();
                     cm.replaceSelection(`\`${selection}\``);
                 },
+                // Ctrl+S is handled by a global listener now to ensure it works even outside the editor.
                 "Ctrl-Space": "autocomplete"
             }
         });
@@ -515,7 +519,7 @@ Wrap up your thoughts and provide a call to action.
                         alert('Storage cleaned!');
                     }
                     event.preventDefault();
-                } else if ((/^resetThis\s*\(\s*\)\s*;?.*/.test(value) || value === 'resetThis' || value === ':clear') && typeof clearAll === 'function') {
+                } else if ((/^resetThis\s*\(\)\s*;?.*/.test(value) || value === 'resetThis' || value === ':clear') && typeof clearAll === 'function') {
                     clearAll();
                     cm.setValue('');
                     if (typeof showNotification === 'function') {
@@ -578,7 +582,8 @@ Wrap up your thoughts and provide a call to action.
                             if (typeof showNotification === 'function') {
                                 showNotification('Binary to integer conversion completed', 'success');
                             }
-                        } catch (error) {
+                        }
+                        catch (error) {
                             cm.setValue(`Error: ${error.message}`);
                             if (typeof showNotification === 'function') {
                                 showNotification('Binary to integer conversion failed', 'error');
@@ -603,7 +608,8 @@ Wrap up your thoughts and provide a call to action.
                             if (typeof showNotification === 'function') {
                                 showNotification('Binary to float conversion completed', 'success');
                             }
-                        } catch (error) {
+                        }
+                        catch (error) {
                             cm.setValue(`Error: ${error.message}`);
                             if (typeof showNotification === 'function') {
                                 showNotification('Binary to float conversion failed', 'error');
@@ -873,248 +879,7 @@ Wrap up your thoughts and provide a call to action.
             showNotification('No HTML output available', 'error');
             return;
         }
-        const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Documents</title>
-    <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Anuphan:wght@400;600;700&display=swap');
-
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-html {
-    line-height: var(--line-height-normal);
-    -webkit-text-size-adjust: 100%;
-    -moz-text-size-adjust: 100%;
-    text-size-adjust: 100%;
-    -webkit-tap-highlight-color: transparent;
-    scroll-behavior: smooth;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-}
-
-:root {
-  --text: #000;
-  --background: #faf9f5;
-  --muted: #666;
-  --border: #a7a6a3;
-  --code-bg: #eae9e5;
-  --heading-border: #a7a6a3;
-  --Links: color:rgb(50, 50, 153);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #f4f4f4;
-    --background: #141414;
-    --muted: #999;
-    --border: #343434;
-    --code-bg: #1f1f1f;
-    --heading-border: #333;
-    --Links: color:hsla(240, 85%, 69%, 1.00);
-  }
-}
-
-body {
-  font-family: 'Inter Tight', 'Anuphan', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 2.5rem;
-  line-height: 1.75;
-  color: var(--text);
-  background-color: var(--background);
-  animation: fadeIn 400ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
-
-@keyframes fadeIn {
-  100% {
-    opacity: 0;
-  }
-  70% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-p {
-  margin: 0 0 1.5rem;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  margin-top: 24px;
-  margin-bottom: 16px;
-  font-weight: 600;
-  line-height: 1.25; 
-}
-
-h1 {
-  font-size: 2em;
-  border-bottom: 1px solid var(--heading-border);
-  padding-bottom: 10px;
-}
-
-h2 {
-  font-size: 1.5em;
-  border-bottom: 1px solid var(--heading-border);
-  padding-bottom: 8px;
-}
-
-h3 { font-size: 1.7em; }
-h4 { font-size: 1.425em; }
-h5 { font-size: 1.245em; }
-h6 { font-size: 1em; }
-
-a {
-    color: var(--Links);
-    text-decoration: underline;
-    transition: color 0.2s ease;
-    line-height: 0;
-    height: 30px;
-    display: inline-block;
-    align-content: center;
-    text-decoration: none;
-    border-bottom: solid 1px currentColor;
-}
-
-a:hover, a:focus {
-  color: var(--muted);
-}
-
-code {
-  background: var(--code-bg);
-  padding: 2px 4px;
-  border-radius: 3px;
-  font-family: Consolas, Menlo, Monaco, "Courier New", monospace;
-  font-size: 0.95em;
-}
-
-pre {
-  background: var(--code-bg);
-  padding: 16px;
-  border-radius: 6px;
-  overflow-x: auto;
-  margin: 0 0 1.5rem;
-}
-
-pre code {
-  background: none;
-  padding: 0;
-  border-radius: 0;
-  font-size: 0.95em;
-  color: inherit;
-}
-
-blockquote {
-  border-left: 4px solid var(--border);
-  margin: 0 0 1.5rem;
-  padding-left: 16px;
-  color: var(--muted);
-  font-style: italic;
-}
-
-ul, ol {
-  margin: 0 0 1.5rem 1.5rem;
-  padding: 0;
-  margin-top: 1rem;
-}
-
-li {
-  margin-bottom: 0.5rem;
-}
-
-li > ul, li > ol {
-  margin-top: 0.5rem;
-}
-
-hr {
-  border: none;
-  border-top: 1px solid var(--border);
-  margin: 2rem 0;
-}
-
-table {
-  border-collapse: collapse;
-  width: 100%;
-  margin-bottom: 1.5rem;
-}
-
-th, td {
-  border: 1px solid var(--border);
-  padding: 8px 12px;
-  text-align: left;
-}
-
-th {
-  background: var(--code-bg);
-  font-weight: 600;
-}
-
-img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-  margin: 1rem auto;
-}
-
-input[type="checkbox"],
-input[type="radio"] {
-    width: 1rem;
-    height: 1rem;
-    padding: 0;
-    margin-right: var(--space-2);
-    accent-color: var(--color-interactive-primary);
-    margin-right: 0.3rem;
-    transform: translateY(1.5px);
-}
-
-img,
-video,
-audio,
-iframe,
-embed,
-object {
-    max-width: 100%;
-    height: auto;
-    display: block;
-}
-
-figcaption {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-secondary);
-    text-align: center;
-    margin-top: var(--space-2);
-    font-style: italic;
-}
-
-section,
-article,
-aside,
-nav {
-    display: block;
-}
-
-@media (max-width: 640px) {
-  body {
-    padding: 1.5rem;
-  }
-}
-    </style>
-</head>
-<body>
-${output.innerHTML}
-</body>
-</html>`;
+        const html = `<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Documents</title>\n    <style>\n@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Anuphan:wght@400;600;700&display=swap');\n\n*,\n*::before,\n*::after {\n    box-sizing: border-box;\n    margin: 0;\n    padding: 0;\n}\n\nhtml {\n    line-height: var(--line-height-normal);\n    -webkit-text-size-adjust: 100%;\n    -moz-text-size-adjust: 100%;\n    text-size-adjust: 100%;\n    -webkit-tap-highlight-color: transparent;\n    scroll-behavior: smooth;\n    -webkit-font-smoothing: antialiased;\n    -moz-osx-font-smoothing: grayscale;\n    text-rendering: optimizeLegibility;\n}\n\n:root {\n  --text: #000;\n  --background: #faf9f5;\n  --muted: #666;\n  --border: #a7a6a3;\n  --code-bg: #eae9e5;\n  --heading-border: #a7a6a3;\n  --Links: color:rgb(50, 50, 153);\n}\n\n@media (prefers-color-scheme: dark) {\n  :root {\n    --text: #f4f4f4;\n    --background: #141414;\n    --muted: #999;\n    --border: #343434;\n    --code-bg: #1f1f1f;\n    --heading-border: #333;\n    --Links: color:hsla(240, 85%, 69%, 1.00);\n  }\n}\n\nbody {\n  font-family: 'Inter Tight', 'Anuphan', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;\n  max-width: 600px;\n  margin: 0 auto;\n  padding: 2.5rem;\n  line-height: 1.75;\n  color: var(--text);\n  background-color: var(--background);\n  animation: fadeIn 400ms cubic-bezier(0.68, -0.55, 0.265, 1.55);\n}\n\n@keyframes fadeIn {\n  100% {\n    opacity: 0;\n  }\n  70% {\n    opacity: 1;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n\np {\n  margin: 0 0 1.5rem;\n}\n\nh1, h2, h3, h4, h5, h6 {\n  margin-top: 24px;\n  margin-bottom: 16px;\n  font-weight: 600;\n  line-height: 1.25; \n}\n\nh1 {\n  font-size: 2em;\n  border-bottom: 1px solid var(--heading-border);\n  padding-bottom: 10px;\n}\n\nh2 {\n  font-size: 1.5em;\n  border-bottom: 1px solid var(--heading-border);\n  padding-bottom: 8px;\n}\n\nh3 { font-size: 1.7em; }\nh4 { font-size: 1.425em; }\nh5 { font-size: 1.245em; }\nh6 { font-size: 1em; }\n\na {\n    color: var(--Links);\n    text-decoration: underline;\n    transition: color 0.2s ease;\n    line-height: 0;\n    height: 30px;\n    display: inline-block;\n    align-content: center;\n    text-decoration: none;\n    border-bottom: solid 1px currentColor;\n}\n\na:hover, a:focus {\n  color: var(--muted);\n}\n\ncode {\n  background: var(--code-bg);\n  padding: 2px 4px;\n  border-radius: 3px;\n  font-family: Consolas, Menlo, Monaco, "Courier New", monospace;\n  font-size: 0.95em;\n}\n\npre {\n  background: var(--code-bg);\n  padding: 16px;\n  border-radius: 6px;\n  overflow-x: auto;\n  margin: 0 0 1.5rem;\n}\n\npre code {\n  background: none;\n  padding: 0;\n  border-radius: 0;\n  font-size: 0.95em;\n  color: inherit;\n}\n\nblockquote {\n  border-left: 4px solid var(--border);\n  margin: 0 0 1.5rem;\n  padding-left: 16px;\n  color: var(--muted);\n  font-style: italic;\n}\n\nul, ol {\n  margin: 0 0 1.5rem 1.5rem;\n  padding: 0;\n  margin-top: 1rem;\n}\n\nli {\n  margin-bottom: 0.5rem;\n}\n\nli > ul, li > ol {\n  margin-top: 0.5rem;\n}\n\nhr {\n  border: none;\n  border-top: 1px solid var(--border);\n  margin: 2rem 0;\n}\n\ntable {\n  border-collapse: collapse;\n  width: 100%;\n  margin-bottom: 1.5rem;\n}\n\nth, td {\n  border: 1px solid var(--border);\n  padding: 8px 12px;\n  text-align: left;\n}\n\nth {\n  background: var(--code-bg);\n  font-weight: 600;\n}\n\nimg {\n  max-width: 100%;\n  height: auto;\n  display: block;\n  margin: 1rem auto;\n}\n\ninput[type="checkbox"],\ninput[type="radio"] {\n    width: 1rem;\n    height: 1rem;\n    padding: 0;\n    margin-right: var(--space-2);\n    accent-color: var(--color-interactive-primary);\n    margin-right: 0.3rem;\n    transform: translateY(1.5px);\n}\n\nimg,\nvideo,\naudio,\niframe,\nembed,\nobject {\n    max-width: 100%;\n    height: auto;\n    display: block;\n}\n\nfigcaption {\n    font-size: var(--font-size-sm);\n    color: var(--color-text-secondary);\n    text-align: center;\n    margin-top: var(--space-2);\n    font-style: italic;\n}\n\nsection,\narticle,\naside,\nnav {\n    display: block;\n}\n\n@media (max-width: 640px) {\n  body {\n    padding: 1.5rem;\n  }\n}\n    </style>\n</head>\n<body>\n${output.innerHTML}\n</body>\n</html>`;
 
         const blob = new Blob([html], { type: 'text/html' });
         const url = URL.createObjectURL(blob);
@@ -1145,14 +910,14 @@ ${output.innerHTML}
                         setTimeout(typeNext, 10);
                     } else {
                         parseMarkdown();
-                        showNotification(`${templateName} template loaded!`, 'success');
+                        // showNotification(`${templateName} template loaded!`, 'success');
                     }
                 }
                 typeNext();
             } else {
                 input.value = template;
                 parseMarkdown();
-                showNotification(`${templateName} template loaded!`, 'success');
+                // showNotification(`${templateName} template loaded!`, 'success');
             }
         }
     }
@@ -1180,12 +945,197 @@ ${output.innerHTML}
     function insertLink() { insertText('[', '](url)', 'link text'); }
     function insertImage() { insertText('![', '](image-url)', 'alt text'); }
     function insertTable() {
-        const table = `| Header 1 | Header 2 | Header 3 |
-|----------|----------|----------|
-| Row 1 Col 1 | Row 1 Col 2 | Row 1 Col 3 |
-| Row 2 Col 1 | Row 2 Col 2 | Row 2 Col 3 |`;
+        const table = `| Header 1 | Header 2 | Header 3 |\n|----------|----------|----------|\n| Row 1 Col 1 | Row 1 Col 2 | Row 1 Col 3 |\n| Row 2 Col 1 | Row 2 Col 2 | Row 2 Col 3 |`;
         insertText(table);
     }
+
+    function getEditorContent() {
+        if (typeof editor !== 'undefined' && editor) {
+            return editor.getValue();
+        }
+        const input = document.getElementById('markdown-input');
+        return input ? input.value : '';
+    }
+
+    function updateRecents(filename) {
+        if (!filename) return;
+        let recents = JSON.parse(localStorage.getItem('mintputs_recents') || '[]');
+        recents = recents.filter(f => f !== filename);
+        recents.unshift(filename);
+        if (recents.length > 20) recents.length = 20;
+        localStorage.setItem('mintputs_recents', JSON.stringify(recents));
+        if (typeof window.updateRecentsUI === 'function') {
+            window.updateRecentsUI();
+        }
+    }
+
+    function createNewFile() {
+        const newFileName = `Untitled file - ${untitledFileCounter++}`;
+
+        // save current file if needed
+        if (window.currentFileName) {
+            saveActiveFile(); // Use the improved save function
+        }
+
+        // Create a new file
+        setActiveFile(newFileName, '');
+        updateRecents(newFileName);
+
+        if (typeof showNotification === 'function') {
+            showNotification('New file created!', 'success');
+        }
+    }
+
+    function saveActiveFile(force = false) {
+        if (!window.currentFileName || window.currentFileName.startsWith('Untitled file')) {
+            window.mint_showSaveModal(
+                (newName) => {
+                    if (newName) {
+                        // If there was an old "Untitled" file, we need to remove it from recents
+                        if(window.currentFileName && window.currentFileName.startsWith('Untitled file')) {
+                            let recents = JSON.parse(localStorage.getItem('mintputs_recents') || '[]');
+                            recents = recents.filter(f => f !== window.currentFileName);
+                            localStorage.setItem('mintputs_recents', JSON.stringify(recents));
+                        }
+
+                        window.currentFileName = newName;
+                        const content = getEditorContent();
+                        try {
+                            localStorage.setItem(`mintputs_file_${window.currentFileName}`, content);
+                            window.lastSavedContent = content;
+                            updateRecents(window.currentFileName);
+                            if (typeof showNotification === 'function') {
+                                showNotification('File saved', 'success');
+                            }
+                            // Update the UI with the new name
+                            const currentFileEl = document.getElementById('CurrentFiles');
+                            if (currentFileEl) {
+                                currentFileEl.textContent = newName;
+                            }
+                            if (typeof window.updateRecentsUI === 'function') {
+                                window.updateRecentsUI();
+                            }
+                        } catch (error) {
+                            if (typeof showNotification === 'function') {
+                                showNotification('Failed to save file', 'error');
+                            }
+                            console.error('Save error:', error);
+                        }
+                    } else {
+                        showNotification('Save cancelled.', 'info');
+                    }
+                },
+                () => {
+                    showNotification('Save cancelled.', 'info');
+                },
+                'Create New File', // modalTitle
+                'Create' // confirmButtonText
+            );
+            return false;
+        }
+
+        const content = getEditorContent();
+
+        if (!force && content === window.lastSavedContent) {
+            return true; // No changes, no need to save
+        }
+
+        try {
+            localStorage.setItem(`mintputs_file_${window.currentFileName}`, content);
+            window.lastSavedContent = content;
+            updateRecents(window.currentFileName);
+
+            if (force && typeof showNotification === 'function') {
+                showNotification('File saved', 'success');
+            }
+
+            return true;
+        } catch (error) {
+            if (typeof showNotification === 'function') {
+                showNotification('Failed to save file', 'error');
+            }
+            console.error('Save error:', error);
+            return false;
+        }
+    }
+
+    function setupAutoSave() {
+        let autoSaveTimer;
+
+        const performAutoSave = () => {
+            const content = input.value;
+            if (content && content.trim().length > 0) {
+                try {
+                    const autoSaveData = {
+                        content: content,
+                        timestamp: new Date().getTime(),
+                        saved: new Date().toISOString()
+                    };
+                    localStorage.setItem('mintputs_autosave', JSON.stringify(autoSaveData));
+                } catch (error) {
+                    console.warn('Auto-save failed:', error);
+                }
+            }
+        };
+
+        // Auto-save every 30 seconds if there are changes
+        const startAutoSave = () => {
+            clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(() => {
+                performAutoSave();
+                startAutoSave(); 
+            }, 30000); 
+        };
+
+        // Auto-save on content change
+        input.addEventListener('input', () => {
+            clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(performAutoSave, 2000); // Save after 2 seconds 
+        });
+
+        startAutoSave();
+    }
+
+    // Function to recover from auto-save
+    function recoverFromAutoSave() {
+        try {
+            const autoSaveData = localStorage.getItem('mintputs_autosave');
+            if (autoSaveData) {
+                const parsed = JSON.parse(autoSaveData);
+                const timeDiff = new Date().getTime() - parsed.timestamp;
+
+                // Only offer recovery if auto-save is less than 24 hours old
+                if (timeDiff < 24 * 60 * 60 * 1000) {
+                    const recover = confirm(
+                        `Found auto-saved content from ${new Date(parsed.saved).toLocaleString()}. ` +
+                        'Do you want to recover it?'
+                    );
+
+                    if (recover) {
+                        input.value = parsed.content;
+                        parseMarkdown();
+                        showNotification('Content recovered from auto-save!', 'success');
+                        return true;
+                    }
+                }
+            }
+        } catch (error) {
+            console.warn('Failed to recover auto-save:', error);
+        }
+        return false;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!input.value || input.value.trim().length === 0) {
+            recoverFromAutoSave();
+        }
+
+        setupAutoSave();
+    });
+
+    window.NewFile = createNewFile;
+    window.recoverFromAutoSave = recoverFromAutoSave;
+
 
     function showNotification(message, type = 'info') {
         const notification = document.createElement('div');
@@ -1361,4 +1311,196 @@ ${output.innerHTML}
     } else {
         console.warn('(TitleLinks, main-content, output-section) not found.');
     }
+
+    // Active File Management & Auto Save
+    window.currentFileName = null;
+    let lastSavedContent = '';
+    let autoSaveTimer = null;
+
+    function setActiveFile(filename, content = '') {
+        window.currentFileName = filename;
+        window.lastSavedContent = content;
+
+        // Sync
+        if (typeof editor !== 'undefined' && editor && editor.setValue) {
+            editor.setValue(content);
+        } else {
+            const input = document.getElementById('markdown-input');
+            if (input) input.value = content;
+        }
+
+        const currentFileEl = document.getElementById('CurrentFiles');
+        if (currentFileEl) {
+            currentFileEl.textContent = filename;
+        }
+    }
+
+    function setupAutoSaveActiveFile() {
+        if (autoSaveTimer) clearInterval(autoSaveTimer);
+        autoSaveTimer = setInterval(() => {
+            saveActiveFile();
+        }, 5000); // auto save
+        if (typeof editor !== 'undefined' && editor) {
+            editor.on('change', () => {
+                saveActiveFile();
+            });
+        } else if (input && input.addEventListener) {
+            input.addEventListener('input', () => {
+                saveActiveFile();
+            });
+        }
+    }
+
+    function switchFile(filename) {
+        if (!filename) return false;
+
+        // save old file first
+        if (window.currentFileName) {
+            saveActiveFile();
+        }
+
+        try {
+            const content = localStorage.getItem(`mintputs_file_${filename}`) || '';
+            setActiveFile(filename, content);
+            updateRecents(filename);
+
+            // trigger parsing
+            if (typeof window.parseMarkdown === 'function') {
+                window.parseMarkdown();
+            }
+
+            if (typeof showNotification === 'function') {
+                // showNotification(`Loaded: ${filename}`, 'info');
+            }
+
+            return true;
+        } catch (error) {
+            if (typeof showNotification === 'function') {
+                showNotification('Failed to load file', 'error');
+            }
+            console.error('Load error:', error);
+            return false;
+        }
+    }
+
+    function createNewFileWithName(filename) {
+        setActiveFile(filename, '');
+        let recents = JSON.parse(localStorage.getItem('mintputs_recents') || '[]');
+        recents = recents.filter(f => f !== filename);
+        recents.unshift(filename);
+        localStorage.setItem('mintputs_recents', JSON.stringify(recents));
+        if (typeof window.updateRecentsUI === 'function') window.updateRecentsUI();
+        showNotification('New file created: ' + filename, 'success');
+    }
+
+    function renameActiveFile(newName) {
+        if (!window.currentFileName) {
+            if (typeof showNotification === 'function') {
+                showNotification('No active file to rename', 'warning');
+            }
+            return false;
+        }
+
+        if (newName === window.currentFileName) {
+            return true;
+        }
+
+        try {
+            // Chenge content
+            const content = getEditorContent();
+            localStorage.setItem(`mintputs_file_${newName}`, content);
+            localStorage.removeItem(`mintputs_file_${window.currentFileName}`);
+
+            let recents = JSON.parse(localStorage.getItem('mintputs_recents') || '[]');
+            recents = recents.map(f => f === window.currentFileName ? newName : f);
+            localStorage.setItem('mintputs_recents', JSON.stringify(recents));
+
+            window.currentFileName = newName;
+            window.lastSavedContent = content;
+
+            const currentFileEl = document.getElementById('CurrentFiles');
+            if (currentFileEl) {
+                currentFileEl.textContent = newName;
+            }
+
+            updateRecentsUI();
+
+            if (typeof showNotification === 'function') {
+                showNotification(`Renamed to: ${newName}`, 'success');
+            }
+
+            return true;
+        } catch (error) {
+            if (typeof showNotification === 'function') {
+                showNotification('Failed to rename file', 'error');
+            }
+            console.error('Rename error:', error);
+            return false;
+        }
+    }
+
+    // Buttons/Menus switch, new, rename (UI Can call by here)
+    window.switchFile = switchFile;
+    window.createNewFileWithName = createNewFileWithName;
+    window.renameActiveFile = renameActiveFile;
+
+    setupAutoSaveActiveFile();
+
+    window.updateRecentsUI = function updateRecentsUI() {
+        const recentsDiv = document.querySelector('.RecentsFiles');
+        if (!recentsDiv) return;
+
+        const recents = JSON.parse(localStorage.getItem('mintputs_recents') || '[]');
+        const ul = document.createElement('ul');
+
+        recents.forEach(filename => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+
+            a.href = 'javascript:void(0)';
+            a.textContent = filename;
+            a.onclick = () => switchFile(filename);
+
+            // #CurrentFiles
+            if (filename === window.currentFileName) {
+                li.classList.add('active');
+            }
+
+            li.appendChild(a);
+            ul.appendChild(li);
+        });
+
+        recentsDiv.innerHTML = '';
+        recentsDiv.appendChild(ul);
+    };
+
+    setTimeout(() => {
+        try {
+            const currentFileEl = document.getElementById('CurrentFiles');
+            const label = currentFileEl ? (currentFileEl.textContent || '').trim() : '';
+            if (label && label.toLowerCase() !== 'untitled') {
+                if (!window.currentFileName) setActiveFile(label);
+            } else {
+                const recents = JSON.parse(localStorage.getItem('mintputs_recents') || '[]');
+                if (recents.length > 0) {
+                    const name = recents[0];
+                    const raw = localStorage.getItem('mintputs_file_' + name);
+                    let content = '';
+                    if (raw) { try { content = decodeURIComponent(raw); } catch (e) { content = raw; } }
+                    setActiveFile(name, content);
+                }
+            }
+        } catch (e) {
+            console.warn('Initial active file sync failed:', e);
+        }
+        if (typeof window.updateRecentsUI === 'function') window.updateRecentsUI();
+    }, 200);
+
+    // Ctrl+S to save current active file silently (no popup)
+    document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
+            e.preventDefault();
+            saveActiveFile(true);
+        }
+    });
 };

@@ -77,6 +77,9 @@ const queueRender = () => {
                 if (typeof page !== 'undefined' && page.initTypingEffect) {
                     page.initTypingEffect();
                 }
+                if (typeof page !== 'undefined' && page.initAboutModal) {
+                    page.initAboutModal();
+                }
             }
         } else {
             console.log("No changes to render");

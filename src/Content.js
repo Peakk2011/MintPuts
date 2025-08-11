@@ -7,6 +7,7 @@ const RECENTS_KEY = 'mintputs_recents';
 const FILE_PREFIX = 'mintputs_file_';
 const MAX_RECENTS = 10;
 let _modalCSSInjected = false;
+let currentFileName = null;
 
 function mint_getRecents() {
     const saved = localStorage.getItem(RECENTS_KEY);
@@ -40,7 +41,7 @@ function mint_loadFile(filename) {
     }
 }
 
-async function mint_showSaveModal(onSave, onCancel) {
+async function mint_showSaveModal(onSave, onCancel, modalTitle = 'Save File', confirmButtonText = 'Save') {
     if (!_modalCSSInjected) {
         await include("./styling/save_model/mint_savemodal.css");
         _modalCSSInjected = true;
@@ -50,6 +51,20 @@ async function mint_showSaveModal(onSave, onCancel) {
     if (!modal) {
         await include("./styling/save_model/model.html");
         modal = document.getElementById('mintputs-save-modal');
+    }
+
+    // Update modal title and button text
+    const titleElement = modal.querySelector('h2');
+    if (titleElement) {
+        titleElement.textContent = modalTitle;
+    }
+    const confirmButton = modal.querySelector('#mintputs-save-confirm .MintputsSaveButtons-inner');
+    if (confirmButton) {
+        confirmButton.textContent = confirmButtonText;
+    }
+    const paragraphElement = modal.querySelector('p');
+    if (paragraphElement) {
+        paragraphElement.innerHTML = 'Please enter a filename to proceed.<br>Only you can access it on this device.';
     }
 
     modal.style.display = 'flex';
@@ -192,22 +207,7 @@ function mint_hideSaveModal() {
     if (modal) modal.style.display = 'none';
 }
 
-function mint_bindCtrlS(getContent, setCurrentFile, updateRecentsUI) {
-    window.addEventListener('keydown', function (e) {
-        if ((e.ctrlKey || e.metaKey) && e.code === 'KeyS') {
-            e.preventDefault();
-            mint_showSaveModal(
-                (filename) => {
-                    const content = getContent();
-                    mint_saveFile(filename, content);
-                    if (typeof updateRecentsUI === 'function') updateRecentsUI();
-                    if (typeof setCurrentFile === 'function') setCurrentFile(filename);
-                },
-                () => { }
-            );
-        }
-    });
-}
+// function mint_bindCtrlS(getContent, setCurrentFile, updateRecentsUI) {}
 
 function mint_updateRecentsUI(onClickFile) {
     const recentsDiv = document.querySelector('.RecentsFiles');
@@ -235,9 +235,9 @@ const lightThemeColors = {
     FormatBorderColors: '#deddd9',
     PrimaryHeaderText: '#303e35',
     PublicFormatBorderColors: '#b8b6b0',
-    OffsetColorPrimary: 'linear-gradient(to bottom, #f0efeb 0%, #f5f4f1 40%, #faf9f5 100%), linear-gradient(to bottom, rgba(0, 0, 0, 0.008) 0%, rgba(0, 0, 0, 0.015) 100%)',
+    OffsetColorPrimary: 'linear-gradient(to bottom, #faf9f5 0%, #f5f4f1 60%, #f0efeb 100%), linear-gradient(to bottom, rgba(0, 0, 0, 0.015) 0%, rgba(0, 0, 0, 0.008) 100%)',
     btnSecondary: {
-        background: "#f4f2ee",
+        background: "linear-gradient(145deg, #e6efee, #e0f0eeff)",
         border: "solid 1px #96948f",
         color: "#000",
     },
@@ -252,9 +252,15 @@ const lightThemeColors = {
         inner: {
             Shadow: "inset 2px 2px 6px #deddd9,inset -8px -8px 12px rgba(255, 255, 255, 1)",
             background: "linear-gradient(180deg, #ffffff, #faf9f5)"
-        },  
+        },
         Box: "0 18px 24px #faf9f5, 0 2px 4px #faf9f5",
-    }
+        AccentBox: `
+            inset 4px 4px 6px rgba(0, 0, 0, 0.04),
+            inset -4px -4px 6px rgba(255, 255, 255, 0.3),
+            6px 6px 12px rgba(0, 0, 0, 0.05),
+            -6px -6px 12px rgba(255, 255, 255, 0.25);
+        `,
+    },
 };
 
 const darkThemeColors = {
@@ -266,9 +272,9 @@ const darkThemeColors = {
     FormatBorderColors: '#202020',
     PrimaryHeaderText: '#dfffeb',
     PublicFormatBorderColors: '#343434',
-    OffsetColorPrimary: 'linear-gradient(to bottom, #080808 0%, #141414 50%, #0f0f0f 100%)',
+    OffsetColorPrimary: 'linear-gradient(to bottom, #0f0f0f 0%, #141414 50%, #080808 100%)',
     btnSecondary: {
-        background: "#333",
+        background: "#212525",
         border: "solid 1px #545454",
         color: "#a2a2a2",
     },
@@ -284,9 +290,15 @@ const darkThemeColors = {
             Shadow: "inset 2px 2px 8px #080808, inset -2px -2px 8px #1a1a1aff, 2px 4px 10px rgba(20, 20, 20, 0.900)",
             background: "linear-gradient(145deg, #0c0c0c, #161616)"
         },
-        Box: "0 18px 24px #0f0f0f, 0 2px 4px #0f0f0f",
+        Box: "0 2px 4px #0f0f0f, 0 18px 24px #0f0f0f",
+        AccentBox: `
+            inset 2px 2px 4px rgba(26, 30, 30, 0.35),
+            inset -2px -2px 4px rgba(38, 44, 43, 0.3),
+            6px 6px 12px rgba(26, 30, 30, 0.35),
+            -6px -6px 12px rgba(38, 44, 43, 0.3)
+        `,
     }
-};  
+};
 
 const getPlatformInfo = () => {
     const isElectron = !!window.electronAPI;
@@ -384,7 +396,6 @@ export const WebContent = {
         IntroduceAnimationName: 'IntroduceAnimation',
     },
 
-    // Reset ค่าเรื่มต้นเป็น CSS preset styling
     Normalize: {
         CALL: `${WebElements.Units.CSSSize.boxSizing};`,
         Unset: `
@@ -400,7 +411,6 @@ export const WebContent = {
         }
     },
 
-    // Force สำหรับการ rendering ข้อความในเเว็บ
     TextRendering: {
         ForceGrayStyleRendering: `
             -webkit-font-smoothing: antialiased;
@@ -575,7 +585,7 @@ export const WebContent = {
                 display: flex;
                 align-items: center;
                 position: ${fixed};
-                top: 16${pixel};
+                top: 14${pixel};
                 left: 50${percent};
                 gap: 16${pixel};
                 z-index: 9999;
@@ -629,21 +639,47 @@ export const WebContent = {
 
             .titleformobile {
                 position: ${fixed};
-                top: 0; 
+                bottom: 0;
                 background: ${OffsetColorPrimary};
                 width: 100%;
                 display: none;
-                height: 36px;
+                height: 40px;
                 box-shadow: ${shadowNew.Box};
             }
 
             .titleformobile h4 {
                 font-weight: 450;
                 font-size: 13px;
-                padding-top: 0.5rem;
-                padding-bottom: 0.3rem;
+                padding-bottom: 0.6rem;
+                padding-top: 0.6rem;
                 text-align: center;
                 letter-spacing: -0.3px;
+            }
+
+            #titlebarlinksBG {
+                width: 100%;
+                height: 60px;
+                position: ${fixed};
+                -webkit-backdrop-filter: blur(10px);
+                backdrop-filter: blur(10px);
+                background-color: ${colorPrimary};
+                z-index: 20;
+
+                -webkit-mask-image: linear-gradient(to bottom,
+                    rgba(0, 0, 0, 1) 0%,    /* 100% */
+                    rgba(0, 0, 0, 1) 20%,   /* 80% */
+                    rgba(0, 0, 0, 0) 100%
+                );
+                -webkit-mask-repeat: no-repeat;
+                -webkit-mask-size: cover;
+
+                mask-image: linear-gradient(to bottom,
+                    rgba(0, 0, 0, 1) 0%,
+                    rgba(0, 0, 0, 1) 20%,
+                    rgba(0, 0, 0, 0) 100%
+                );
+                mask-repeat: no-repeat;
+                mask-size: cover;
             }
 
             #drag-region {
@@ -896,7 +932,11 @@ export const WebContent = {
             }
 
             .CodeMirror-sizer{
-                margin-left: 55${pixel} !important;
+                margin-left: 30${pixel} !important;
+            }
+
+            .CodeMirror-lines {
+                padding: 0;
             }
 
             .CodeMirror-gutters, .CodeMirror-gutter {
@@ -979,39 +1019,25 @@ export const WebContent = {
             #DropdownPresetMenu {
                 display: block;
                 position: ${absolute};
-                left: 12${pixel};
-                top: 130${pixel};
+                left: -8${pixel};
+                top: 10${pixel};
                 background-color: ${colorPrimary};
                 border: ${FormatBorderColors} solid 1${pixel};
-                border-radius: 6${pixel};
+                border-radius: 8${pixel};
                 min-width: 230${pixel};
                 height: 100${pixel};
                 z-index: 100;
-                padding: 4${pixel} 0;
+                padding: 8${pixel} 0;
                 overflow: hidden;
                 opacity: 0;
                 pointer-events: none;
                 transition: ${transitionAll};
                 -webkit-app-region: no-drag;
-            }
-
-            #DropdownPresetMenu hr {
-                width: 88${percent};
-                margin-top: 0.2${rem};
-                margin-bottom: 0.6${rem};
-                margin-left: auto;
-                margin-right: auto;
-                opacity: 10${percent};
-            }
-
-            #DropdownPresetMenu span {
-                padding: 14${pixel} 16${pixel};
-                font-size: 12${pixel};
-                opacity: 60${percent};
+                box-shadow: ${shadowMd};
             }
                 
             #DropdownPresetMenu.open {
-                height: 205${pixel};
+                height: fit-content;
                 opacity: 1;
                 pointer-events: auto;
             }
@@ -1022,7 +1048,7 @@ export const WebContent = {
                 margin: auto;
                 margin-bottom: 0.15${rem};
                 text-align: left;
-                padding: 5${pixel} 10${pixel};
+                padding: 3${pixel} 10${pixel};
                 border: none;
                 background: none;
                 cursor: pointer;
@@ -1030,11 +1056,12 @@ export const WebContent = {
                 color: ${textColorPrimaryDisplay};
                 opacity: 80${percent};
                 border-radius: 8${pixel};
-                transition: background 0.15s, color 0.15s;
+                transition: cubic-bezier(0.19, 1, 0.22, 1) 450ms all;
                 -webkit-app-region: no-drag;
             }
             .dropdown-template-btn:hover, .dropdown-template-btn:focus {
                 background: ${btnSecondary.background};
+                box-shadow: ${shadowNew.AccentBox};
             }
             .dropdown-template-btn:active {
                 background: transparent;
@@ -1143,6 +1170,7 @@ export const WebContent = {
 
                 #html-output {
                     padding: 12${pixel} 16${pixel};
+                    padding-top: 4rem;
                 }
 
                 .CodeMirror-code {
@@ -1151,7 +1179,7 @@ export const WebContent = {
 
                 .CodeMirror-sizer {
                     margin-left: 25${pixel} !important;
-                    margin-top: 42${pixel} !important;
+                    margin-top: 75${pixel} !important;
                     background: ${colorPrimary} !important;
                 }
 
@@ -1174,35 +1202,12 @@ export const WebContent = {
                     padding: 4${pixel} 8${pixel};
                 }
 
-                #TitleLinks {
-                    position: fixed;
-                    top: auto;
-                    bottom: 30px;
-                    left: 50%;
-                    right: auto;
-                    transform: translateX(-50%);
-                    align-items: center;
-                    justify-content: center;
-                    height: fit-content;
-                    margin: 0;
-                    width: auto;
-                    max-width: calc(100vw - 20px);
-                    padding: 0 10px;
-                    box-sizing: border-box;
-                }
-
                 .titleformobile {
                     display: block;
                 }
             }
 
             @media (max-width: 420px) {
-                #TitleLinks {
-                    bottom: 20px;
-                    max-width: calc(100vw - 16px);
-                    gap: 8px;
-                }
-
                 #TitleLinks li a {
                     padding: ${spacing[2]} ${spacing[3]};
                     letter-spacing: 0.3px;
@@ -1215,12 +1220,6 @@ export const WebContent = {
                     padding: 1vw 4vw;
                     font-size: 12${pixel};
                     min-width: fit-content;
-                }
-                #TitleLinks {
-                    bottom: calc(20px + env(safe-area-inset-bottom));
-                    gap: 6px;
-                    flex-wrap: wrap;
-                    justify-content: center;
                 }
                 
                 .TitleSubLinks,
@@ -1498,6 +1497,7 @@ function getContent() {
 }
 
 function setCurrentFile(filename) {
+    currentFileName = filename;
     const currentFile = document.getElementById('CurrentFiles');
     if (currentFile) currentFile.textContent = filename;
 }
@@ -1562,7 +1562,9 @@ function setupAutoSaveReminder() {
                         updateRecentsUI();
                         setCurrentFile(filename);
                     },
-                    () => { }
+                    () => { },
+                    'Save File', // modalTitle
+                    'Save' // confirmButtonText
                 );
             } else {
                 console.error('mint_showSaveModal is not available');
@@ -1645,10 +1647,11 @@ function clearAllRecentFiles() {
 
 if (typeof window !== 'undefined') {
     window.clearAllRecentFiles = clearAllRecentFiles;
+    window.mint_showSaveModal = mint_showSaveModal;
 }
 
 function resetStr() {
-    localStorage.removeItem('mintputs_recents');
+    localStorage.removeItem('mintputs_recents');    
     Object.keys(localStorage).forEach(key => {
         if (key.startsWith('mintputs_file_')) {
             localStorage.removeItem(key);

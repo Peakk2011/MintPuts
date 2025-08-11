@@ -117,9 +117,8 @@
 
     /* Headers and Text Styling */
     .cm-header { 
-        color: #0D4015 !important; 
+        color: #546ab1 !important; 
         font-weight: 600; 
-        font-size: 16.5px; 
     }
     .cm-strong { color: #5A2D08 !important; font-weight: 600; }
     .cm-em { color: #4A2D15 !important; font-style: italic; }
@@ -139,9 +138,9 @@
     .cm-list { color: #5A2D08 !important; font-weight: 600; }
 
     /* Variables and Properties */
-    .cm-variable { color: #8B0808 !important; font-weight: 500; }
-    .cm-variable-2 { color: #8B0808 !important; font-weight: 500; }
-    .cm-variable-3 { color: #7B0000 !important; }
+    .cm-variable { color: #925d5d !important; font-weight: 500; }
+    .cm-variable-2 { color: #925d5d !important; font-weight: 500; }
+    .cm-variable-3 { color: #925d5d !important; }
     .cm-property { color: #4A1D10 !important; font-weight: 600; }
     .cm-def { color: #5A2D08 !important; font-weight: 700; }
 
@@ -240,7 +239,7 @@
     .cm-html-string { color: #4A2008 !important; }
 
     /* Markdown Specific */
-    .cm-markdown-header { color: #0D4015 !important; font-weight: 800; }
+    .cm-markdown-header { color: #546ab1 !important; font-weight: 800; }
     .cm-markdown-code { 
         color: #4A2008 !important; 
         background-color: rgba(74, 32, 8, 0.06);

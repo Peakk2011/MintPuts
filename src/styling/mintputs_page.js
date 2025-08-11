@@ -1,4 +1,5 @@
 // Mintputs /mintputs_page.js
+import { include } from '../mintkit/MintUtils.js';
 
 const page = {
     Introduce(Name) {
@@ -43,12 +44,12 @@ const page = {
                     </svg>
                 </div>
                 <div id="TitlebarLinks">
-                    <li><a href="javascript:void(0)">
+                    <li><a href="javascript:void(0)" id="NewFile" onclick="NewFile()">
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
                                 <path d="M440-120v-320H120v-80h320v-320h80v320h320v80H520v320h-80Z" />
                             </svg>
                             New files</a></li>
-                    <li><a href="javascript:void(0)">
+                    <li><a href="javascript:void(0)" id="AboutMintputs">
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
                                 <path
                                     d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z" />
@@ -63,8 +64,6 @@ const page = {
                             </svg>
                             Templates</button>
                         <div id="DropdownPresetMenu">
-                            <span>TEMPLATES PRESET</span>
-                            <hr>
                             <button class="dropdown-template-btn" onclick="insertTemplate('README')">README</button>
                             <button class="dropdown-template-btn" onclick="insertTemplate('Documentation')">Documentation</button>
                             <button class="dropdown-template-btn" onclick="insertTemplate('Blog Post')">Blog Post</button>
@@ -74,13 +73,15 @@ const page = {
 
                     <span>Recent files</span>
                     <li><a href="javascript:void(0)" id="CurrentFiles">Untitled</a></li>
+                    <span>All Files</span>
                     <div class="RecentsFiles">
-                        <li><a href="javascript:void(0)"></a></li>
                     </div>
                 </div>
             </div>
 
             <div class="container">
+                <div id="titlebarlinksBG"></div>
+
                 <div id="TitleLinks">
                     <div class="TitlePrimaryLinks">
                         <li><a id="Highlight" data-base-id="ToggleMDEditer" href="javascript:void(0)">Editer</a></li>
@@ -155,6 +156,95 @@ const page = {
         }
 
         typeMessage();
+    },
+
+    // About Model
+    async initAboutModal() {
+        const aboutMintputs = document.getElementById("AboutMintputs");
+        if (!aboutMintputs) {
+            console.error("AboutMintputs button not found.");
+            return;
+        }
+
+        let modalInstance = null;
+
+        // Function to set up event listeners for the modal
+        const attachModalEventListeners = () => {
+            const modal = document.getElementById("aboutModal");
+            if (!modal) {
+                console.error("About modal element not found after loading.");
+                return;
+            }
+            modalInstance = modal;
+
+            const span = modal.getElementsByClassName("close-button")[0];
+            const modalContent = modal.querySelector(".modal-content");
+
+            let isDragging = false;
+            let startX = 0;
+            let startY = 0;
+            let currentX = 0;
+            let currentY = 0;
+
+            span.onclick = function () {
+                modalInstance.style.display = "none";
+            };
+
+            const windowClickHandler = (event) => {
+                if (event.target === modalInstance) {
+                    modalInstance.style.display = "none";
+                }
+            };
+            window.addEventListener('click', windowClickHandler);
+
+            modalContent.addEventListener("mousedown", dragStart);
+            document.addEventListener("mouseup", dragEnd);
+            document.addEventListener("mousemove", drag);
+
+            function dragStart(e) {
+                if (e.target === modalContent || e.target.closest('.modal-header')) {
+                    isDragging = true;
+                    startX = e.clientX - currentX;
+                    startY = e.clientY - currentY;
+                    e.preventDefault();
+                }
+            }
+
+            function dragEnd(e) {
+                isDragging = false;
+            }
+
+            function drag(e) {
+                if (!isDragging) return;
+                e.preventDefault();
+                currentX = e.clientX - startX;
+                currentY = e.clientY - startY;
+
+                setTranslate(currentX, currentY, modalContent);
+            }
+
+            function setTranslate(xPos, yPos, el) {
+                el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
+            }
+        };
+
+        // When click it going to pop up
+        aboutMintputs.onclick = async function () {
+            if (!modalInstance || !document.body.contains(modalInstance)) {
+                await include("./styling/save_model/about_modal.html", "body");
+                modalInstance = document.getElementById("aboutModal");
+                if (modalInstance) {
+                    attachModalEventListeners();
+                } else {
+                    console.error("Failed to find aboutModal after inclusion.");
+                    return;
+                }
+            }
+
+            if (modalInstance) {
+                modalInstance.style.display = "block";
+            }
+        };
     }
 }
 
