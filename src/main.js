@@ -1,5 +1,6 @@
-const { app, BrowserWindow, Menu, ipcMain } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, dialog } = require('electron');
 const path = require('node:path');
+const fs = require('fs');
 const isDev = require('electron-is-dev');
 const v8 = require('v8');
 const os = require('os');
@@ -157,8 +158,8 @@ process.on('unhandledRejection', async (reason, promise) => {
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
-    width: 1000,
-    height: 845,
+    width: 730,
+    height: 840,
     minWidth: 345,
     minHeight: 520,
     show: false,

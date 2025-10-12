@@ -992,7 +992,7 @@ Wrap up your thoughts and provide a call to action.
                 (newName) => {
                     if (newName) {
                         // If there was an old "Untitled" file, we need to remove it from recents
-                        if(window.currentFileName && window.currentFileName.startsWith('Untitled file')) {
+                        if (window.currentFileName && window.currentFileName.startsWith('Untitled file')) {
                             let recents = JSON.parse(localStorage.getItem('mintputs_recents') || '[]');
                             recents = recents.filter(f => f !== window.currentFileName);
                             localStorage.setItem('mintputs_recents', JSON.stringify(recents));
@@ -1083,8 +1083,8 @@ Wrap up your thoughts and provide a call to action.
             clearTimeout(autoSaveTimer);
             autoSaveTimer = setTimeout(() => {
                 performAutoSave();
-                startAutoSave(); 
-            }, 30000); 
+                startAutoSave();
+            }, 30000);
         };
 
         // Auto-save on content change
@@ -1503,4 +1503,69 @@ Wrap up your thoughts and provide a call to action.
             saveActiveFile(true);
         }
     });
+
+    // Download Dropdown
+    const toggleDownload = document.getElementById('ToggleDownload');
+    const downloadMenu = document.getElementById('DownloadDropdownMenu');
+    const downloadPDF = document.getElementById('DownloadPDF');
+    const downloadHTML = document.getElementById('DownloadHTML');
+    const downloadTXT = document.getElementById('DownloadTXT');
+
+    if (toggleDownload && downloadMenu) {
+        toggleDownload.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const isVisible = downloadMenu.style.display === 'block';
+            downloadMenu.style.display = isVisible ? 'none' : 'block';
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!toggleDownload.contains(e.target)) {
+                downloadMenu.style.display = 'none';
+            }
+        });
+    }
+
+    function downloadAsTxt() {
+        const markdown = input.value;
+        const blob = new Blob([markdown], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'document.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showNotification('TXT downloaded!', 'success');
+    }
+
+    function downloadAsPdf() {
+        const output = document.getElementById('html-output');
+        if (!output) {
+            showNotification('No HTML output available', 'error');
+            return;
+        }
+        const html = output.innerHTML;
+        const printWindow = window.open('', '', 'height=600,width=800');
+        printWindow.document.write('<html><head><title>Print</title>');
+        printWindow.document.write('<style>body{font-family: sans-serif;}</style>');
+        printWindow.document.write('</head><body>');
+        printWindow.document.write(html);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
+        showNotification('Printing to PDF...', 'info');
+    }
+
+    if (downloadPDF) {
+        downloadPDF.addEventListener('click', downloadAsPdf);
+    }
+
+    if (downloadHTML) {
+        downloadHTML.addEventListener('click', downloadHtml);
+    }
+
+    if (downloadTXT) {
+        downloadTXT.addEventListener('click', downloadAsTxt);
+    }
 };

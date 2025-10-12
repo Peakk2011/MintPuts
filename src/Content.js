@@ -76,6 +76,7 @@ async function mint_showSaveModal(onSave, onCancel, modalTitle = 'Save File', co
     let currentText = '';
     let isDeleting = false;
     let isTyping = false;
+    let userHasTyped = false; // Flag to check if user has typed
 
     const placeholderTexts = [
         "Enter Your Filename",
@@ -86,8 +87,8 @@ async function mint_showSaveModal(onSave, onCancel, modalTitle = 'Save File', co
     ];
 
     function typeWriter() {
-        // Stop if focused on input
-        if (document.activeElement === input || input.value.trim() !== '') {
+        // Stop if user has typed, input is focused, or has value
+        if (userHasTyped || document.activeElement === input || input.value.trim() !== '') {
             return;
         }
 
@@ -106,34 +107,26 @@ async function mint_showSaveModal(onSave, onCancel, modalTitle = 'Save File', co
         input.placeholder = currentText;
 
         if (!isDeleting && currentText === fullText) {
-            // Wait before starting to delete
             typewriterTimeout = setTimeout(() => {
                 isDeleting = true;
                 typeWriter();
             }, 2000);
         } else if (isDeleting && currentText === '') {
-            // Move to next text
             isDeleting = false;
             currentIndex = (currentIndex + 1) % placeholderTexts.length;
             typewriterTimeout = setTimeout(typeWriter, 500);
         } else {
-            // Continue typing/deleting
             typewriterTimeout = setTimeout(typeWriter, typeSpeed);
         }
     }
 
     function startTypewriter() {
-        // Clear any existing timeout
         clearTimeout(typewriterTimeout);
-
-        // Reset state if needed
         if (!isTyping) {
             currentIndex = 0;
             currentText = '';
             isDeleting = false;
         }
-
-        // Only start if input is not focused and empty
         if (document.activeElement !== input && input.value.trim() === '') {
             typeWriter();
         }
@@ -152,14 +145,18 @@ async function mint_showSaveModal(onSave, onCancel, modalTitle = 'Save File', co
 
     input.addEventListener('blur', () => {
         if (input.value.trim() === '') {
-            // Small delay before starting typewriter again
+            userHasTyped = false; // Reset when input is cleared and blurred
             setTimeout(startTypewriter, 300);
         }
     });
 
     input.addEventListener('input', () => {
+        userHasTyped = true; // User has started typing
         if (input.value.trim() !== '') {
             stopTypewriter();
+        } else {
+            // If user deletes everything, allow typewriter to restart on blur
+            userHasTyped = false;
         }
     });
 
@@ -207,7 +204,7 @@ function mint_hideSaveModal() {
     if (modal) modal.style.display = 'none';
 }
 
-// function mint_bindCtrlS(getContent, setCurrentFile, updateRecentsUI) {}
+function mint_bindCtrlS(getContent, setCurrentFile, updateRecentsUI) { }
 
 function mint_updateRecentsUI(onClickFile) {
     const recentsDiv = document.querySelector('.RecentsFiles');
@@ -237,7 +234,7 @@ const lightThemeColors = {
     PublicFormatBorderColors: '#b8b6b0',
     OffsetColorPrimary: 'linear-gradient(to bottom, #faf9f5 0%, #f5f4f1 60%, #f0efeb 100%), linear-gradient(to bottom, rgba(0, 0, 0, 0.015) 0%, rgba(0, 0, 0, 0.008) 100%)',
     btnSecondary: {
-        background: "linear-gradient(145deg, #e6efee, #e0f0eeff)",
+        background: "#e6efee",
         border: "solid 1px #96948f",
         color: "#000",
     },
@@ -274,7 +271,7 @@ const darkThemeColors = {
     PublicFormatBorderColors: '#343434',
     OffsetColorPrimary: 'linear-gradient(to bottom, #0f0f0f 0%, #141414 50%, #080808 100%)',
     btnSecondary: {
-        background: "#212525",
+        background: "#313535",
         border: "solid 1px #545454",
         color: "#a2a2a2",
     },
@@ -513,6 +510,16 @@ export const WebContent = {
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
+            }
+
+            :root {
+                --modal-background: #ffffff;
+            }
+
+            @media (prefers-color-scheme: dark) {
+                :root {
+                    --modal-background: #141414;
+                }
             }
 
             *::-webkit-scrollbar {
@@ -775,10 +782,6 @@ export const WebContent = {
                 box-shadow: ${shadowNew.hover};
             }
 
-            .RecentsFiles {
-                margin-top: ${spacing[3]};
-            }
-
             .container {
                 overflow: hidden;
                 backdrop-filter: blur(10${pixel});
@@ -1007,8 +1010,10 @@ export const WebContent = {
                 font-weight: 500;
                 letter-spacing: -0.5${pixel};
                 opacity: 0.8;
+                width: 100%;
+                text-align: left;
             }
-
+            
             #ToggleDropdownPreset svg {
                 width: 20${pixel};
                 height: 20${pixel};
@@ -1021,7 +1026,7 @@ export const WebContent = {
                 position: ${absolute};
                 left: -8${pixel};
                 top: 10${pixel};
-                background-color: ${colorPrimary};
+                background-color: var(--modal-background);
                 border: ${FormatBorderColors} solid 1${pixel};
                 border-radius: 8${pixel};
                 min-width: 230${pixel};
@@ -1067,6 +1072,11 @@ export const WebContent = {
                 background: transparent;
             }
             
+            #DownloadDropdownMenu {
+                background-color: var(--modal-background);
+                border: ${FormatBorderColors} solid 1${pixel};
+            }
+
             @media (min-width: 1200${pixel}) {
                 :root {
                     --sidebar-width: 250${pixel};
@@ -1651,7 +1661,7 @@ if (typeof window !== 'undefined') {
 }
 
 function resetStr() {
-    localStorage.removeItem('mintputs_recents');    
+    localStorage.removeItem('mintputs_recents');
     Object.keys(localStorage).forEach(key => {
         if (key.startsWith('mintputs_file_')) {
             localStorage.removeItem(key);

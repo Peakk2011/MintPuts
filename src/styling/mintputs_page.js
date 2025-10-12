@@ -88,8 +88,16 @@ const page = {
                         <li><a id="ToggleHTMLOUTPUT" data-base-id="ToggleHTMLOUTPUT" href="javascript:void(0)"> Output</a></li>
                     </div>
                     <div class="TitleSubLinks">
-                        <li><a id="ToggleDownload" data-base-id="ToggleDownload" href="javascript:void(0)"
-                                onclick="downloadHtml()">Download</a></li>
+                        <li>
+                            <div id="DownloadDropdownContainer" style="position: relative;">
+                                <a id="ToggleDownload" data-base-id="ToggleDownload" href="javascript:void(0)" style="padding: 10px; display: block;">Download</a>
+                                <div id="DownloadDropdownMenu" style="display: none; position: absolute; min-width: 120px; z-index: 10; border-radius: 5px; overflow: hidden;">
+                                    <a href="javascript:void(0)" id="DownloadPDF" style="padding: 8px 12px; text-decoration: none; display: block;">PDF</a>
+                                    <a href="javascript:void(0)" id="DownloadHTML" style="padding: 8px 12px; text-decoration: none; display: block;">HTML</a>
+                                    <a href="javascript:void(0)" id="DownloadTXT" style="padding: 8px 12px; text-decoration: none; display: block;">TXT</a>
+                                </div>
+                            </div>
+                        </li>
                         <li><a id="CLearALL" data-base-id="CLearALL" href="javascript:void(0)" onclick="clearAll()">Clear Texts</a>
                         </li>
                     </div>
